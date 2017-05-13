@@ -1,0 +1,140 @@
+
+{% extends "layout.html" %}
+{% block css %}
+    {% assets "user_css" %}
+        <link rel="stylesheet" href="{{ ASSET_URL }}">
+        <script src="https://use.fontawesome.com/a911e2def4.js"></script>
+    {% endassets %}
+{% endblock %}
+{% block content %}
+    <div class="row" style="min-height: 100%; margin:0;">
+        <div class="col m1 s1 menu-bar">
+        </div>
+        <div class="col m4 s11 evaluate-bar">
+
+            <!-- title -->
+            <h5 class="title">
+                S'AUTO-EVALUER
+            </h5>
+
+            <ul class="sphere-list">
+                <li><span class="sphere fa fa-user fa-2x"></span>sphère personnelle</li>
+                <li><span class="sphere fa fa-handshake-o fa-2x"></span>sphère relationnelle</li>
+                <li><span class="sphere fa fa-leaf fa-2x"></span>sphère environnementale</li>
+            </ul>
+
+            <div class="full-2">
+                <div id='others' class="red-circle">
+                    <div class="title" style="bottom: 35px; right: -10px;">AUTRE</div>
+                    <div class="small-info" style="right: 9px; top: 18px">
+                        <p>CORPS</p>
+                        <p class="value">2</p>
+                    </div>
+                    <div class="small-info" style="left: 20px; top: 18px">
+                          <p>EMOTIONS</p>
+                          <p class="value">2</p>
+                    </div>
+                    <div class="small-info" style="right: 4px; bottom: -4px;">
+                           <p>MENTAL</p>
+                          <p class="value">2</p>
+                    </div>
+                    <div class="small-info" style="left: 12px; bottom: -4px;">
+                           <p>ESPRIT</p>
+                          <p class="value">2</p>
+                    </div>
+                    3
+                </div>
+                <div id='env' class="red-circle">
+                    <div class="title" style="bottom: 35px; right: -46px;">ENVIRONNEMENT</div>
+                    <div class="small-info" style="right: 9px; top: 18px">
+                        <p>CORPS</p>
+                        <p class="value">2</p>
+                    </div>
+                    <div class="small-info" style="left: 20px; top: 18px">
+                          <p>EMOTIONS</p>
+                          <p class="value">2</p>
+                    </div>
+                    <div class="small-info" style="right: 4px; bottom: -4px;">
+                           <p>MENTAL</p>
+                          <p class="value">2</p>
+                    </div>
+                    <div class="small-info" style="left: 12px; bottom: -4px;">
+                           <p>ESPRIT</p>
+                          <p class="value">2</p>
+                    </div>
+                    2
+                </div>
+                <svg id='tree' width="180" height="180">
+                    <line x1="0" y1="0" x2="90" y2="65" style="stroke:rgb(0,0,0);stroke-width:2" ></line>
+                    <line x1="90" y1="65" x2="180" y2="0" style="stroke:rgb(0,0,0);stroke-width:2" ></line>
+                    <line x1="90" y1="65" x2="105" y2="180" style="stroke:rgb(0,0,0);stroke-width:2" ></line>
+                    <polygon points="100 40, 270 60, 205 260" fill="lightgrey" fill-opacity="0.4"></polygon>
+                </svg>
+                <div id='me' class="red-circle">
+                    <div class="title" style="bottom: -57px; right: 0px;">MOI</div>
+                    <div class="small-info" style="right: 9px; top: 18px">
+                        <p>CORPS</p>
+                        <p class="value">2</p>
+                    </div>
+                    <div class="small-info" style="left: 14px; top: 18px">
+                          <p>EMOTIONS</p>
+                          <p class="value">2</p>
+                    </div>
+                    <div class="small-info" style="right: 4px; bottom: -5px;">
+                           <p>MENTAL</p>
+                          <p class="value">2</p>
+                    </div>
+                    <div class="small-info" style="left: 3px; bottom: -4px;">
+                           <p>ESPRIT</p>
+                          <p class="value">2</p>
+                    </div>
+                    4
+                </div>
+
+            </div>
+        </div>
+        <div class="col m7 s12" style="padding-left: 0;">
+            <div class="row">
+                <div class="col m12 right-block">
+                    <ul class="intention-list">
+                        <li><div class="circle"></div></li>
+                        <li>toto</li>
+                        <li>toto</li>
+                        <li>toto</li>
+                        <li>toto</li>
+                        <li>toto</li>
+                        <li>toto</li>
+                        <li>toto</li>
+                        <li>toto</li>
+                        <li>toto</li>
+                        <li>toto</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <ul class="beneficials">
+            <li>
+                <div class="fa fa-plus-circle fa-3x"></div>
+                <div>BENEFICES</div>
+            </li>
+            <li>
+                <div class="fa fa-user fa-3x" style="color: #36ab9f"></div>
+                <div>156</div>
+            </li>
+
+            <li >
+                  <div class="fa fa-handshake-o fa-3x" style="color: #36ab9f"></div>
+                <div>156</div>
+            </li>
+
+            <li >
+                  <div class="fa fa-leaf fa-3x" style="color: #36ab9f"></div>
+                <div>156</div>
+            </li>
+        </ul>
+
+{% endblock %}
+
