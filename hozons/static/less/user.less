@@ -8,6 +8,7 @@ html {
 body {
     min-height: 100%;
     background-color: #f8f8f8;
+    font-family: 'Poppins';
 }
 
 .full-2 {
@@ -129,22 +130,96 @@ body {
 
 .intention-list {
     min-height: 500px;
-    padding-left: 150px !important;
-    li:nth-child(1) {
-        border: none;
-    }
-    li div.circle{
-        position: relative;
-        height: 20px;
-        width: 20px;
-        background-color: rgba(255, 0, 0, .5) !important;
-        border-radius: 20px;
-        right: 62px;
-        z-index: 1;
-    }
+    padding-left: 60px !important;
+
     li {
-        padding-left: 50px;
-        border-left: 5px solid rgba(255, 0, 0, .5) !important;
+        padding-left: 30px;
+        border-left: 5px solid black;
+
+        .intention {
+            .black-circle {
+                position: relative;
+                right: 40px;
+                border-radius: 100%;
+                height:15px;
+                width: 15px;
+                display: inline-block;
+                background-color: black;
+            }
+            .title {
+                margin-left: -35px;
+                display: inline-block;
+                padding-bottom: 20px;
+            }
+
+            .slider-t {
+                padding-bottom: 50px;
+               ul {
+                width: 100%;
+
+                li {
+                    display: inline-block;
+                    border: 0;
+                    padding:0;
+                    margin-left: -7px;
+                    max-width: 20%;
+                    min-width: 20%;
+
+                    &::before {
+                      content: '';
+                      position:absolute;
+                      height: 20px;
+                      width: 20px;
+                      background-color: black;
+                      border-radius: 100%;
+                    }
+
+                    .step {
+                        display: inline-block;
+                        width: 100%;
+                        .line {
+                            height: 5px;
+                            border-radius: 5px;
+                            font-size: 0.8em;
+                            list-style: none;
+                            display: inline-block;
+                            border: solid 5px lightgrey;
+                            width: 100%;
+                        }
+                        .title {
+                            position:absolute;
+                            font-size: 12px;
+                            padding-left: 17px;
+                        }
+                    }
+                }
+               }
+            }
+
+            .engagement {
+                font-weight: bold;
+                padding-bottom: 10px;
+            }
+
+            .intention-results {
+                li.ball {
+                    padding:0;
+                    border: 0;
+                    display: inline-block;
+                    height: 50px;
+                    width: 50px;
+                    border-radius: 100%;
+                    background-color: @main-color;
+                    margin-right: 15px;
+                    text-align: center;
+
+                    .score {
+                        padding-top: 5px;
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -183,12 +258,12 @@ body {
     }
 
     .sphere-list li {
-        border-bottom : 1px solid black;
+        border-bottom : 1px solid #d1d1d1;
         /*width: 80%;*/
         padding-bottom: 20px;
         padding-top: 20px;
-        margin-left: 10%;
-        margin-right: 10%;
+        margin-left: 11%;
+        margin-right: -20px;
         text-transform: uppercase;
 
         .sphere {
@@ -222,3 +297,55 @@ body {
 
 }
 
+.col.m7.s12 {
+    background-color: #f8f8f8;
+
+    .row {
+        padding: 0 10%;
+        h3 {
+            text-transform: uppercase;
+        }
+        h3 div.circle {
+            height:40px;
+            width:40px;
+            border-radius: 100%;
+            display: inline-block;
+            background-color: @main-color;
+            margin-right: 20px;
+            text-align:center;
+
+            span {
+                margin-top: -5px;
+                font-size: 16px;
+                position: relative;
+                bottom: 10px;
+                font-weight: bold;
+                color: white;
+            }
+        }
+
+        h5 {
+           text-transform:uppercase;
+           font-weight: bolder;
+
+            div.circle {
+                margin-left: 5px;
+                height:30px;
+                width:30px;
+                border-radius: 100%;
+                display: inline-block;
+                background-color: black;
+                margin-right: 20px;
+                text-align:center;
+
+                span {
+                    font-size: 16px;
+                    top:2px;
+                    position: relative;
+                    color: white;
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+}

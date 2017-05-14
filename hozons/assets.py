@@ -4,6 +4,7 @@ from flask_assets import Bundle, Environment
 
 css = Bundle(
     'libs/materialize/dist/css/materialize.css',
+    'libs/materialize/extras/noUiSlider/nouislider.css',
     'css/style.css',
     filters='cssmin',
     output='public/css/common.css'
@@ -12,6 +13,7 @@ css = Bundle(
 js = Bundle(
     'libs/jquery/dist/jquery.js',
     'libs/materialize/dist/js/materialize.js',
+    'libs/materialize/extras/noUiSlider/nouislider.js',
     'js/plugins.js',
     filters='jsmin',
     output='public/js/common.js'
