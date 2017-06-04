@@ -5,7 +5,7 @@ from flask import Flask, render_template
 from hozons import commands, public, user
 from hozons.assets import assets
 from hozons.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate
-from hozons.settings import ProdConfig
+from hozons.settings import ProdConfig, DevConfig
 
 
 def create_app(config_object=ProdConfig):
@@ -72,3 +72,4 @@ def register_commands(app):
     app.cli.add_command(commands.lint)
     app.cli.add_command(commands.clean)
     app.cli.add_command(commands.urls)
+

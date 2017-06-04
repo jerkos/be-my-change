@@ -22,10 +22,14 @@
 
   <link rel="stylesheet" href="{{ url_for('static', filename='libs/font-awesome4/css/font-awesome.min.css') }}">
   <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+
   {% assets "css_all" %}
     <link rel="stylesheet" href="{{ ASSET_URL }}">
   {% endassets %}
-
+  {% assets "user_css" %}
+        <link rel="stylesheet" href="{{ ASSET_URL }}">
+        <script src="https://use.fontawesome.com/a911e2def4.js"></script>
+  {% endassets %}
   {% block css %}{% endblock %}
 
 </head>
@@ -33,7 +37,7 @@
 
 {% block body %}
 
-
+{% include 'nav.html' %}
 
 <header>{% block header %}{% endblock %}</header>
 <!--<div class="{% block content_class %}container{% endblock content_class %}">-->
@@ -62,6 +66,22 @@
 {% assets "js_all" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>
 {% endassets %}
+<script>
+     $(document).ready(function(){
+        $('.modal').modal();
+        $('.dropdown-button').dropdown({
+          inDuration: 300,
+          outDuration: 225,
+          constrainWidth: true, // Does not change width of dropdown to that of the activator
+          hover: false, // Activate on hover
+          gutter: 0, // Spacing from edge
+          belowOrigin: true, // Displays dropdown below the button
+          alignment: 'left', // Displays dropdown with edge aligned to the left of button
+          stopPropagation: false // Stops event propagation
+        }
+  );
+    });
+</script>
 {% block js %}{% endblock %}
 <!-- end scripts -->
 {% endblock %}
