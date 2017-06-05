@@ -78,7 +78,7 @@ def gather_informations():
         abort(400)
 
     apikey = request.args('apikey', '')
-    if not apikey || apikey != get_current_config().SECRET_KEY:
+    if not apikey or apikey != get_current_config().SECRET_KEY:
         abort(403)
        
     response = {}
