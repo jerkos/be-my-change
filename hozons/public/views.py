@@ -2,14 +2,22 @@
 """Public section, including homepage and signup."""
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
+from flask.helpers import get_debug_flag
+
+import lassie
 
 from hozons.extensions import login_manager
 from hozons.public.forms import LoginForm
 from hozons.user.forms import RegisterForm
 from hozons.user.models import User
 from hozons.utils import flash_errors
+from hozons.settings import DevConfig, ProdConfig
 
 blueprint = Blueprint('public', __name__, static_folder='../static')
+
+def get_current_config():    
+    return DevConfig if get_debug_flag() else ProdConfig
+
 
 
 @login_manager.user_loader
@@ -61,3 +69,23 @@ def about():
     """About page."""
     form = LoginForm(request.form)
     return render_template('public/about.html', form=form)
+
+
+@blueprint.route('/gather-informations', methods=['GET'])
+def gather_informations():
+    """gaher information from an url"""
+    if request.args('url') is None:
+        abort(400)
+
+    apikey = request.args('apikey', '')
+    if not apikey || apikey != get_current_config().SECRET_KEY:
+        abort(403)
+       
+    response = {}
+    try:
+        response = lassie.fetch(url)
+    except lassie.LassieError as e:
+        pass
+    return jsonify(response)
+
+
