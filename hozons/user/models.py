@@ -79,9 +79,7 @@ class Action(SurrogatePK, Model):
     temporal_kind = Column('value', db.Enum(TemporalKind), nullable=False, default=TemporalKind.daily)
 
     def __init__(self, title, description, temporal_kind=TemporalKind.daily):
-        self.title = title
-        self.description = description
-        self.temporal_kind = temporal_kind
+        db.Model.__init__(self, title=title, description=description, temporal_kind=temporal_kind)
     
     def __repr__(self):
         return '<Action {title}>'.format(title=self.title)
@@ -91,28 +89,59 @@ class UserAction(SurrogatePK, Model):
     __tablename__ = 'user_actions'
     user_id = reference_col('users', nullable=False)
     user = relationship('User', backref='user_actions')
+
     action_id = reference_col('actions', nullable=False)
     action = relationship('Action', backref='user_actions')
+    
     created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
     start_date = Column(db.DateTime, nullable=False)
     end_date = Column(db.DateTime, nullable=False)
+    
+    last_succeed = Column(db.DateTime)
     nb_succeed = Column(db.Integer, nullable=False, default=0)
+
+    def __init__(self, user_id, action_id, start_date, end_date):
+        self.user_id = user_id
+        self.action_id = action_id
+        self.start_date = start_date
+        self.end_date = end_date
+
+    def has_been_realised_today():
+        if self.last_succeed is None:
+            return False
+        now = dt.utcnow()
+        return self.last_succeed.year = now.year and self.last_succeed.day = now.day
+
+    def realised():
+        self.update(last_succeed = dt.utcnow(), nb_succeed=self.nb_succeed += 1)
 
 
 class Followings(SurrogatePK, Model):
     __tablename__ = 'followings'
     followed_user_id = reference_col('users', nullable=False)
     followed_users = relationship('User', foreign_keys=[followed_user_id], backref='following_users')
+    
     following_user_id = reference_col('users', nullable=False)
     following_users = relationship('User', foreign_keys=[following_user_id], backref='followed_users')
+    
     created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
+
+    def __init__(self, followed_user_id, following_user_id):
+        self.followed_user_id = followed_user_id
+        self.following_user_id = following_user_id
 
 
 class Ressource(SurrogatePK, Model):
     __tablename__ = 'ressources'
     user_id = reference_col('users', nullable=False)
     user = relationship('User', backref='ressources')
+
     action_id = reference_col('actions', nullable=False)
     action = relationship('Action', backref='ressources')
+    
     content = Column(db.Text, nullable=True)
 
+    def __init__(self, user_id, action_id, content):
+        self.user_id = user_id
+        self.action_id = action_id
+        self.content = content
