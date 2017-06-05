@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """Database module, including the SQLAlchemy database object and DB-related utilities."""
+import collections
+import json
+
 from .compat import basestring
 from .extensions import db
 
@@ -73,3 +76,40 @@ def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
     return db.Column(
         db.ForeignKey('{0}.{1}'.format(tablename, pk_name)),
         nullable=nullable, **kwargs)
+
+
+class JsonSerializerMixin(object):
+
+    MAPPER = {
+        'datetime': lambda x: x.isoformat(),
+        'date': lambda x: x.isoformat()
+    }
+
+    def _to_dict(self):
+        result = {}
+
+        # fetch simple columns
+        for col in self.class.__table__.columns:
+            value = getattr(self, col.name)
+            if col.type in MAPPER.keys() and value is not None:
+                try:
+                    result[col.name] = convert[col.type](value)
+                except:
+                    result[col.name] = "Error:  Failed to covert using ", str(MAPPER[col.type])
+            else:
+                result[col.name] = value
+        
+        # try to fetch relationships
+        referred_classes = [r.mapper.class_ for r in inspect(self).relationships]
+        for attr_name, value in self.__dir__.items():
+            if isinstance(value, Collections.Iterable):
+                for item in value:
+                    if isinstance(item, db.Model):
+                        result.update(to_json(item, item.class))
+            else:
+                if isinstance(value, db.Model):
+                    result.update(to_json(value, value.class))
+        return result
+
+    def to_json(self):
+        return json.dumps(self._to_dict())
