@@ -89,7 +89,7 @@ class JsonSerializerMixin(object):
         result = {}
 
         # fetch simple columns
-        for col in self.class.__table__.columns:
+        for col in self.__class__.__table__.columns:
             value = getattr(self, col.name)
             if col.type in MAPPER.keys() and value is not None:
                 try:
@@ -105,10 +105,10 @@ class JsonSerializerMixin(object):
             if isinstance(value, Collections.Iterable):
                 for item in value:
                     if isinstance(item, db.Model):
-                        result.update(to_json(item, item.class))
+                        result.update(to_json(item, item.__class__))
             else:
                 if isinstance(value, db.Model):
-                    result.update(to_json(value, value.class))
+                    result.update(to_json(value, value.__class__))
         return result
 
     def to_json(self):

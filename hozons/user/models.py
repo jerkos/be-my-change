@@ -110,10 +110,10 @@ class UserAction(SurrogatePK, Model):
         if self.last_succeed is None:
             return False
         now = dt.utcnow()
-        return self.last_succeed.year = now.year and self.last_succeed.day = now.day
+        return self.last_succeed.year == now.year and self.last_succeed.day == now.day
 
     def realised():
-        self.update(last_succeed = dt.utcnow(), nb_succeed=self.nb_succeed += 1)
+        self.update(last_succeed = dt.utcnow(), nb_succeed=self.nb_succeed + 1)
 
 
 class Followings(SurrogatePK, Model):

@@ -4,7 +4,7 @@ from collections import defaultdict
 import datetime as dt
 
 from flask import Blueprint, render_template, jsonify
-from flask_login import login_required
+from flask_login import login_required, current_user
 from .models import Action
 
 
