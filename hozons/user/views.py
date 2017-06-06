@@ -24,14 +24,21 @@ class Event(object):
 @login_required
 def actions():
     """List actions."""
-    user_actions = current_user.user_actions
-    events = defaultdict(list)
-    for action in user_actions:
-        date = action.start_date
-        while date <= action.end_date:
-            events[action.id].append(Event(action.title, date, date))
-            date += Event.ONE_DAY_DELTA
-    return render_template('users/actions.html', actions=user_actions, events=events)
+    return render_template('users/actions.html')
+
+@blueprint.route('/actions/get')
+@login_required
+def get_actions():
+    #user_actions = current_user.user_actions
+    #events = defaultdict(list)
+    #for action in user_actions:
+    #    date = action.start_date
+    #    while date <= action.end_date:
+    #        events[action.id].append(Event(action.title, date, date))
+    #        date += Event.ONE_DAY_DELTA
+    user_actions = [{'title': 'Test', 'description': 'Une longue description'}]
+    return jsonify(user_actions)
+    #return render_template('users/actions.html', actions=jsonify(user_actions), events=events)
 
 
 @blueprint.route('/actions/create', methods=['POST'])

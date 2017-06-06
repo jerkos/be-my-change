@@ -1,0 +1,14 @@
+{
+  "name": "hyperscript",
+  "homepage": "https://github.com/dominictarr/hyperscript",
+  "_release": "dbe486e7e1",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "dbe486e7e1f8807c969230f01e1c45cb139b93b1"
+  },
+  "_source": "https://github.com/dominictarr/hyperscript.git",
+  "_target": "*",
+  "_originalSource": "hyperscript",
+  "_direct": true
+}
