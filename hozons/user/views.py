@@ -37,6 +37,7 @@ def get_actions():
     #        events[action.id].append(Event(action.title, date, date))
     #        date += Event.ONE_DAY_DELTA
     user_actions = [{'title': 'Test', 'description': 'Une longue description'}]
+    print(user_actions)
     return jsonify(user_actions)
     #return render_template('users/actions.html', actions=jsonify(user_actions), events=events)
 

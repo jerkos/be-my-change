@@ -7,9 +7,6 @@
     {% endassets %}
 
     <style>
-        /*.datepicker {
-            display: none;
-        }*/
         .picker__date-display {
             background-color: white;
             color: #d24141 !important;
@@ -48,7 +45,10 @@
         .picker__box {
             border: none;
             box-shadow: none;
-            margin-top: 20px !important;
+        }
+
+        .picker__wrap {
+            margin-top: 50px !important;
         }
 
         .picker__table {
@@ -83,35 +83,9 @@
                             <input class="datepicker"/>    
                         </div>
                         <div class="col s9">
-                            <div id="actions">
+                            <div id="actions-card">
                             </div>
                         </div>
-                    </div>
-                    {% for row in actions| batch(4) %}
-                        <div class="row">
-                        {% for action in row %}
-                            <div class="col s3">
-                             <div class="card">
-                                <div class="card-content white-text">
-                                    <span class="card-title">{{action.title}}</span>
-                                    <p>{{action.description}}</p>
-                                </div>
-                                <div class="card-action">
-                                    <a href="#">
-                                        {% if action.has_been_realised_today() %}
-                                            Réalisé !
-                                        {% else %}
-                                            Non réalisé
-                                        {% endif %}
-                                    </a>
-                                </div>
-                            </div>
-                            </div>
-                        {% endfor %}
-                        </div>
-                    {% else %}
-                        <p>Participer à ou créer une nouvelle action !</p>
-                    {% endfor %}
                     </div>
                 </div>
                 <div id="test2" class="col s12">Test 2</div>
@@ -154,9 +128,19 @@
     });
     </script>
     <script src="{{url_for('static', filename='js/require.js')}}"></script>
-    <script src="{{url_for('static', filename='libs/hyperscript/index.js')}}"></script>
+    <script src="{{url_for('static', filename='libs/hyperscript/bundle.js')}}"></script>
 
     <script>
+        var h = require('hyperscript');
+        var hh = require('hyperscript-helpers')(h);
+
+        var div  = hh.div,
+            span = hh.span,
+            h1   = hh.h1
+            p    = hh.p,
+            a    = hh.a;
+
+        console.log('hello');
         var state = {};
 
         function setState(object) {
@@ -168,8 +152,8 @@
             return ( 
                 div(".card", {}, [
                     div(".card-content.white-text", {}, [
-                        span(".card-title", {}, action.title),
-                        p("", {}, action.description)
+                        span(".card-title", {style: {'color': 'black'}}, action.title),
+                        p("", {style: {'color': 'black'}}, action.description)
                         ]
                     ),
                     div(".card-action", {}, [
@@ -180,7 +164,7 @@
             );             
         }
 
-        function partitionList(list, bucketSize) {
+        function partitionList(input, spacing) {
            var output = [];
 
             for (var i = 0; i < input.length; i += spacing) {
@@ -190,25 +174,27 @@
         }
 
         function actionsList(actions) {
-            return partitionList(actions).map(subactions => {
-                return div(".row", {}, subactions.map((action, i) => { 
-                    return div('.col.s' + i + 1,  {}, cardNode(action))
-                }))
-            });
+            return div('', {}, 
+                partitionList(actions, 4).map(subactions => 
+                    div(".row", {style: {'margin-top': '50px !important'}}, subactions.map(action => 
+                        div('.col.s4',  {}, cardNode(action))
+                    ))
+                )
+            );
         }
 
         function refreshActions(actions) {
-            var node = document.getElementById('actions');
+            var node = document.getElementById('actions-card');
             var fc = node.firstChild;
-            while( fc ) {
-                node.removeChild( fc );
+            while(fc) {
+                node.removeChild(fc);
                 fc = node.firstChild;
             }
-            node.appendChild(actionsList);
+            node.appendChild(actionsList(actions));
         }
 
-        $.getJSON('/user/actions/get', function(data) {
-            state.updateState({actions: data});
+        $.getJSON('/users/actions/get', function(data) {
+            setState({actions: data});
             refreshActions(state.actions);
         });
 
