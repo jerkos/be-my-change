@@ -27,8 +27,8 @@ h3 {
 
 @media(min-width:1052px){
     .boxed-layout {
-        margin-left:15%;
-        margin-right:15%;
+        margin-left:5%;
+        margin-right:5%;
     }
 }
 
@@ -153,4 +153,18 @@ letter-spacing:0px !important;
 
 #sidenav-overlay {
     display:none;
+}
+
+.title-with-bullet{
+    font-weight: bold;
+    &::before {
+        content: '';
+        position: absolute;
+        height: 20px;
+        width: 20px;
+        border-radius: 100%;
+        background-color: rgb(210, 65, 65);
+        padding-right: 20px;
+        /*left: 3.6em;*/
+    }
 }

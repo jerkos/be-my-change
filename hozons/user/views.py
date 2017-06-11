@@ -36,7 +36,13 @@ def get_actions():
     #    while date <= action.end_date:
     #        events[action.id].append(Event(action.title, date, date))
     #        date += Event.ONE_DAY_DELTA
-    user_actions = [{'title': 'Test', 'description': 'Une longue description'}]
+    user_actions = [
+        {'title': 'Test', 'description': 'Une longue description', 'dates':['2017-06-09']},
+        {'title': 'Test2', 'description': 'Une longue description2', 'dates':['2017-06-09']},
+        {'title': 'Mierda', 'description': 'C\'est de la mierda!', 'dates':['2017-06-09']},
+        {'title': 'Mierda 2', 'description': 'C\'est de la mierda number 2!', 'dates':['2017-06-09']},
+
+    ];
     print(user_actions)
     return jsonify(user_actions)
     #return render_template('users/actions.html', actions=jsonify(user_actions), events=events)
