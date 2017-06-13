@@ -134,16 +134,48 @@ nav img {
 #sidenav-overlay {
   display: none;
 }
-.title-with-bullet {
+.bullet-title > div {
   font-weight: bold;
 }
-.title-with-bullet::before {
-  content: '';
-  position: absolute;
+.bullet-title > div > div {
+  position: relative;
+  top: 5px;
+  display: inline-block;
   height: 20px;
   width: 20px;
   border-radius: 100%;
   background-color: #d24141;
-  padding-right: 20px;
-  /*left: 3.6em;*/
+  margin-right: 20px;
+}
+.row.mt--20 {
+  margin-top: -20px;
+}
+.row.mb-20 {
+  margin-bottom: 20px;
+}
+h6.create-action-title {
+  font-size: 20px;
+  color: #d24141;
+}
+.bouton-rond.action-red-selected {
+  background-color: #d24141 !important;
+  border: none;
+  color: white;
+}
+.input-field.red-input label {
+  color: #d24141;
+}
+.input-field.red-input input[type=text]:focus + label {
+  color: #d24141;
+}
+.input-field.red-input textarea:focus + label {
+  color: #d24141;
+}
+.input-field.red-input input[type=text]:focus {
+  border-bottom: 1px solid #d24141;
+  box-shadow: 0 1px 0 0 #d24141;
+}
+.input-field.red-input textarea:focus {
+  border-bottom: 1px solid #d24141;
+  box-shadow: 0 1px 0 0 #d24141;
 }

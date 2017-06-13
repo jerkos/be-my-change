@@ -91,23 +91,44 @@
                 </div>
                 <div id="test2" class="col s12">Test 2</div>
                 <div id="create" class="col s12" style="padding: 0 25%">
-                    <h6>Je définis mon action</h6>
+                    <h6 class="create-action-title">Je choisis ma thématique</h6>
                     <div class="row">
-                        <div class="title-with-bullet">Son intitulé</div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                          <input id="title" type="text">
-                          <label class="active" for="first_name2">Son intitulé</label>
+                        <div class="col s3">
+                            <button id='per-but' class="bouton-rond">Personnel</button>
+                        </div>
+                        <div class="col s3">
+                            <button id='rel-but' class="bouton-rond">Relationnel</button>
+                        </div>
+                        <div class="col s3">
+                            <button id='env-but' class="bouton-rond">Environnement</button>
                         </div>
                     </div>
                     <div class="row">
-                    <div class="title-with-bullet">Sa description</div>
+                        <p id='theme-action-result' style="text-align: center"></p>
                     </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                          <textarea id="description" class="materialize-textarea" rows="10"></textarea>
-                          <label class="active" for="description">Sa description</label>
+
+                    <h6 class="create-action-title">Je définis mon action</h6>
+                    <div class="row bullet-title">
+                        <div>
+                            <div></div>
+                            Son intitulé
+                        </div>
+                    </div>
+                    <div class="row mt--20">
+                        <div class="input-field red-input col s12">
+                          <input id="title" type="text" placeholder="le titre de votre nouvelle action !">
+                        </div>
+                    </div>
+                    <div class="row bullet-title">
+                        <div>
+                            <div></div>
+                            Sa description
+                        </div>
+                    </div>
+                    <div class="row mt--20">
+                        <div class="input-field red-input col s12">
+                          <textarea id="description" class="materialize-textarea" rows="10">Choisissez une description accrocheuse afin que d'autres life changers la remarquent !
+                          </textarea>
                         </div>
                     </div>
                 </div>
@@ -156,6 +177,30 @@
             function setState(object) {
                 state = Object.assign({}, state, object);
             }
+            var perButton = document.getElementById('per-but'), 
+            relButton = document.getElementById('rel-but'),
+            envButton = document.getElementById('env-but');
+            
+            perButton.onclick =function(e) {
+                console.log(this);
+                this.classList.add('action-red-selected');
+                relButton.classList.remove('action-red-selected');
+                envButton.classList.remove('action-red-selected');
+                setState({selectedActionTheme: 'per'});
+            };
+            relButton.onclick = function(e) {
+                this.classList.add('action-red-selected');
+                perButton.classList.remove('action-red-selected');
+                envButton.classList.remove('action-red-selected');
+                setState({selectedActionTheme: 'rel'});
+            }
+            envButton.onclick = function(e) {
+                this.classList.add('action-red-selected');
+                relButton.classList.remove('action-red-selected');
+                perButton.classList.remove('action-red-selected');
+                setState({selectedActionTheme: 'env'});
+            }
+            
 
             function sideNavNode(action) {
                 return div({style: {'padding': '0 10%'}}, [
@@ -188,14 +233,14 @@
                         ]),
                         div('#description-tab.col.s12', {style: {'padding-top': '50px'}}, [
                             // description
-                            div('.row', [
-                                div('.title-with-bullet', 'Sa description')
+                            div('.row.bullet-title', [
+                                div([div()], 'Sa description')
                             ]),
                             div('.row', action.description),
 
                             // duration with slider
-                            div('.row', [
-                                div('.title-with-bullet', 'Sa durée')
+                            div('.row.bullet-title', [
+                                div([div()], 'Sa durée (maximum 31 jours)')
                             ]),
                             div('.row', [
                                 form({
@@ -204,10 +249,12 @@
                                   }
                                 }, [
                                   p(".range-field", [
-                                    input({
+                                    input('.red-input', {
                                         type: "range",
                                         min: "0",
-                                        max: "100"
+                                        max: "31",
+                                        value: "27",
+                                        style: {'background-color': '#d24141'}
                                     })
                                   ])
                                 ])
