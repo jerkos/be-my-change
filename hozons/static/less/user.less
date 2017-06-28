@@ -17,8 +17,7 @@ a {
 }
 
 h2 {
-    font-weight:100;
-    font-size:50px;
+    font-weight:500;
 }
 h3 {
     font-weight:800;
@@ -27,44 +26,56 @@ h3 {
 
 @media(min-width:1052px){
     .boxed-layout {
-        margin-left:5%;
-        margin-right:5%;
+        margin-left:10%;
+        margin-right:10%;
     }
 }
 
 nav {
-    background-color:#FFF;
-    position:fixed;
+    background-color:rgba(0,0,0,0) !important;
+    /*background-color:#FFF !important;*/
+    /*position:fixed;*/
+    /*border-bottom:2px solid #f7fafb;*/
     z-index:1;
     top:0px;
     a {
-        font-weight:600;
+        font-weight:700;
         font-size:12px !important;
     }
     
-    box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -3px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
 
     i {
         color:#111;
-    }
+    } 
 
     .btn {
         border-radius:0px !important;
         box-shadow:none !important;
         cursor:pointer;
         margin-left:0px !important;
-        width:136px;
+        width:140px;
 
         &:hover {
-          opacity:0.9 !important;
+          opacity:0.8 !important;
+          background-color:#31c7d5 !important;
         }
     }
     
     img {
-        width: 150px;
-        margin-top: 5px;
+        width: 180px;
+        margin-top: 8px;
         margin-left: 20px;
     }
+}
+
+nav ul a {
+    color:#111 !important;
+    text-transform:uppercase;
+}
+nav ul a:hover {
+    background-color:rgba(0,0,0,0) !important;
+    opacity:0.8;
 }
 
 @media(max-width:600px) {
@@ -77,28 +88,47 @@ nav {
 letter-spacing:0px !important;
 }
 
+.tabs {
+    height:100%;
+}
+
+.tabs .tab {
+    padding: 1px;
+    line-height: 85px;
+    height: 68px;
+}
+
 .tabs .tab a{
-    color:#111 !important;
+    color:#fff !important;
     /*text-transform:none !important;*/
-    border-bottom:2px solid #DDD;
+    font-size:16px;
+    height:100% !important;
+    background-color: #d5e0ea;
 }
 
 .tabs .tab a.active {
     font-weight:800 !important;
-    /*color:#57a3b6 !important;*/
+    background-color: #31c7d5;
+    color:#fff!important;
 }
+
+.tabs .tab a.active:hover{
+    background-color: #31c7d5 !important;
+    }
+
 .tabs .tab a:hover {
-    color:#57a3b6 !important;
+    background-color:#6f95b7 !important;
     /*font-weight:800;*/
 }
-.initiative .indicator {
+.tabs .indicator {
     background-color:#57a3b6;
     height:3px;
-    /*display:none;*/
+    display:none;
 }
 .mobile-off {
     position:relative;
-    bottom:5px;
+    bottom:8px;
+    font-weight:700;
 }
 @media(max-width:622px){
     .mobile-off {
@@ -107,19 +137,41 @@ letter-spacing:0px !important;
 }
 .en-tete {
     text-transform:uppercase;
-    color:#FFF;
-    background-color:#57a3b6;
-    padding-left:1%;
-    padding-top:60px;
+    font-size:30px;
+    letter-spacing:2px;
+    color:#111;
+    background-color:#f7fafb !important;
+    padding-left:2%;
+    padding-top:250px;
+    text-align:center;
     padding-bottom:40px;
     margin:0;
-    img {
-        width:80px;
-        left: 85%;
-        position: relative;
-        bottom: -30px;
+    margin-top:-64px !important;
+    i {
+    position: relative;
+    top: 10px;
+    font-size: 45px;
+    left: 85%;
     }
 }
+@media(min-width:600px){
+.inspire .en-tete {
+    background: url("/static/img/batz.jpg");
+    background-size:100%;
+    color:#fff;
+    height:350px;
+    /*background-attachment: fixed;*/
+    background-position:0px -260px;
+}}
+@media(min-width:600px){
+.action .en-tete {
+    background:url("/static/img/batz11.jpg");
+    /*background-attachment: fixed;*/
+    color:#fff;
+    height:350px;
+    background-size:100%;
+    background-position:0px -120px;
+}}
 
 @media(max-width:600px) {
     .en-tete img {
@@ -131,7 +183,7 @@ letter-spacing:0px !important;
 }
 
 .bouton-rond {
-    border:1px solid #57a3b6;
+    border:1px solid #31c7d5;
     padding-left:30px;
     padding-right:30px;
     font-size:12px;
@@ -142,9 +194,9 @@ letter-spacing:0px !important;
     border-radius:20px;
     font-weight:500;
     background-color:#fff !important;
-    color:#57a3b6;}
+    color:#31c7d5;}
 .bouton-rond:hover {
-    background-color:#57a3b6 !important;
+    background-color:#31c7d5 !important;
     color:#FFF !important;
     box-shadow:none;
     /*font-weight:800;*/
@@ -157,14 +209,106 @@ letter-spacing:0px !important;
 
 .title-with-bullet{
     font-weight: bold;
+    font-size:16px;
+    text-transform:uppercase;
+    padding-left:30px;
     &::before {
         content: '';
         position: absolute;
         height: 20px;
         width: 20px;
+        margin-left:-30px;
         border-radius: 100%;
-        background-color: rgb(210, 65, 65);
+        background-color: #31c7d5;
         padding-right: 20px;
         /*left: 3.6em;*/
     }
+}
+
+.title-separator {
+    background-color:#31c7d5;
+    height:4px;
+    width:40px;
+        margin: 0 auto 30px auto;
+}
+
+.dropdown-content {
+    background-color:#393939 !important;
+    width:200px !important;
+}
+
+.dropdown-content li:hover{
+    background-color:#111 !important;
+    }
+
+.dropdown-content li > a {
+    color:#FFF !important;
+}
+
+.card {
+    border-radius:20px;
+}
+.card .card-action {
+background-color:#31c7d5;
+border-radius:0 0 20px 20px !important;
+}
+
+.picker__date-display {
+    color:#31c7d5 !important;
+}
+
+.back-to-top {
+    position:fixed;
+    right:10px;
+    bottom:20px;
+    i {color: #f5f5f5;
+    background: #31c7d5;
+    padding: 15px;
+    border-radius: 100%;
+    }
+    :hover{
+    opacity:0.9;
+    }
+    }
+
+.picker {
+    z-index: 0;
+}
+
+#slide-out-actions {
+    width: 100% !important;
+}
+
+.collapsible {
+    box-shadow:none;
+    border:none;
+}
+.collapsible-header {
+    background-color:#f7fafb;
+    padding:10px;
+    text-align:center;
+    color:#111;
+    text-transform:uppercase;
+    font-weight:800;
+    border-bottom:none !important;
+}
+.collapsible-body {
+    border:none;
+}
+
+[type="radio"]:checked + label:after, [type="radio"].with-gap:checked + label:after {
+    background-color:#111 !important;
+}
+
+[type="radio"]:checked + label:after, [type="radio"].with-gap:checked + label:before {
+    border: 2px solid #111 !important;
+}
+
+textarea.materialize-textarea:focus:not([readonly]),input[type=text]:focus:not([readonly]) {
+    border:none !important;
+    box-shadow:0 1px 0 0 #31c7d5 !important;
+}
+
+textarea.materialize-textarea:focus:not([readonly]) + label,input[type=text]:focus:not([readonly]) + label {
+    color:#31c7d5 !important;
 }

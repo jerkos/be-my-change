@@ -9,7 +9,7 @@
     <style>
         .picker__date-display {
             background-color: white;
-            color: #d24141 !important;
+            color: #31c7d5 !important;
         }
 
         .picker__footer {
@@ -31,7 +31,7 @@
 
         .picker__year-display {
             font-size: 2em;
-            color: #d24141 !important;
+            color: #31c7d5 !important;
         }
 
         .datepicker {
@@ -63,56 +63,89 @@
         }
 
         .picker__day--selected {
-            background-color: #d24141 !important;
+            background-color: #31c7d5 !important;
+            color:#FFF !important;
+        }
+        .picker__day.picker__day--today {
+            font-weight:700;
+            color:#31c7d5;
         }
     </style>
 {% endblock %}
 {% block content %}
-        <h2 class="en-tete" style="background-color: #d24141"><img src="{{url_for('static', filename='img/ampoule-idee.png')}}">J'agis</h2>        
-        <div class="boxed-layout">
+<div class="action">
+        <h2 class="en-tete">J'agis</h2>        
+        <div class="boxed-layout" style="margin-top:50px">
         <div class="row">
             <div class="col s12">
                 <ul class="tabs">
-                    <li class="tab col s4"><a class="active" href="#actions">Passer à l'action</a></li>
-                    <li class="tab col s4"><a href="#test2">Recherche une action</a></li>
-                    <li class="tab col s4"><a href="#create">Créer une action</a></li>
+                    <li class="tab col s4"><a class="active" href="#actions"><i class="lnr lnr-rocket fa-2x" style="margin-right:20px"></i><span class="mobile-off">Passer à l'action</span></a></li>
+                    <li class="tab col s4"><a href="#test2"><i class="lnr lnr-magnifier fa-2x" style="margin-right:20px"></i><span class="mobile-off">Rechercher</span></a></li>
+                    <li class="tab col s4"><a href="#create"><i class="lnr lnr-plus-circle fa-2x" style="margin-right:20px"></i><span class="mobile-off">Créer</span></a></li>
                 </ul>
-                </div>
-                <div id="actions" class="col s12">
+            </div>
+                <div id="actions" class="col s12"></br>
+                    <h3 style="text-align: center;text-transform: uppercase;">Passer à l'action</h3>
+                    <div class="title-separator" style="text-align:center"></div>
                     <div class="row">
-                        <div class="col s3">
+                        <div class="col s12 m3" style="margin-top:-30px;margin-left:-30px">
                             <input class="datepicker"/>    
                         </div>
-                        <div class="col s9">
-                            <div id="actions-card">
-                            </div>
+                        <div class="col s12 m9" style="margin-left:270px">
+                            <ul class="collapsible" data-collapsible="accordion">
+                                <li>
+                                <div class="collapsible-header"><i class="lnr lnr-user"></i>#Agir et non réagir</div>
+                                <div class="collapsible-body">
+                                    <span id="actions-card"></span>
+                                </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
                 <div id="test2" class="col s12">Test 2</div>
-                <div id="create" class="col s12" style="padding: 0 25%">
-                    <h6>Je définis mon action</h6>
+                <div id="create" class="col s12"></br>
+                     <h3 style="text-align: center;text-transform: uppercase;">Créer son action</h3>
+                    <div class="title-separator" style="text-align:center"></div>
                     <div class="row">
                         <div class="title-with-bullet">Son intitulé</div>
-                    </div>
-                    <div class="row">
                         <div class="input-field col s12">
-                          <input id="title" type="text">
-                          <label class="active" for="first_name2">Son intitulé</label>
+                            <input id="title" type="text">
+                            <label class="active" for="first_name2">Son intitulé</label>
                         </div>
                     </div>
+                   
+                    <div class="row">
+                        <div class="title-with-bullet">Sa thématique</div></br>
+                        <form action="#">
+                            <span>
+                              <input class="with-gap" name="group1" type="radio" id="personnel" />
+                              <label for="personnel">Personnel</label>
+                            </span>
+                            <span>
+                              <input class="with-gap" name="group1" type="radio" id="relationnel" />
+                              <label for="relationnel">Relationnel</label>
+                            </span>
+                            <span>
+                              <input class="with-gap" name="group1" type="radio" id="environnement"  />
+                              <label for="environnement">Environnement</label>
+                            </span>
+                        </form>
+                    </div></br>
                     <div class="row">
                     <div class="title-with-bullet">Sa description</div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s12">
-                          <textarea id="description" class="materialize-textarea" rows="10"></textarea>
-                          <label class="active" for="description">Sa description</label>
+                    
+                            <div class="input-field col s12">
+                            <textarea id="description" class="materialize-textarea" rows="10"></textarea>
+                            <label class="active" for="description">Sa description</label>
                         </div>
-                    </div>
+                        
                 </div>
         </div>
         </div>
+        <div class="back-to-top"><a href="#top"><i class="lnr lnr-arrow-up fa-2x"></i></a></div>
+
+</div>
 {% endblock %}
 
 {% block js %}
@@ -160,11 +193,12 @@
             function sideNavNode(action) {
                 return div({style: {'padding': '0 10%'}}, [
                     div('.row', [
-                        p({style:{'text-transform': 'uppercase', 'font-weight': 'bold', 'color': '#d24141'}}, [
-                            div({style: {'border-radius': '100%', 'height' : '43px', 'width': '43px', 'background-color': '#d24141', 'color': 'white', 'display': 'inline-block', 'margin-right' : '10px'}}, [
+                        p({style:{'text-transform': 'uppercase', 'font-weight': 'bold', 'color': '#111'}}, [
+                            div({style: {'border-radius': '100%', 'height' : '43px', 'width': '43px', 'background-color': '#31c7d5', 'color': 'white', 'display': 'inline-block', 'margin-right' : '10px'}}, [
                                 span('.fa.fa-handshake-o.fa-2x', {style: {'position': 'relative', 'top': '8px', 'left': '5px'}})
                             ])
-                        ], 'Donner/Recevoir')
+                        ], 'Donner/Recevoir'),
+                        span({style: {'position': 'fixed', 'right': '2px', 'top': '10px'}}, 'CROSS')
                     ]),
                     div('.row', [
                         p({style:{'text-align': 'center', 'font-weight': 'bold', 'font-size': '20px'}}, action.title)
@@ -236,14 +270,14 @@
                                     span('.fa.fa-user.fa-3x')
                                 ]),
                                 div('.col.s1.offset-s4', [
-                                    span('.fa.fa-user-circle.fa-3x', {style: {'color': '#d24141', 'position':'relative', 'left': '-15px'}})
+                                    span('.lnr.lnr-user.fa-3x', {style: {'color': '#31c7d5', 'position':'relative', 'left': '-5px'}})
                                 ]),
                                 div('.col.s1.offset-s4', [
                                     span('.fa.fa-user.fa-3x')
                                 ])
                             ]),
                             div('.row', [
-                                p({style: {'text-align': 'center', 'font-weight': 'bold', 'color': '#d24141'}}, 'Donner/Recevoir')
+                                p({style: {'text-align': 'center', 'font-weight': 'bold', 'color': '#111'}}, 'Donner/Recevoir')
                             ]),
                             p('.card-title.button-collapse', {onclick: function(e) {
                                     if (!document.getElementById('slide-out-actions')) {
@@ -258,7 +292,7 @@
                                     $(this).attr('data-activates', 'slide-out-actions');
                                     $(this).sideNav({
                                    // $('#test-sidenav').sideNav({
-                                      menuWidth: 700, // Default is 300
+                                      menuWidth: 300, // Default is 300
                                       edge: 'right', // Choose the horizontal origin
                                       closeOnClick: false, // Closes side-nav on <a> clicks, useful for Angular/Meteor
                                       draggable: true // Choose whether you can drag to open on touch screens
@@ -272,9 +306,9 @@
                                 ], ' personnes participent')
                             ]
                         ),
-                        div('.card-action', {}, [
+                        div('.card-action',{}, [
                             p({style: {'text-align': 'center'}}, [
-                                a(".bouton-rond",  {href: "#", style:{'color': 'black',  'margin-right': '0'}}, buttonText)
+                                a(".bouton-rond .btn",  {href: "#", style:{'color': 'black',  'margin-right': '0'}}, buttonText)
 
                                 ])
                             ]
@@ -295,8 +329,8 @@
             function actionsList(actions) {
                 return div('', {}, 
                     partitionList(actions, 4).map(subactions => 
-                        div(".row", {style: {'margin-top': '50px !important'}}, subactions.map(action => 
-                            div('.col.s4',  {}, cardNode(action))
+                        div(".row", subactions.map(action => 
+                            div('.col.s6',  {}, cardNode(action))
                         ))
                     )
                 );

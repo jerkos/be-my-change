@@ -29,24 +29,32 @@
 
   <nav>
       <div class="nav-wrapper">
-        <a href="/" class="brand-logo"><img src="{{url_for('static', filename='img/Logo-autre-2.jpg')}}" alt="Be my Change"></a>
+        <a href="/" class="brand-logo"><img src="{{url_for('static', filename='img/Logo-autre-8.png')}}" alt="Be my Change"></a>
         <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="lnr lnr-menu"></i></a>
         <ul class="right hide-on-med-and-down">
+
+          <li><a>Accueil</a></li>
+          <li><a>About</a></li>
+          <li><a>Blog</a></li>
           {%if current_user and current_user.is_authenticated %}
 
-            <li><a class="waves-effect waves-light btn" href="{{url_for('user.inspire')}}" style="background-color:#57a3b6">Je m'inspire</a></li>
-            <li><a class="waves-effect waves-light btn" href="{{url_for('user.actions')}}" style="background-color:#d24141">J'agis</a></li>
-          
-              <li>
+            <li><a class="waves-effect waves-light btn" href="{{url_for('user.inspire')}}" style="background-color:#31c7d5;color:#FFF !important">Je m'inspire</a></li>
+            <li><a class="waves-effect waves-light btn" href="{{url_for('user.actions')}}" style="background-color:#31c7d5;color:#FFF !important">J'agis</a></li>
+            <li>
                 <a class='dropdown-button' href='#' data-activates='dropdown1'>
-                  <i class="fa fa-user fa-3x" style="margin-right:30px;margin-left:10px"></i>
+                  <i class="fa fa-user fa-2x" style="margin-left:10px"></i>
                 </a>
-              </li>
+            </li>
+            <li>
+                <a>
+                  <i class="fa fa-globe fa-2x" style="margin-right:20px"></i>
+                </a> 
+            </li>
               
           {% else %}
             <li>
               <a class='dropdown-button' href='#' data-activates='connection'>
-                  <i class="fa fa-user fa-3x" style="margin-right:30px;margin-left:10px"></i>
+                  <i class="lnr lnr-user fa-2x" style="margin-right:30px;margin-left:10px"></i>
                 </a>
             </li>
           {% endif %}
