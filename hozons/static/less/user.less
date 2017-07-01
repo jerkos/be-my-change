@@ -207,6 +207,7 @@ letter-spacing:0px !important;
     display:none;
 }
 
+
 .title-with-bullet{
     font-weight: bold;
     font-size:16px;
@@ -215,6 +216,17 @@ letter-spacing:0px !important;
     &::before {
         content: '';
         position: absolute;
+
+.bullet-title {
+
+    & > div {
+        font-weight: bold;
+    }
+
+    & > div > div {
+        position: relative;
+        top: 5px;
+        display: inline-block;
         height: 20px;
         width: 20px;
         margin-left:-30px;
@@ -311,4 +323,53 @@ textarea.materialize-textarea:focus:not([readonly]),input[type=text]:focus:not([
 
 textarea.materialize-textarea:focus:not([readonly]) + label,input[type=text]:focus:not([readonly]) + label {
     color:#31c7d5 !important;
+}
+
+        background-color: rgb(210, 65, 65);
+        margin-right: 20px;
+    }
+}
+
+.row {
+    &.mt--20 {
+        margin-top:-20px;
+    }
+
+    &.mb-20 {
+        margin-bottom: 20px;
+    }
+}
+
+h6.create-action-title {
+    font-size: 20px;
+    color: #d24141;
+}
+
+
+.bouton-rond.action-red-selected {
+    background-color: #d24141 !important;
+    border: none;
+    color: white;
+}
+
+.input-field.red-input label {
+    color: #d24141;
+}
+   
+.input-field.red-input input[type=text]:focus + label {
+ color: #d24141;
+}
+
+.input-field.red-input textarea:focus + label {
+ color: #d24141;
+}
+
+.input-field.red-input input[type=text]:focus {
+    border-bottom: 1px solid #d24141;
+    box-shadow: 0 1px 0 0 #d24141;
+}
+
+.input-field.red-input textarea:focus {
+    border-bottom: 1px solid #d24141;
+    box-shadow: 0 1px 0 0 #d24141;
 }
