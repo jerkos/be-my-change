@@ -1,64 +1,55 @@
-{% from 'user_macros.html' import intention %}
 {% extends "layout.html" %}
 {% block css %}
-    {% assets "user_css" %}
-        <link rel="stylesheet" href="{{ ASSET_URL }}">
-        <script src="https://use.fontawesome.com/a911e2def4.js"></script>
-    {% endassets %}
-
     <style>
         .picker__date-display {
             background-color: white;
             color: #31c7d5 !important;
         }
 
-        .picker__footer {
+        #main-picker-container .picker__footer {
             display: none !important;
         }
 
-        .picker__holder {
+        #main-picker-container .picker__holder {
             position: static !important;
             border: 0 !important;
         }
 
-        .picker__month-display {
+        #main-picker-container .picker__month-display {
             font-size: 1rem;
         }
 
-        .picker__day-display {
+        #main-picker-container .picker__day-display {
             font-size: 2em;
         }
 
-        .picker__year-display {
+        #main-picker-container .picker__year-display {
             font-size: 2em;
             color: #31c7d5 !important;
         }
 
-        .datepicker {
+        #main-picker.datepicker {
             display: none !important;
         }
 
-        .picker {
+        #main-picker-container .picker {
             font-size: 14px !important;
         }
 
-        .picker__box {
+        #main-picker-container .picker__box {
             border: none;
             box-shadow: none;
         }
 
-        .picker__wrap {
+        #main-picker-container .picker__wrap {
             margin-top: 50px !important;
         }
 
-        .picker__table {
+        #main-picker-container .picker__table {
             font-size: 0.8rem;
         }
-        .picker__header {
-            /*margin-left: 38px !important;*/
-        }
 
-        .picker__weekday-display {
+        #main-picker-container .picker__weekday-display {
             display: none !important;
         }
 
@@ -71,323 +62,9 @@
             color:#31c7d5;
         }
     </style>
-{% endblock %}
-{% block content %}
-<div class="action">
-        <h2 class="en-tete">J'agis</h2>        
-        <div class="boxed-layout" style="margin-top:50px">
-        <div class="row">
-            <div class="col s12">
-                <ul class="tabs">
-                    <li class="tab col s4"><a class="active" href="#actions"><i class="lnr lnr-rocket fa-2x" style="margin-right:20px"></i><span class="mobile-off">Passer à l'action</span></a></li>
-                    <li class="tab col s4"><a href="#test2"><i class="lnr lnr-magnifier fa-2x" style="margin-right:20px"></i><span class="mobile-off">Rechercher</span></a></li>
-                    <li class="tab col s4"><a href="#create"><i class="lnr lnr-plus-circle fa-2x" style="margin-right:20px"></i><span class="mobile-off">Créer</span></a></li>
-                </ul>
-            </div>
-                <div id="actions" class="col s12"></br>
-                    <h3 style="text-align: center;text-transform: uppercase;">Passer à l'action</h3>
-                    <div class="title-separator" style="text-align:center"></div>
-                    <div class="row">
-                        <div class="col s12 m3" style="margin-top:-30px;margin-left:-30px">
-                            <input class="datepicker"/>    
-                        </div>
-                        <div class="col s12 m9" style="margin-left:270px">
-                            <ul class="collapsible" data-collapsible="accordion">
-                                <li>
-                                <div class="collapsible-header active"><i class="lnr lnr-user"></i>#Agir et non réagir</div>
-                                <div class="collapsible-body">
-                                    <span id="actions-card"></span>
-                                </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div id="test2" class="col s12">Test 2</div>
-<<<<<<< HEAD
-                <div id="create" class="col s12"></br>
-                     <h3 style="text-align: center;text-transform: uppercase;">Créer son action</h3>
-                    <div class="title-separator" style="text-align:center"></div>
-                    <div class="row">
-                        <div class="title-with-bullet">Son intitulé</div>
-                        <div class="input-field col s12">
-                            <input id="title" type="text">
-                            <label class="active" for="first_name2">Son intitulé</label>
-                        </div>
-                    </div>
-                   
-                    <div class="row">
-                        <div class="title-with-bullet">Sa thématique</div></br>
-                        <form action="#">
-                            <span>
-                              <input class="with-gap" name="group1" type="radio" id="personnel" />
-                              <label for="personnel">Personnel</label>
-                            </span>
-                            <span>
-                              <input class="with-gap" name="group1" type="radio" id="relationnel" />
-                              <label for="relationnel">Relationnel</label>
-                            </span>
-                            <span>
-                              <input class="with-gap" name="group1" type="radio" id="environnement"  />
-                              <label for="environnement">Environnement</label>
-                            </span>
-                        </form>
-                    </div></br>
-                    <div class="row">
-                    <div class="title-with-bullet">Sa description</div>
-                    
-                            <div class="input-field col s12">
-                            <textarea id="description" class="materialize-textarea" rows="10"></textarea>
-                            <label class="active" for="description">Sa description</label>
-
-                
-                        </div>
-                        
-                </div>
-        </div>
-        </div>
-        <div class="back-to-top"><a href="#top"><i class="lnr lnr-arrow-up fa-2x"></i></a></div>
-
-</div>
+    <link href="/static/bundles/css/actions.css" rel="stylesheet"/>
 {% endblock %}
 
 {% block js %}
-    <script src="{{url_for('static', filename='libs/moment/min/moment.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/require.js')}}"></script>
-    <script src="{{url_for('static', filename='libs/hyperscript/bundle.js')}}"></script>
-
-    <script>
-        $(document).ready(function() {
-            var h = require('hyperscript');
-            var hh = require('hyperscript-helpers')(h);
-
-            var div  = hh.div,
-                span = hh.span,
-                h1   = hh.h1
-                p    = hh.p,
-                a    = hh.a
-                strong = hh.strong
-                ul = hh.ul
-                li = hh.li
-                img = hh.img
-                i = hh.i
-                input = hh.input,
-                form = hh.form;
-
-            var $input = $('.datepicker').pickadate({
-                klass: {
-                    picker: "picker picker--opened",
-                    opened: "__always-open__"
-                },
-                onSet: function() {
-                    setState({selectedDate: this.get('select', 'yyyy-mm-dd')});
-                    filteredActions = state.actions.filter(action => 
-                        (action.dates || []).includes(state.selectedDate)
-                    );
-                    refreshActions(filteredActions);
-                }
-            });
-            var state = {};
-
-            function setState(object) {
-                state = Object.assign({}, state, object);
-            }
-            var perButton = document.getElementById('per-but'), 
-            relButton = document.getElementById('rel-but'),
-            envButton = document.getElementById('env-but');
-            
-            perButton.onclick =function(e) {
-                console.log(this);
-                this.classList.add('action-red-selected');
-                relButton.classList.remove('action-red-selected');
-                envButton.classList.remove('action-red-selected');
-                setState({selectedActionTheme: 'per'});
-            };
-            relButton.onclick = function(e) {
-                this.classList.add('action-red-selected');
-                perButton.classList.remove('action-red-selected');
-                envButton.classList.remove('action-red-selected');
-                setState({selectedActionTheme: 'rel'});
-            }
-            envButton.onclick = function(e) {
-                this.classList.add('action-red-selected');
-                relButton.classList.remove('action-red-selected');
-                perButton.classList.remove('action-red-selected');
-                setState({selectedActionTheme: 'env'});
-            }
-            
-
-            function sideNavNode(action) {
-                return div({style: {'padding': '0 10%'}}, [
-                    div('.row', [
-                        p({style:{'text-transform': 'uppercase', 'font-weight': 'bold', 'color': '#111'}}, [
-                            div({style: {'border-radius': '100%', 'height' : '43px', 'width': '43px', 'background-color': '#31c7d5', 'color': 'white', 'display': 'inline-block', 'margin-right' : '10px'}}, [
-                                span('.fa.fa-handshake-o.fa-2x', {style: {'position': 'relative', 'top': '8px', 'left': '5px'}})
-                            ])
-                        ], 'Donner/Recevoir'),
-                        span({style: {'position': 'fixed', 'right': '2px', 'top': '10px'}}, 'CROSS')
-                    ]),
-                    div('.row', [
-                        p({style:{'text-align': 'center', 'font-weight': 'bold', 'font-size': '20px'}}, action.title)
-                    ]),
-                    div('.row'),  [
-                        div('.col.s12', [
-                            ul('.tabs', [
-                                li('.tab.col.s3', [
-                                    a('.active', {'href': '#description-tab'}, 'description')
-                                ]),
-                                li('.tab.col.s3', [
-                                    a({'href': '#participants-tab'}, 'participants')
-                                ]),
-                                li('.tab.col.s3', [
-                                    a({'href': '#commentaires-tab'}, 'commentaires')
-                                ]),
-                                li('.tab.col.s3', [
-                                    a({'href': '#ressources-tab'}, 'ressources')
-                                ])
-                            ])
-                        ]),
-                        div('#description-tab.col.s12', {style: {'padding-top': '50px'}}, [
-                            // description
-                            div('.row.bullet-title', [
-                                div([div()], 'Sa description')
-                            ]),
-                            div('.row', action.description),
-
-                            // duration with slider
-                            div('.row.bullet-title', [
-                                div([div()], 'Sa durée (maximum 31 jours)')
-                            ]),
-                            div('.row', [
-                                form({
-                                  "attributes": {
-                                    "action": "#"
-                                  }
-                                }, [
-                                  p(".range-field", [
-                                    input('.red-input', {
-                                        type: "range",
-                                        min: "0",
-                                        max: "31",
-                                        value: "27",
-                                        style: {'background-color': '#d24141'}
-                                    })
-                                  ])
-                                ])
-                            ]),
-                            div('.row', {style: {'margin-top': '-27px'}}, [
-                                div('.col.s3', {style: {'position': 'relative', 'right': '47px'}}, 'Action coup de point'),
-                                div('.col.s3', {style: {'position': 'relative', 'right': '20px'}}, 'Je prends la température'),
-                                div('.col.s3', {style: {'position': 'relative', 'left': '20px'}}, 'J\'ancre une habitude'),
-                                div('.col.s3', {style: {'position': 'relative', 'left': '47px'}}, 'Je m\'engage à long terme')
-                            ])
-                        ]),
-                        div('#participants-tab.col.s12', 'Toto part en vacances'),
-                        div('#commentaires-tab.col.s12', 'Hello world'),
-                        div('#ressources-tab.col.s12', 'A lot of ressources goes here')
-                    ]
-                ]);
-            }
-
-            function cardNode(action) {
-                var buttonText = "Réalisé";
-                return ( 
-                    div('.card', [
-                        div('.card-content.white-text', [
-                            div('.row', [
-                                div('.col.s1', [
-                                    span('.fa.fa-user.fa-3x')
-                                ]),
-                                div('.col.s1.offset-s4', [
-                                    span('.lnr.lnr-user.fa-3x', {style: {'color': '#31c7d5', 'position':'relative', 'left': '-5px'}})
-                                ]),
-                                div('.col.s1.offset-s4', [
-                                    span('.fa.fa-user.fa-3x')
-                                ])
-                            ]),
-                            div('.row', [
-                                p({style: {'text-align': 'center', 'font-weight': 'bold', 'color': '#111'}}, 'Donner/Recevoir')
-                            ]),
-                            p('.card-title.button-collapse', {onclick: function(e) {
-                                    if (!document.getElementById('slide-out-actions')) {
-                                        var node2 = div("#slide-out-actions.side-nav");
-                                        document.body.appendChild(node2);
-                                    }
-                                    //renderTo('slide-out-actions', p(action.description));
-                                    //document.getElementById('slide-out-actions')..appendChild(node);
-                                    var node = sideNavNode(action);
-                                    console.log(node);
-                                    renderTo('slide-out-actions', node);
-                                    $(this).attr('data-activates', 'slide-out-actions');
-                                    $(this).sideNav({
-                                   // $('#test-sidenav').sideNav({
-                                      menuWidth: 300, // Default is 300
-                                      edge: 'right', // Choose the horizontal origin
-                                      closeOnClick: false, // Closes side-nav on <a> clicks, useful for Angular/Meteor
-                                      draggable: true // Choose whether you can drag to open on touch screens
-                                    });
-                                    $(this).sideNav('show');
-                                    $('ul.tabs').tabs();
-  
-                            }, style: {'color': 'black', 'text-align':'center', 'cursor': 'pointer'}}, action.title),
-                            p({style: {'color': 'black', 'padding-top': '20px', 'text-align': 'center'}}, [
-                                strong(220)
-                                ], ' personnes participent')
-                            ]
-                        ),
-                        div('.card-action',{}, [
-                            p({style: {'text-align': 'center'}}, [
-                                a(".bouton-rond .btn",  {href: "#", style:{'color': 'black',  'margin-right': '0'}}, buttonText)
-
-                                ])
-                            ]
-                        )
-                    ])
-                );             
-            }
-
-            function partitionList(input, spacing) {
-               var output = [];
-
-                for (var i = 0; i < input.length; i += spacing) {
-                    output[output.length] = input.slice(i, i + spacing);
-                }
-                return output;
-            }
-
-            function actionsList(actions) {
-                return div('', {}, 
-                    partitionList(actions, 4).map(subactions => 
-                        div(".row", subactions.map(action => 
-                            div('.col.s6',  {}, cardNode(action))
-                        ))
-                    )
-                );
-            }
-
-            function renderTo(id_, node) {
-                var target = document.getElementById(id_);
-                var fc = target.firstChild;
-                while(fc) {
-                    target.removeChild(fc);
-                    fc = target.firstChild;
-                }
-                target.appendChild(node);
-            }
-
-            function refreshActions(actions) {
-                renderTo('actions-card', actionsList(actions));
-            }
-
-            $.getJSON('/users/actions/get', function(data) {
-                setState({actions: data});
-                refreshActions(state.actions.filter(action => 
-                        (action.dates || []).includes(moment().format('YYYY-MM-DD'))
-                    )
-                );
-            });
-    });
-
-    </script>
-
+    <script src="/static/bundles/actions.js"></script>
 {% endblock %}

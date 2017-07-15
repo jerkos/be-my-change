@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Public section, including homepage and signup."""
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for, jsonify
 from flask_login import login_required, login_user, logout_user
 from flask.helpers import get_debug_flag
 
@@ -74,13 +74,13 @@ def about():
 @blueprint.route('/gather-informations', methods=['GET'])
 def gather_informations():
     """gaher information from an url"""
-    if request.args('url') is None:
-        abort(400)
+    #if request.args('url') is None:
+   #     abort(400)
 
-    apikey = request.args('apikey', '')
-    if not apikey or apikey != get_current_config().SECRET_KEY:
-        abort(403)
-       
+    #apikey = request.args('apikey', '')
+    #if not apikey or apikey != get_current_config().SECRET_KEY:
+    #    abort(403)
+    url = request.args['url'];
     response = {}
     try:
         response = lassie.fetch(url)

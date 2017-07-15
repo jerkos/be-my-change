@@ -3,10 +3,10 @@
 from collections import defaultdict
 import datetime as dt
 
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, request
 from flask_login import login_required, current_user
 from .models import Action
-
+from hozons.extensions import csrf_protect
 
 blueprint = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
 
@@ -50,21 +50,25 @@ def get_actions():
 
 @blueprint.route('/actions/create', methods=['POST'])
 @login_required
+@csrf_protect.exempt
 def create_action():
     data = request.get_json()
-
+    print(data);
     # create action first
-    title = data['title'] or abort(403)
-    description = data['description'] or abort(403)
-    Action.create(title, description)
+    title = data.get('title')
+    description = data.get('description')
+    kind = data.get('kind')
+    format = data.get('format')
+    Action.create(title=title, description=description)
 
     # create associated user action
-    start_date = data['start_date'] or abort(403)
-    end_date = data['end_date'] or abort(403)
-    userAction = UserAction(current_user.id, action.id, start_date, end_date)
-    userAction.save()
+    #start_date = data['start_date'] or abort(403)
+    #end_date = data['end_date'] or abort(403)
+    #userAction = UserAction(current_user.id, action.id, start_date, end_date)
+    #userAction.save()
 
-    return userAction.to_json(), 200
+    return jsonify({}), 200
+    #return userAction.to_json(), 200
 
 
 @blueprint.route('/inspire', methods=['GET'])

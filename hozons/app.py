@@ -3,8 +3,7 @@
 from flask import Flask, render_template
 
 from hozons import commands, public, user
-from hozons.assets import assets
-from hozons.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate
+from hozons.extensions import bcrypt, cache, db, debug_toolbar, login_manager, migrate, csrf_protect
 from hozons.settings import ProdConfig, DevConfig
 
 
@@ -25,7 +24,6 @@ def create_app(config_object=ProdConfig):
 
 def register_extensions(app):
     """Register Flask extensions."""
-    assets.init_app(app)
     bcrypt.init_app(app)
     cache.init_app(app)
     db.init_app(app)

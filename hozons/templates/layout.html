@@ -19,55 +19,36 @@
 
   <!-- Mobile viewport optimized: h5bp.com/viewport -->
   <meta name="viewport" content="width=device-width">
-
   <link rel="stylesheet" href="{{ url_for('static', filename='libs/font-awesome4/css/font-awesome.min.css') }}">
   <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
   <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
-
-  {% assets "css_all" %}
-    <link rel="stylesheet" href="{{ ASSET_URL }}">
-  {% endassets %}
-  {% assets "user_css" %}
-        <link rel="stylesheet" href="{{ ASSET_URL }}">
-        <script src="https://use.fontawesome.com/a911e2def4.js"></script>
-  {% endassets %}
-  {% block css %}{% endblock %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bundles/css/actions.css') }}">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://use.fontawesome.com/a911e2def4.js"></script>
+  
+  
+  {% block css %}
+  {% endblock %}
 
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
-{% block body %}
-
 {% include 'nav.html' %}
 
-<header>{% block header %}{% endblock %}</header>
-<!--<div class="{% block content_class %}container{% endblock content_class %}">-->
 
-  <div role="main">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="row">
-      <div class="col s12">
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">
-          <a class="close" title="Close" href="#" data-dismiss="alert">&times;</a>
-         {{message}}
-        </div><!-- end .alert -->
-        {% endfor %}
-      </div><!-- end col-md -->
-    </div><!-- end row -->
-        {% endif %}
-    {% endwith %}
+<div id="message"></div>
+<div id="container"></div>
 
-    {% block content %}{% endblock %}
-  </div>
+{% block content %}
+{% endblock %}
 
-<!--</div>&lt;!&ndash; end container &ndash;&gt;-->
-<!-- JavaScript at the bottom for fast page loading -->
-{% assets "js_all" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %}
-<script>
+
+
+{% block js %}
+  <script src='/static/bundles/home.js'></script>
+{% endblock %}
+  <script>
      $(document).ready(function(){
         $('.modal').modal();
         $('.dropdown-button').dropdown({
@@ -79,13 +60,10 @@
           belowOrigin: true, // Displays dropdown below the button
           alignment: 'left', // Displays dropdown with edge aligned to the left of button
           stopPropagation: false // Stops event propagation
-        }
-  );
+        });
     });
-</script>
-{% block js %}{% endblock %}
-<!-- end scripts -->
-{% endblock %}
+  </script>
+
 </body>
 </html>
 
