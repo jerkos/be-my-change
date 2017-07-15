@@ -45,4 +45,4 @@ docs/_build
 # Virtualenvs
 env/
 hozons/javascripts/node_modules
-public/
+hozons/static/bundles
