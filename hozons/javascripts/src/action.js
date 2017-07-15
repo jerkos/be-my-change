@@ -80,7 +80,7 @@ class SlideActionInfo extends SimpleDom.Component {
 class ActionCard extends SimpleDom.Component {
 	render() {
 		let self = this;
-		return <div class="card">
+		return <div class="card hoverable">
 	                <div class="card-content white-text">
 	                    <div class="row">
 	                        <div class="col s1">

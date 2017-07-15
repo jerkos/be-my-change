@@ -1,15 +1,22 @@
     <!-- Modal Structure -->
-  {% if not current_user.is_authenticated %}
+  {% if not current_user or not current_user.is_authenticated %}
   <div id="login" class="modal">
     <div class="modal-content">
       <form id="loginForm" method="POST" class="navbar-form form-inline navbar-right" action="/" role="login">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-        <div class="form-group">
-          {{ form.username(placeholder="Username", class_="form-control") }}
-          {{ form.password(placeholder="Password", class_="form-control") }}
+        <div class="row" style="padding: 0 15%">
+          <div class="input-field col s12">
+            {{ form.username(class_="form-control") }}
+            <label>Nom</label>
+          </div>
+          <div class="input-field col s12">
+            {{ form.password(class_="form-control") }}
+            <label>Mot de passe</label>
+          </div>
         </div>
-        <hr/>
-        <button type="submit" class="btn-flat btn-default">Log in</button>
+        <div class="row" style="padding: 0 15%; text-align: right">
+          <button type="submit" class="btn waves waves-effect">Se connecter</button>
+        </div>
       </form>
     </div>
   </div>
