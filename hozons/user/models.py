@@ -72,6 +72,8 @@ class User(JsonSerializerMixin, UserMixin, SurrogatePK, Model):
 
 class Action(JsonSerializerMixin, SurrogatePK, Model):
     __tablename__ = 'actions'
+    RELATIONSHIPS_TO_DICT = True
+
     title = Column(db.String(200), nullable=False)
     description = Column(db.Text, nullable=False)
     initial_nb_days = Column(db.Integer, default=1)

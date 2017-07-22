@@ -2,6 +2,7 @@
 """User views."""
 import datetime as dt
 from collections import defaultdict
+import json
 
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import current_user, login_required
@@ -44,11 +45,11 @@ def get_matching_text_actions():
     if text_to_search is None:
         return '{}', 403
     like_query = '%' + text_to_search + '%'
-    return jsonify(
+    return Action.arr_to_json(
         Action.query.filter(
             (Action.title.like(like_query)) |
             (Action.description.like(like_query))
-        ).all()
+        ).all(), exclude={'password'}
     ), 200
 
 
@@ -58,9 +59,11 @@ def get_last_actions():
     """get last actions created by users
         used as default values on actions page
     """
-    return jsonify(
-        Action.query.order_by(desc(Action.created_at)).limit(5).all()
+    return Action.arr_to_json(
+        Action.query.order_by(desc(Action.created_at)).limit(5).all(),
+        exclude={'password'}
     ), 200
+
 
 @user.route('/actions/create', methods=['POST'])
 @login_required

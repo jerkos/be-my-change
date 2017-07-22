@@ -33,8 +33,6 @@
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
-{% include 'nav.html' %}
-
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     <div class="notifications">

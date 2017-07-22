@@ -362,14 +362,59 @@ class CreateAction extends SimpleDom.Component {
 }
 
 class LookForAction extends SimpleDom.Component {
+	
+	eventsToSubscribe() {
+		return ['LOOK_FOR_UPDATE'];
+	}
+	
+	componentDidMount() {
+		if (this.inputRef)
+			this.inputRef.focus();
+			this.inputRef.value = this.value || '';
+		$(this.selectKind).material_select();
+	}
+
 	render() {
 		return (
 			<div class="boxed-layout">
+				<div class="row">
+				<div class="input-field col s8">
+					<i class="material-icons prefix">search</i>
+					<input type="text" value="" ref={ref => this.inputRef = ref}
+					onkeyup={event => {
+						this.lastTimerId = this.timerId;
+						if (this.lastTimerId) {
+							clearTimeout(this.lastTimerId);
+						}
+						this.value = event.target.value;
+						if (this.value.length < 3) {
+							return;
+						}
+						this.timerId = setTimeout(()=> {
+							fetchJsonData(`/users/actions/matching-with-text?text=${this.value}`)
+							.then(data => this.store.updateState({lastActions: data}, 'LOOK_FOR_UPDATE'))
+						}, 500);
+					}}/>
+				</div>
+				<div class="input-field col s4">
+					<select ref={ref => this.selectKind = ref}>
+						<option value="" disabled selected>Choisissez un type d'action</option>
+						<option value="PERS">Personnel</option>
+						<option value="REL">Relationnel</option>
+						<option value="ENV">Environnement</option>
+					</select>
+					<label>Materialize Select</label>
+				</div>
+				</div>
 				<div class="collection">
-					{(this.state.actions || []).map(action => {
+					{(this.state.lastActions || []).map(action => {
 						return <a class="collection-item avatar">
 									<span class="title">{action.title}</span>
 									<p>{action.description}</p>
+									<a href="#!" class="secondary-content">
+										{(action.creator || {}).username}<br/>
+										<small>{(action.creator || {}).email}</small>
+									</a>
 								</a>
 					})}
 				</div>
@@ -420,17 +465,16 @@ class App extends SimpleDom.Component {
 
 
 const store = new SimpleDom.Store();
-fetch('/users/actions/get', {credentials: 'include'})
-	.then(response => response.json())
-	.then(actions => {
+Promise.all([fetchJsonData('/users/actions/get'), fetchJsonData('/users/actions/last-actions')])
+	.then(([actions, lastActions]) => {
 		store.updateState(
 				{
-					actions, 
+					actions,
+					lastActions, 
 					selectedActions: actions.filter(action => (action.dates || []).includes(moment().format('YYYY-MM-DD')))
 				}
 		);
 		SimpleDom.renderToDom('container', <App/>, store);
-
 		// jquery functions
 		$('#begin-action-picker.datepicker').pickadate();
 
