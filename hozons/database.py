@@ -2,6 +2,9 @@
 """Database module, including the SQLAlchemy database object and DB-related utilities."""
 import collections
 import json
+from datetime import datetime
+
+from sqlalchemy.ext.declarative import DeclarativeMeta
 
 from .compat import basestring
 from .extensions import db
@@ -79,37 +82,36 @@ def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
 
 
 class JsonSerializerMixin(object):
+    """mixin for handling json serialization"""
+    RELATIONSHIPS_TO_DICT = False
 
-    MAPPER = {
-        'datetime': lambda x: x.isoformat(),
-        'date': lambda x: x.isoformat()
-    }
+    def __iter__(self):
+        return self.to_dict().iteritems()
 
-    def _to_dict(self):
-        result = {}
+    def to_dict(self, rel=None, backref=None):
+        if rel is None:
+            rel = self.RELATIONSHIPS_TO_DICT
+        res = {column.key: getattr(self, attr)
+               for attr, column in self.__mapper__.c.items()}
+        if rel:
+            for attr, relation in self.__mapper__.relationships.items():
+                # Avoid recursive loop between to tables.
+                if backref == relation.table:
+                    continue
+                value = getattr(self, attr)
+                if value is None:
+                    res[relation.key] = None
+                elif isinstance(value.__class__, DeclarativeMeta):
+                    res[relation.key] = value.to_dict(backref=self.__table__)
+                else:
+                    res[relation.key] = [i.to_dict(backref=self.__table__)
+                                         for i in value]
+        return res
 
-        # fetch simple columns
-        for col in self.__class__.__table__.columns:
-            value = getattr(self, col.name)
-            if col.type in MAPPER.keys() and value is not None:
-                try:
-                    result[col.name] = convert[col.type](value)
-                except:
-                    result[col.name] = "Error:  Failed to covert using ", str(MAPPER[col.type])
-            else:
-                result[col.name] = value
-        
-        # try to fetch relationships
-        referred_classes = [r.mapper.class_ for r in inspect(self).relationships]
-        for attr_name, value in self.__dir__.items():
-            if isinstance(value, Collections.Iterable):
-                for item in value:
-                    if isinstance(item, db.Model):
-                        result.update(to_json(item, item.__class__))
-            else:
-                if isinstance(value, db.Model):
-                    result.update(to_json(value, value.__class__))
-        return result
-
-    def to_json(self):
-        return json.dumps(self._to_dict())
+    def to_json(self, rel=None):
+        def extended_encoder(x):
+            if isinstance(x, datetime):
+                return x.isoformat()
+        if rel is None:
+            rel = self.RELATIONSHIPS_TO_DICT
+        return json.dumps(self.to_dict(rel), default=extended_encoder)

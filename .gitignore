@@ -46,3 +46,4 @@ docs/_build
 env/
 hozons/javascripts/node_modules
 hozons/static/bundles
+.vscode/

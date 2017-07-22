@@ -1,57 +1,72 @@
 # -*- coding: utf-8 -*-
 """User views."""
-from collections import defaultdict
 import datetime as dt
+from collections import defaultdict
 
-from flask import Blueprint, render_template, jsonify, request
-from flask_login import login_required, current_user
-from .models import Action
+from flask import Blueprint, jsonify, render_template, request
+from flask_login import current_user, login_required
+from sqlalchemy import desc
+
 from hozons.extensions import csrf_protect
 
-blueprint = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
+from .models import Action
+from .models import User
 
-class Event(object):
-    ONE_DAY_DELTA = dt.timedelta(days=1)
+user = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
 
-    def __init__(self, title, start_date, end_date, color='blue'):
-        self.title = title
-        self.start_date = start_date
-        self.end_date = end_date
-        self.color = color
-
-
-@blueprint.route('/actions')
+@user.route('/actions')
 @login_required
 def actions():
     """List actions."""
     return render_template('users/actions.html')
 
-@blueprint.route('/actions/get')
+@user.route('/actions/get')
 @login_required
 def get_actions():
+    """get current selected current actions"""
     #user_actions = current_user.user_actions
-    #events = defaultdict(list)
-    #for action in user_actions:
-    #    date = action.start_date
-    #    while date <= action.end_date:
-    #        events[action.id].append(Event(action.title, date, date))
-    #        date += Event.ONE_DAY_DELTA
     user_actions = [
         {'title': 'Test', 'description': 'Une longue description', 'dates':['2017-06-09']},
         {'title': 'Test2', 'description': 'Une longue description2', 'dates':['2017-06-09']},
         {'title': 'Mierda', 'description': 'C\'est de la mierda!', 'dates':['2017-06-09']},
-        {'title': 'Mierda 2', 'description': 'C\'est de la mierda number 2!', 'dates':['2017-06-09']},
-
-    ];
+        {'title': 'Mierda 2', 'description': 'C\'est de la mierda number 2!', 'dates':['2017-06-09']}
+    ]
     print(user_actions)
     return jsonify(user_actions)
     #return render_template('users/actions.html', actions=jsonify(user_actions), events=events)
 
 
-@blueprint.route('/actions/create', methods=['POST'])
+@user.route('/actions/matching-with-text')
+@login_required
+def get_matching_text_actions():
+    """search actions given a query string"""
+    text_to_search = request.args.get('text', None)
+    if text_to_search is None:
+        return '{}', 403
+    like_query = '%' + text_to_search + '%'
+    return jsonify(
+        Action.query.filter(
+            (Action.title.like(like_query)) |
+            (Action.description.like(like_query))
+        ).all()
+    ), 200
+
+
+@user.route('/actions/last-actions')
+@login_required
+def get_last_actions():
+    """get last actions created by users
+        used as default values on actions page
+    """
+    return jsonify(
+        Action.query.order_by(desc(Action.created_at)).limit(5).all()
+    ), 200
+
+@user.route('/actions/create', methods=['POST'])
 @login_required
 @csrf_protect.exempt
 def create_action():
+    """create an base action"""
     data = request.get_json()
     print(data);
     # create action first
@@ -71,18 +86,17 @@ def create_action():
     #return userAction.to_json(), 200
 
 
-@blueprint.route('/inspire', methods=['GET'])
+@user.route('/inspire', methods=['GET'])
 @login_required
 def inspire():
     """List inspirations"""
     return render_template('users/inspire.html')
 
 
-@blueprint.route('/profile', methods=['GET'])
+@user.route('/profile', methods=['GET'])
 @login_required
 def profile():
     """profile page"""
-    name = request.args("name")
-    user = current_user if  name is None else User.query.filter(User.username == name).first_or_404()
+    name = request.args.get("name")
+    user = current_user if name is None else User.query.filter(User.username == name).first_or_404()
     return render_template('users/profile.html', user=user)
-

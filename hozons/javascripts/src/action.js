@@ -13,9 +13,9 @@ class SlideActionInfo extends SimpleDom.Component {
                     </div>
                 Donner/Recevoir
                 </p>
-                <span style="position: absolute; right: 5px; top: 5px"
+                <span class="lnr lnr-cross fa-3x" style="position: absolute; right: 5px; top: 5px; cursor: pointer;"
                 	onclick={this.props.close}
-                >CROSS</span>
+                ></span>
             </div>
             <div class="row">
                 <p style="text-align: center; font-weight: bold; font-size: 20px">{this.props.action.title}</p>
@@ -361,6 +361,23 @@ class CreateAction extends SimpleDom.Component {
 	}
 }
 
+class LookForAction extends SimpleDom.Component {
+	render() {
+		return (
+			<div class="boxed-layout">
+				<div class="collection">
+					{(this.state.actions || []).map(action => {
+						return <a class="collection-item avatar">
+									<span class="title">{action.title}</span>
+									<p>{action.description}</p>
+								</a>
+					})}
+				</div>
+			</div>
+		);
+	}
+}
+
 
 class App extends SimpleDom.Component {
 	render() {
@@ -375,7 +392,7 @@ class App extends SimpleDom.Component {
 			            <div class="col s12">
 			                <ul class="tabs">
 			                    <li class="tab col s4"><a class="active" href="#actions">Passer à l'action</a></li>
-			                    <li class="tab col s4"><a href="#test2">Recherche une action</a></li>
+			                    <li class="tab col s4"><a href="#lookfor">Recherche une action</a></li>
 			                    <li class="tab col s4"><a href="#create">Créer une action</a></li>
 			                </ul>
 			                </div>
@@ -389,7 +406,9 @@ class App extends SimpleDom.Component {
 					                </div>
 					            </div>
 			                </div>
-			                <div id="test2" class="col s12">Test 2</div>
+			                <div id="lookfor" class="col s12">
+			                	<LookForAction/>
+			                </div>
 			                <div id="create" class="col s12" style="padding: 0 25%">
 			          			<CreateAction/>  
 			                </div>
