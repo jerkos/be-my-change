@@ -80,67 +80,69 @@ class SlideActionInfo extends SimpleDom.Component {
 class ActionCard extends SimpleDom.Component {
 	render() {
 		let self = this;
-		return <div class="card hoverable">
-	                <div class="card-content white-text">
-	                    <div class="row">
-	                        <div class="col s1">
-	                            <span class="fa fa-user fa-3x"/>
-	                        </div>
-	                        <div class="col s1 offset-s4">
-	                            <span class="fa fa-user-circle fa-3x" 
-	                            style="color: #d24141; position: relative; left: -15px;"/>
-	                        </div>
-	                        <div class="col s1 offset-s4">
-	                            <span class=" fa fa-user fa-3x"/>
-	                        </div>
-	                    </div>
-	                    <div class="row">
-	                        <p style="text-align: center; font-weight: bold; color: #d24141">
-	                        	Donner/Recevoir
-	                        </p>
-	                    </div>
-	                    <p class="card-title button-collapse" onclick={function(e){
-	                            if (!document.getElementById('slide-out-actions')) {
-	                            	let slideContainer = document.createElement('div');
-	                            	slideContainer.id = "slide-out-actions";
-	                            	slideContainer.classList.add('side-nav');
-	                                document.body.appendChild(slideContainer);
-	                            }
-	                            
-	                            SimpleDom.renderToDom(
-	                            	'slide-out-actions', 
-	                            	<SlideActionInfo
-	                            		action={self.props.action}
-	                            		close={() => $(e.target).sideNav('destroy')}
-	                            	/>
-	                            );
-	                            $(e.target).attr('data-activates', 'slide-out-actions');
-	                            $(e.target).sideNav({
-	                           // $('#test-sidenav').sideNav({
-	                              menuWidth: 700, // Default is 300
-	                              edge: 'right', // Choose the horizontal origin
-	                              closeOnClick: false, // Closes side-nav on <a> clicks, useful for Angular/Meteor
-	                              draggable: true // Choose whether you can drag to open on touch screens
-	                            });
-	                            $(e.target).sideNav('show');
-	                            $('ul.tabs').tabs();
+		return (
+			<div class="card hoverable">
+				<div class="card-image waves-effect waves-block waves-light">
+      					<img class="activator" src="http://lorempixel.com/300/200/nature"/>
+    			</div>
+				<div class="card-content">
+					<span class="card-title activator grey-text text-darken-4">
+						{this.props.action.title}
+						<small style="margin-left: 10px; margin-top: 10px;">
+							<i class="material-icons">account_circle</i>
+						</small>
+						<i class="material-icons right">more_vert</i>
+					</span>
+				</div>
+				<div class="card-reveal">
+					<span class="card-title button-collapse"> 
+							{this.props.action.title}
+							<i class="material-icons right">close</i>
+						</span>
+						<p>{self.props.action.description}</p>
+						<p class="right-align">
+							<a class="btn-floating waves-effect waves-light red"
+							 onclick={function(e){
+								if (!document.getElementById('slide-out-actions')) {
+									let slideContainer = document.createElement('div');
+									slideContainer.id = "slide-out-actions";
+									slideContainer.classList.add('side-nav');
+									document.body.appendChild(slideContainer);
+								}
+								
+								SimpleDom.renderToDom(
+									'slide-out-actions', 
+									<SlideActionInfo
+										action={self.props.action}
+										close={() => $(e.target).sideNav('destroy')}
+									/>
+								);
+								$(e.target).attr('data-activates', 'slide-out-actions');
+								$(e.target).sideNav({
+								// $('#test-sidenav').sideNav({
+									menuWidth: 700, // Default is 300
+									edge: 'right', // Choose the horizontal origin
+									closeOnClick: false, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+									draggable: true // Choose whether you can drag to open on touch screens
+								});
+								$(e.target).sideNav('show');
+								$('ul.tabs').tabs();
 
-	                    }} style="color: black; text-align: center; cursor: pointer"> 
-	                    	{this.props.action.title}
-	                    </p>
-	                    <p style="color: black; padding-top: 20px; text-align: center">
-	                        <strong>220 </strong> personnes participent
-	                    </p>  
-	                </div>
-
-	                <div class="card-action">
-	                    <p style="text-align: center">
-	                        <a class="bouton-rond" href="#" style="color: black, margin-right: 0">
-	                         buttonText
-	                        </a>
-	                    </p>
-	                </div>
-	            </div>;
+							}}>
+								<i class="material-icons">add</i>
+							</a>
+						</p>
+				</div>
+				<div class="card-action">
+					<p>
+						<a href="#" style="color: black, margin-right: 0">
+							J'ai effectué cette action !
+						</a>
+						<a class="right" style="font-size: 8px">Abandon</a>
+					</p>
+				</div>
+	        </div>
+		);
 	}
 }
 
@@ -164,10 +166,10 @@ class ActionsList extends SimpleDom.Component {
             
 	render() {
 		return <div id="actions-card">
-			{this.partitionList(this.state.selectedActions || [], 4).map(subactions => 
+			{this.partitionList(this.state.selectedActions || [], 2).map(subactions => 
 				<div class="row" style="margin-top: 50px !important">
 					{subactions.map(action => 
-						<div class="col s4">
+						<div class="col s6">
 							<ActionCard 
 								action={action}
 							/>
@@ -428,11 +430,9 @@ class App extends SimpleDom.Component {
 	render() {
 		console.log(this.state);
 		return (
-			<div>
-				<h2 class="en-tete" style="background-color: #d24141">
-					<img src="static/img/ampoule-idee.png"/>J'agis
-				</h2> 
-				<div class="boxed-layout">
+			<div id="top" class="action">
+				<h2 class="en-tete">J'agis</h2> 
+				<div class="boxed-layout" style="margin-top: 50px;">
 			        <div class="row">
 			            <div class="col s12">
 			                <ul class="tabs">
@@ -443,10 +443,10 @@ class App extends SimpleDom.Component {
 			                </div>
 			                <div id="actions" class="col s12">
 			                    <div class="row">
-					                <div id="main-picker-container" class="col s3">
+					                <div id="main-picker-container" class="col s4">
 					                    <input id="main-picker" class="datepicker"/>    
 					                </div>
-					                <div class="col s9">
+					                <div class="col s8">
 					                    <ActionsList/>
 					                </div>
 					            </div>
@@ -471,7 +471,7 @@ Promise.all([fetchJsonData('/users/actions/get'), fetchJsonData('/users/actions/
 				{
 					actions,
 					lastActions, 
-					selectedActions: actions.filter(action => (action.dates || []).includes(moment().format('YYYY-MM-DD')))
+					selectedActions: actions //actions.filter(action => (action.dates || []).includes(moment().format('YYYY-MM-DD')))
 				}
 		);
 		SimpleDom.renderToDom('container', <App/>, store);
