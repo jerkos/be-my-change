@@ -101,7 +101,6 @@ class UserAction(JsonSerializerMixin, SurrogatePK, Model):
     user = relationship('User', backref='user_actions')
 
     action_id = reference_col('actions', nullable=False)
-    action = relationship('Action', backref='user_actions')
     
     created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
     start_date = Column(db.DateTime, nullable=False)
