@@ -27,10 +27,10 @@ def get_actions():
     """get current selected current actions"""
     #user_actions = current_user.user_actions
     user_actions = [
-        {'title': 'Test', 'description': 'Une longue description', 'dates':['2017-06-09']},
-        {'title': 'Test2', 'description': 'Une longue description2', 'dates':['2017-06-09']},
-        {'title': 'Mierda', 'description': 'C\'est de la mierda!', 'dates':['2017-06-09']},
-        {'title': 'Mierda 2', 'description': 'C\'est de la mierda number 2!', 'dates':['2017-06-09']}
+        {'title': 'Test', 'description': 'Une longue description', 'dates':['2017-06-09'], 'end_date': '2017-09-12', 'nb_success': 21},
+        {'title': 'Test2', 'description': 'Une longue description2', 'dates':['2017-06-09'], 'end_date': '2017-09-12','nb_success': 10},
+        {'title': 'Mierda', 'description': 'C\'est de la mierda!', 'dates':['2017-06-09'],'end_date': '2017-09-12','nb_success': 1},
+        {'title': 'Mierda 2', 'description': 'C\'est de la mierda number 2!', 'dates':['2017-06-09'], 'end_date': '2017-09-12','nb_success': 2}
     ]
     print(user_actions)
     return jsonify(user_actions)

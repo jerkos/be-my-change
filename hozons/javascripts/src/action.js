@@ -1,5 +1,8 @@
 require('./home')
 const moment = require('moment')
+require('moment/locale/fr');
+//moment.locale('fr');
+console.log(moment.locale());
 import * as SimpleDom from 'simpledom-component';
 
 
@@ -83,16 +86,31 @@ class ActionCard extends SimpleDom.Component {
 		return (
 			<div class="card hoverable">
 				<div class="card-image waves-effect waves-block waves-light">
-      					<img class="activator" src="http://lorempixel.com/300/200/nature"/>
+      					<img class="activator" src="http://lorempixel.com/400/200/nature"/>
     			</div>
 				<div class="card-content">
 					<span class="card-title activator grey-text text-darken-4">
-						{this.props.action.title}
-						<small style="margin-left: 10px; margin-top: 10px;">
-							<i class="material-icons">account_circle</i>
-						</small>
+						{this.props.action.title} 
+						<span class="badge small green white-text" 
+						style="border-radius: 5px; position: absolute">env</span>
 						<i class="material-icons right">more_vert</i>
 					</span>
+					<div>	
+						<div>
+							<div class="chip" style="font-size: 10px">
+								<i class="material-icons tiny">alarm</i>
+								{moment(this.props.action.dates[0]).fromNow(true)}
+							</div>
+							<div class="chip" style="font-size: 10px">
+								<i class="tiny material-icons">alarm_off</i>
+								{moment(this.props.action.dates[0]).from(moment(this.props.action.end_date), true)}
+							</div>
+							<div class="chip" style="font-size: 10px">
+								<i class="tiny material-icons">check</i>
+								{this.props.action.nb_success}
+							</div>
+						</div>
+					</div>
 				</div>
 				<div class="card-reveal">
 					<span class="card-title button-collapse"> 
@@ -101,7 +119,7 @@ class ActionCard extends SimpleDom.Component {
 						</span>
 						<p>{self.props.action.description}</p>
 						<p class="right-align">
-							<a class="btn-floating waves-effect waves-light red"
+							<a class="btn-floating waves-effect waves-light purple lighten-2"
 							 onclick={function(e){
 								if (!document.getElementById('slide-out-actions')) {
 									let slideContainer = document.createElement('div');
@@ -135,10 +153,10 @@ class ActionCard extends SimpleDom.Component {
 				</div>
 				<div class="card-action">
 					<p>
-						<a href="#" style="color: black, margin-right: 0">
+						<a class="purple-text lighten-2-text" href="#" style="color: black, margin-right: 0">
 							J'ai effectué cette action !
 						</a>
-						<a class="right" style="font-size: 8px">Abandon</a>
+						<a class="right grey-text" style="font-size: 8px">Abandon</a>
 					</p>
 				</div>
 	        </div>
