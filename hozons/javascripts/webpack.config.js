@@ -11,7 +11,6 @@ module.exports = {
     entry: {
         actions: [
             './src/action.js',
-            './src/veil.js',
             './src/css/user.less'
             ],
         home : [

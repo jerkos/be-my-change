@@ -3,15 +3,18 @@
 import datetime as dt
 from collections import defaultdict
 import json
+import time
 
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import current_user, login_required
 from sqlalchemy import desc
 
 from hozons.extensions import csrf_protect
+from hozons.extensions import db
 
 from .models import Action
 from .models import User
+from .models import UserAction
 
 user = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
 
@@ -27,14 +30,22 @@ def get_actions():
     """get current selected current actions"""
     #user_actions = current_user.user_actions
     user_actions = [
-        {'title': 'Test', 'description': 'Une longue description', 'dates':['2017-06-09'], 'end_date': '2017-09-12', 'nb_success': 21},
-        {'title': 'Test2', 'description': 'Une longue description2', 'dates':['2017-06-09'], 'end_date': '2017-09-12','nb_success': 10},
-        {'title': 'Mierda', 'description': 'C\'est de la mierda!', 'dates':['2017-06-09'],'end_date': '2017-09-12','nb_success': 1},
-        {'title': 'Mierda 2', 'description': 'C\'est de la mierda number 2!', 'dates':['2017-06-09'], 'end_date': '2017-09-12','nb_success': 2}
+        {'id': 1, 'title': 'Test', 'description': 'Une longue description', 'dates':['2017-06-09'], 'end_date': '2017-09-12', 'nb_success': 21},
+        {'id': 2, 'title': 'Test2', 'description': 'Une longue description2', 'dates':['2017-06-09'], 'end_date': '2017-09-12','nb_success': 10},
+        {'id': 3, 'title': 'Mierda', 'description': 'C\'est de la mierda!', 'dates':['2017-06-09'],'end_date': '2017-09-12','nb_success': 1},
+        {'id': 4, 'title': 'Mierda 2', 'description': 'C\'est de la mierda number 2!', 'dates':['2017-06-09'], 'end_date': '2017-09-12','nb_success': 2}
     ]
     print(user_actions)
     return jsonify(user_actions)
     #return render_template('users/actions.html', actions=jsonify(user_actions), events=events)
+
+
+@user.route('/actions/<int:action_id>/participants', methods=['GET'])
+#@login_required
+def get_participants_for_action(action_id):
+    """get participants of action"""
+    users = db.session.query(User).join(UserAction).filter(UserAction.action_id == action_id)
+    return User.arr_to_json(users, exclude={'password'})
 
 
 @user.route('/actions/matching-with-text')

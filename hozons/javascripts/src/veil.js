@@ -1,6 +1,7 @@
 import moment from 'moment';
 require('moment/locale/fr');
 moment.locale('fr');
+require('./css/veil.less')
 
 import * as SimpleDom from 'simpledom-component';
 

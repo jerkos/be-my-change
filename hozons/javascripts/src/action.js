@@ -1,13 +1,42 @@
 require('./home')
 const moment = require('moment')
 require('moment/locale/fr');
-//moment.locale('fr');
-console.log(moment.locale());
 import * as SimpleDom from 'simpledom-component';
-
+import {withVeilAndMessages} from './veil';
 
 class SlideActionInfo extends SimpleDom.Component {
+	eventsToSubscribe() {
+		return ['SLIDE_TO_UPDATE']
+	}
+
+	componentDidMount() {
+		console.log('comp did mount');
+		console.log(this.state.tabActive);
+		$('ul.tabs.action-infos')
+		.tabs()
+		.tabs('select_tab', this.state.tabActive || 'description-tab')
+
+		$('ul.tabs.action-infos')
+		.tabs()
+		
+		$('ul.tabs.action-infos').tabs({onShow: ([elem]) => {
+			console.log('on show');
+			if (elem.id === 'participants-tab') {
+				if (! this.state.users) {
+					withVeilAndMessages(
+						fetchJsonData(`/users/actions/${this.props.action.id}/participants`),
+						true
+					).then(users => {
+						this.store.updateState({users, tabActive: 'participants-tab'}, 'SLIDE_TO_UPDATE');
+						//$('ul.tabs').tabs();
+					});
+				}
+			}
+		}});
+	}
+
 	render() {
+		console.log(this.state);
         return <div style="padding: 0 10%">
             <div class="row">
                 <p style="text-transform: uppercase; font-weight: bold; color: #d24141">
@@ -25,18 +54,22 @@ class SlideActionInfo extends SimpleDom.Component {
             </div>
             <div class="row">
                 <div class="col s12">
-                    <ul class="tabs">
+                    <ul class="tabs action-infos">
                         <li class="tab col s3">
-                            <a class="active" href="#description-tab">description</a>
+							<a //class={this.state.tabActive === 'description' || !!this.state.tabActive ? 'active': undefined}
+							href="#description-tab">description</a>
                         </li>
                         <li class=" tab col s3">
-                            <a href="#participants-tab">participants</a>
+                            <a //class={this.state.tabActive === 'participants' ? 'active': undefined}
+							href="#participants-tab">participants</a>
                         </li>
                         <li class=" tab col s3">
-                            <a href="#commentaires-tab">commentaires</a>
+                            <a //class={this.state.tabActive === 'comments' ? 'active': undefined}
+							href="#commentaires-tab">commentaires</a>
                         </li>
                         <li class=" tab col s3">
-                            <a href="#ressources-tab">ressources</a>
+                            <a //class={this.state.tabActive === 'ressources' ? 'active': undefined} 
+							href="#ressources-tab">ressources</a>
                         </li>
                     </ul>
                 </div>
@@ -71,7 +104,11 @@ class SlideActionInfo extends SimpleDom.Component {
                         <div class="col s3" style="position: relative; left: 47px">Je m'engage à long terme</div>
                     </div>
                 </div>
-                <div id="participants-tab" class="col s12">Toto part en vacances</div>
+                <div id="participants-tab" class="col s12">
+					<ul class="collection">
+						{(this.state.users || []).map(user => <li>{user.username}</li>)}
+					</ul>
+				</div>
                 <div id="commentaires-tab" class="col s12">Hello world</div>
                 <div id="ressources-tab" class="col s12">A lot of ressources goes here</div>
             </div>
@@ -127,13 +164,14 @@ class ActionCard extends SimpleDom.Component {
 									slideContainer.classList.add('side-nav');
 									document.body.appendChild(slideContainer);
 								}
-								
+								const slideStore = new SimpleDom.Store();
 								SimpleDom.renderToDom(
 									'slide-out-actions', 
 									<SlideActionInfo
 										action={self.props.action}
 										close={() => $(e.target).sideNav('destroy')}
-									/>
+									/>,
+									slideStore
 								);
 								$(e.target).attr('data-activates', 'slide-out-actions');
 								$(e.target).sideNav({
@@ -144,8 +182,6 @@ class ActionCard extends SimpleDom.Component {
 									draggable: true // Choose whether you can drag to open on touch screens
 								});
 								$(e.target).sideNav('show');
-								$('ul.tabs').tabs();
-
 							}}>
 								<i class="material-icons">add</i>
 							</a>
@@ -483,7 +519,9 @@ class App extends SimpleDom.Component {
 
 
 const store = new SimpleDom.Store();
-Promise.all([fetchJsonData('/users/actions/get'), fetchJsonData('/users/actions/last-actions')])
+withVeilAndMessages(
+	Promise.all([fetchJsonData('/users/actions/get'), fetchJsonData('/users/actions/last-actions')]),
+	true)
 	.then(([actions, lastActions]) => {
 		store.updateState(
 				{
