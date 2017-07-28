@@ -10,33 +10,28 @@ class SlideActionInfo extends SimpleDom.Component {
 	}
 
 	componentDidMount() {
-		console.log('comp did mount');
-		console.log(this.state.tabActive);
 		$('ul.tabs.action-infos')
 		.tabs()
-		.tabs('select_tab', this.state.tabActive || 'description-tab')
+		.tabs('select_tab', this.state.tabActive || 'description-tab');
 
-		$('ul.tabs.action-infos')
-		.tabs()
-		
-		$('ul.tabs.action-infos').tabs({onShow: ([elem]) => {
-			console.log('on show');
-			if (elem.id === 'participants-tab') {
+		$('ul.tabs.action-infos').on('click', 'a', event => {
+			if (event.target.href.split('#')[1] === 'participants-tab') {
 				if (! this.state.users) {
 					withVeilAndMessages(
 						fetchJsonData(`/users/actions/${this.props.action.id}/participants`),
 						true
 					).then(users => {
 						this.store.updateState({users, tabActive: 'participants-tab'}, 'SLIDE_TO_UPDATE');
-						//$('ul.tabs').tabs();
+						setTimeout(this.searchInput.focus(), 1000);
+						
 					});
 				}
+				setTimeout(this.searchInput.focus(), 1000);
 			}
-		}});
+		})
 	}
 
 	render() {
-		console.log(this.state);
         return <div style="padding: 0 10%">
             <div class="row">
                 <p style="text-transform: uppercase; font-weight: bold; color: #d24141">
@@ -105,9 +100,30 @@ class SlideActionInfo extends SimpleDom.Component {
                     </div>
                 </div>
                 <div id="participants-tab" class="col s12">
-					<ul class="collection">
-						{(this.state.users || []).map(user => <li>{user.username}</li>)}
-					</ul>
+					<div class="row">
+						<div class='col s8 offset-s2'>
+						<nav class="search-nav">
+							<div class="nav-wrapper">
+							<form>
+								<div class="input-field">
+								<input id="search" type="search" ref={ref => this.searchInput = ref}/>
+								<label class="label-icon" for="search"><i class="material-icons">search</i></label>
+								<i class="material-icons">close</i>
+								</div>
+							</form>
+							</div>
+						</nav>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s6">
+						<ul class="collection">
+							{(this.state.users || []).map(user => <li>{user.username}</li>)}
+						</ul>
+						</div>
+						<div class="col s6">
+						</div>
+					</div>
 				</div>
                 <div id="commentaires-tab" class="col s12">Hello world</div>
                 <div id="ressources-tab" class="col s12">A lot of ressources goes here</div>
@@ -165,21 +181,25 @@ class ActionCard extends SimpleDom.Component {
 									document.body.appendChild(slideContainer);
 								}
 								const slideStore = new SimpleDom.Store();
-								SimpleDom.renderToDom(
-									'slide-out-actions', 
-									<SlideActionInfo
-										action={self.props.action}
-										close={() => $(e.target).sideNav('destroy')}
-									/>,
-									slideStore
-								);
+
 								$(e.target).attr('data-activates', 'slide-out-actions');
 								$(e.target).sideNav({
 								// $('#test-sidenav').sideNav({
 									menuWidth: 700, // Default is 300
 									edge: 'right', // Choose the horizontal origin
 									closeOnClick: false, // Closes side-nav on <a> clicks, useful for Angular/Meteor
-									draggable: true // Choose whether you can drag to open on touch screens
+									draggable: true, // Choose whether you can drag to open on touch screens
+									onOpen: el => {
+										console.log(el);
+										SimpleDom.renderToDom(
+											'slide-out-actions', 
+											<SlideActionInfo
+												action={self.props.action}
+												close={() => $(e.target).sideNav('destroy')}
+											/>,
+											slideStore
+										);
+									}
 								});
 								$(e.target).sideNav('show');
 							}}>

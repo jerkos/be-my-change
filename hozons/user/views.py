@@ -44,8 +44,9 @@ def get_actions():
 #@login_required
 def get_participants_for_action(action_id):
     """get participants of action"""
-    users = db.session.query(User).join(UserAction).filter(UserAction.action_id == action_id)
-    return User.arr_to_json(users, exclude={'password'})
+    users = db.session.query(User).join(UserAction).filter(UserAction.action_id == action_id).all()
+    return User.arr_to_json(users * 10, exclude={'password'})
+    #return User.arr_to_json(users, exclude={'password'})
 
 
 @user.route('/actions/matching-with-text')
