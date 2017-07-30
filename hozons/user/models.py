@@ -29,6 +29,8 @@ class User(JsonSerializerMixin, UserMixin, SurrogatePK, Model):
     """A user of the app."""
 
     __tablename__ = 'users'
+    RELATIONSHIPS_TO_DICT = True
+
     username = Column(db.String(80), unique=True, nullable=False)
     email = Column(db.String(80), unique=True, nullable=False)
     #: The hashed password
@@ -97,8 +99,10 @@ class Action(JsonSerializerMixin, SurrogatePK, Model):
 
 class UserAction(JsonSerializerMixin, SurrogatePK, Model):
     __tablename__ = 'user_actions'
+    RELATIONSHIPS_TO_DICT = True
+
     user_id = reference_col('users', nullable=False)
-    user = relationship('User', backref='user_actions')
+    user = relationship('models.User', backref='user_actions', lazy='joined')
 
     action_id = reference_col('actions', nullable=False)
     

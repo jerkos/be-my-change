@@ -35,7 +35,6 @@ def get_actions():
         {'id': 3, 'title': 'Mierda', 'description': 'C\'est de la mierda!', 'dates':['2017-06-09'],'end_date': '2017-09-12','nb_success': 1},
         {'id': 4, 'title': 'Mierda 2', 'description': 'C\'est de la mierda number 2!', 'dates':['2017-06-09'], 'end_date': '2017-09-12','nb_success': 2}
     ]
-    print(user_actions)
     return jsonify(user_actions)
     #return render_template('users/actions.html', actions=jsonify(user_actions), events=events)
 
@@ -44,8 +43,10 @@ def get_actions():
 #@login_required
 def get_participants_for_action(action_id):
     """get participants of action"""
-    users = db.session.query(User).join(UserAction).filter(UserAction.action_id == action_id).all()
-    return User.arr_to_json(users * 10, exclude={'password'})
+    users = User.query.join(UserAction).filter(UserAction.action_id == action_id).all()
+    print(User.to_json(users[0], exclude={'password'}))
+    resp = User.arr_to_json(users * 10, exclude={'password'})
+    return resp
     #return User.arr_to_json(users, exclude={'password'})
 
 

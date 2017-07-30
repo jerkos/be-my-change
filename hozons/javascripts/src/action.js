@@ -3,10 +3,11 @@ const moment = require('moment')
 require('moment/locale/fr');
 import * as SimpleDom from 'simpledom-component';
 import {withVeilAndMessages} from './veil';
+require('./css/avatar.less')
 
 class SlideActionInfo extends SimpleDom.Component {
 	eventsToSubscribe() {
-		return ['SLIDE_TO_UPDATE']
+		return ['SLIDE_TO_UPDATE', 'UPDATE_USER_PANEL'];
 	}
 
 	componentDidMount() {
@@ -118,10 +119,61 @@ class SlideActionInfo extends SimpleDom.Component {
 					<div class="row">
 						<div class="col s6">
 						<ul class="collection">
-							{(this.state.users || []).map(user => <li>{user.username}</li>)}
+							{(this.state.users || []).map(user => 
+								<a onclick={ () => {
+									this.store.updateState({selectedUser: user}, 'UPDATE_USER_PANEL');
+									
+								}}
+								style="pointer: cursor;" class="collection-item">
+									<div class="avatar avatar-sm" style="color: white;background-color: #5764c6;" data-initial={user.username.slice(0, 2) || ''}/>
+									<strong style="padding-left: 20px;">{user.username}</strong>
+								</a>)
+							}
 						</ul>
 						</div>
 						<div class="col s6">
+							{SimpleDom.predicate(this.state.selectedUser, () => {
+								console.log(this.state.selectedUser);
+								const userAction = this.state.selectedUser.user_actions.find(uaction => uaction.id === uaction.id);
+								return (
+									<div>
+										<h1>{this.state.selectedUser.username}</h1>
+										<div>
+											<div style="display: inline-block">Action entreprise le: </div>
+											<div style="display: inline-block; padding: 5px 10px; background-color: lightgrey; border-radius: 5px">
+												{userAction.created_date} 
+											</div>											
+										</div>
+										<div>
+											<div style="display: inline-block">Action commencée le: </div>
+											<div style="display: inline-block; padding: 5px 10px; background-color: lightgrey; border-radius: 5px">
+												{userAction.start_date} 
+											</div>											
+										</div>
+										<div>
+											<div style="display: inline-block">Action terminée le: </div>
+											<div style="display: inline-block; padding: 5px 10px; background-color: lightgrey; border-radius: 5px">
+												{userAction.end_date} 
+											</div>											
+										</div>
+										<div>
+											<div style="display: inline-block"># défis réussi: </div>
+											<div style="display: inline-block; padding: 5px 10px; background-color: lightgrey; border-radius: 5px">
+												{userAction.nb_succeed} 
+											</div>											
+										</div>
+									</div>
+								);
+							}, () => {
+								return (
+									<div style="background-color: lightgrey; border-radius: 5px; min-height: 300px">
+										<div style="padding: 25% 25%">
+											<h4 style="text-align: center;"><i class="lnr lnr-user"></i></h4>
+											<h6 style="text-align :center;">Sélectionner un utilisateur !</h6>
+										</div>
+									</div>
+								)
+							})}
 						</div>
 					</div>
 				</div>
