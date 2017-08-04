@@ -28,13 +28,13 @@
             color: #31c7d5 !important;
         }
 
-        #main-picker.datepicker {
-            display: none !important;
-        }
+         #main-picker.datepicker.picker__input {
+             visibility: hidden !important; 
+        } 
 
-        #main-picker-container .picker {
-            font-size: 14px !important;
-        }
+         #main-picker-container .picker__header {
+            font-size: 12px;
+        }   
 
         #main-picker-container .picker__box {
             border: none;
@@ -54,6 +54,7 @@
         }
 
         .picker__day--selected {
+            border-radius: 5px !important;
             background-color: #31c7d5 !important;
             color:#FFF !important;
         }
