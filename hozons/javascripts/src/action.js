@@ -125,7 +125,7 @@ class SlideActionInfo extends SimpleDom.Component {
 									
 								}}
 								style="pointer: cursor;" class="collection-item">
-									<div class="avatar avatar-sm" style="color: white;background-color: #5764c6;" data-initial={user.username.slice(0, 2) || ''}/>
+									<div class="avatar-spec avatar-spec-sm" style="color: white;background-color: #5764c6;" data-initial={user.username.slice(0, 2) || ''}/>
 									<strong style="padding-left: 20px;">{user.username}</strong>
 								</a>)
 							}
@@ -138,29 +138,32 @@ class SlideActionInfo extends SimpleDom.Component {
 								return (
 									<div>
 										<h1>{this.state.selectedUser.username}</h1>
-										<div>
-											<div style="display: inline-block">Action entreprise le: </div>
+										<div style="padding: 5px 0;">
+											<div style="display: inline-block; min-width: 150px;">Action entreprise le: </div>
 											<div style="display: inline-block; padding: 5px 10px; background-color: lightgrey; border-radius: 5px">
 												{userAction.created_date} 
 											</div>											
 										</div>
-										<div>
-											<div style="display: inline-block">Action commencée le: </div>
+										<div style="padding: 5px 0;">
+											<div style="display: inline-block; min-width: 150px;">Action commencée le: </div>
 											<div style="display: inline-block; padding: 5px 10px; background-color: lightgrey; border-radius: 5px">
 												{userAction.start_date} 
 											</div>											
 										</div>
-										<div>
-											<div style="display: inline-block">Action terminée le: </div>
+										<div style="padding: 5px 0;">
+											<div style="display: inline-block; min-width: 150px;">Action terminée le: </div>
 											<div style="display: inline-block; padding: 5px 10px; background-color: lightgrey; border-radius: 5px">
 												{userAction.end_date} 
 											</div>											
 										</div>
-										<div>
-											<div style="display: inline-block"># défis réussi: </div>
+										<div style="padding: 5px 0;">
+											<div style="display: inline-block; min-width: 150px;"># défis réussi: </div>
 											<div style="display: inline-block; padding: 5px 10px; background-color: lightgrey; border-radius: 5px">
 												{userAction.nb_succeed} 
 											</div>											
+										</div>
+										<div style="text-align: left">
+											<a class="waves-effect waves-light btn"><i class="material-icons left">cloud</i>PROFIL</a>
 										</div>
 									</div>
 								);
@@ -537,11 +540,14 @@ class LookForAction extends SimpleDom.Component {
 				<div class="collection">
 					{(this.state.lastActions || []).map(action => {
 						return <a class="collection-item avatar">
-									<span class="title">{action.title}</span>
-									<p>{action.description}</p>
+									<span class="title"><strong>{action.title}</strong></span>
+									<p>{action.description} 
+										<div class="avatar-spec" data-initial={(action.creator || {}).username.slice(0,2)}></div>
+										<div style="display: inline-block">#Nb défis relevés: {action.user_actions.length}</div>
+									</p>
 									<a href="#!" class="secondary-content">
-										{(action.creator || {}).username}<br/>
-										<small>{(action.creator || {}).email}</small>
+										<a style="margin-right: 10px" class="btn-floating waves-effect waves-light red"><i class="material-icons">add</i></a>
+ 										<a class="btn-floating waves-effect waves-light red"><i class="material-icons">add</i></a>
 									</a>
 								</a>
 					})}

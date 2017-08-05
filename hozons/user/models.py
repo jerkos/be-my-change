@@ -3,6 +3,7 @@
 import datetime as dt
 
 from flask_login import UserMixin
+from sqlalchemy import func
 
 from hozons.database import Column, Model, SurrogatePK, db, reference_col, relationship, JsonSerializerMixin
 from hozons.extensions import bcrypt
@@ -88,7 +89,7 @@ class Action(JsonSerializerMixin, SurrogatePK, Model):
     end_date = Column(db.DateTime)
     
     creator_user_id = reference_col('users', nullable=False)
-    creator = relationship('User', backref='createdActions')
+    creator = relationship('models.User', backref='created_actions')
 
     def __init__(self, creator_id, title, description, initial_nb_days=1):
         db.Model.__init__(self, creator_id = creator_id, title=title, description=description, initial_nb_days=1)
@@ -96,6 +97,9 @@ class Action(JsonSerializerMixin, SurrogatePK, Model):
     def __repr__(self):
         return '<Action {title}>'.format(title=self.title)
 
+    def get_users(self):
+        return 
+        #return db.session.query(func.count(UserAction.id).label('count')).filter(UserAction.action_id == self.id).distinct().all()    
 
 class UserAction(JsonSerializerMixin, SurrogatePK, Model):
     __tablename__ = 'user_actions'
@@ -105,7 +109,8 @@ class UserAction(JsonSerializerMixin, SurrogatePK, Model):
     user = relationship('models.User', backref='user_actions', lazy='joined')
 
     action_id = reference_col('actions', nullable=False)
-    
+    #action = relationship('Action', backref='user_actions', uselist=True, lazy='dynamic')
+
     created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
     start_date = Column(db.DateTime, nullable=False)
     end_date = Column(db.DateTime, nullable=False)

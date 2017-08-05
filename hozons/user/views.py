@@ -72,8 +72,19 @@ def get_last_actions():
     """get last actions created by users
         used as default values on actions page
     """
+    actions = Action.query.order_by(desc(Action.created_at)).limit(5).all();
+
+    last_actions = Action.query.order_by(desc(Action.created_at)).limit(5).subquery();
+    users = db.session.query(User).join(UserAction).join(last_actions, last_actions.c.id == UserAction.action_id).limit(5).all()
+
+    print(users)
+    #result = db.session.execute(
+    #    'select count(1) from user_actions join (select * from actions order by created_at desc limit 5) _ on (_.id = user_actions.action_id) group by user_actions.action_id '
+    #)
+
+    #for r in result: print(r)
     return Action.arr_to_json(
-        Action.query.order_by(desc(Action.created_at)).limit(5).all(),
+        actions,#Action.query.order_by(desc(Action.created_at)).limit(5).all(),
         exclude={'password'}
     ), 200
 
