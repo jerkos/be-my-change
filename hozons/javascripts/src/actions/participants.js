@@ -98,10 +98,10 @@ export class ParticipantTab extends ParentComponent {
         console.log(this.cstate);
     }
 
-    // componentDidMount() {
-    //     console.log(this.searchInput);
-    //     setTimeout(this.searchInput.focus(), 1000);
-    // }
+    componentDidMount() {
+        console.log(this.searchInput);
+        setTimeout(this.searchInput.focus(), 1000);
+    }
 
     render() {
         return (
