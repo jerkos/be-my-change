@@ -7,7 +7,7 @@ import time
 
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import current_user, login_required
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 
 from hozons.extensions import csrf_protect
 from hozons.extensions import db
@@ -43,9 +43,27 @@ def get_actions():
 #@login_required
 def get_participants_for_action(action_id):
     """get participants of action"""
-    users = User.query.join(UserAction).filter(UserAction.action_id == action_id).all()
-    print(User.to_json(users[0], exclude={'password'}))
-    resp = User.arr_to_json(users * 10, exclude={'password'})
+    page = request.args.get('page', 2)
+    per_page = request.args.get('per_page', 7)
+    # total_count = (User.query(func.count(User.id))
+    #                 .join(UserAction)
+    #                 .filter(UserAction.action_id == action_id)
+    #                 .scalar())
+    total_count = 10 # fake
+    nb_pages = (total_count / per_page)
+    if total_count % per_page != 0:
+        nb_pages += 1 
+
+    users = (User.query.join(UserAction)
+                .filter(UserAction.action_id == action_id)
+                #.offset(per_page * page)
+                #.limit(per_page)
+                .all()) * 10
+    print(len(users)) # 10
+    print(page) # 1
+    print(per_page) # 7
+    count = per_page * (page - 1) + 1
+    resp = User.arr_to_json(users[count:count + 1 + per_page], exclude={'password'})
     return resp
     #return User.arr_to_json(users, exclude={'password'})
 
