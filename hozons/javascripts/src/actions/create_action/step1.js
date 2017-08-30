@@ -1,5 +1,8 @@
 const moment = require('moment')
 require('moment/locale/fr');
+require('../../css/steps.less');
+require('../../css/tooltips.less');
+require('../../css/popovers.less');
 import * as SimpleDom from 'simpledom-component';
 import { withVeilAndMessages } from '../../veil';
 import { ComposedComponent, ParentComponent } from '../../composedComponent'
@@ -18,12 +21,12 @@ class CreateActionStep1 extends ComposedComponent {
                         <input
                             type="text"
                             placeholder="le titre de votre nouvelle action !"
-                            value={this.state.actionTitle || ''}
-                            onchange={e => this.store.updateState({ actionTitle: e.target.value })}
+                            value={this.cstate.actionTitle || ''}
+                            onchange={e => this.updateCState({ actionTitle: e.target.value })}
                         />
                         {SimpleDom.predicate(
-                            !!this.state.errorTitle,
-                            () => <p class="red-text" style="margin-top: -10px">{this.state.errorTitle}</p>
+                            !!this.cstate.errorTitle,
+                            () => <p class="red-text" style="margin-top: -10px">{this.cstate.errorTitle}</p>
                         )}
                     </div>
                 </div>
@@ -31,59 +34,61 @@ class CreateActionStep1 extends ComposedComponent {
                     <p style="font-size: 1.2em;">Quelques mots pour décrire votre action ou évènement</p>
                     <div class="input-field col s12" style="margin-top: -10px">
                         <textarea class="materialize-textarea"
-                            onchange={e => this.store.updateState({actionDescription: e.target.value})}
-                        >{this.state.actionDescription || 'Entrez une description innovante...'}</textarea>
+                            onchange={e => this.updateCState({actionDescription: e.target.value})}
+                        >{this.cstate.actionDescription || 'Entrez une description innovante...'}</textarea>
                     </div>
                     {SimpleDom.predicate(
-                            !!this.state.errorDescription,
-                            () => <p class="red-text" style="margin-top: -15px">{this.state.errorDescription}</p>
+                            !!this.cstate.errorDescription,
+                            () => <p class="red-text" style="margin-top: -15px">{this.cstate.errorDescription}</p>
                     )}
                 </div>
                 <div class="row">
                     <p style="font-size: 1.2em;">Choisissez une image !
-                        {SimpleDom.predicate(!!this.state.actionImageUrl,
-                            () => <img src={this.state.actionImageUrl} class="responsive-img"/>
+                        {SimpleDom.predicate(!!this.cstate.actionImageUrl,
+                            () => <img src={this.cstate.actionImageUrl} class="responsive-img"/>
                         )}
                     </p>
                    <div class="input-field col s12" style="margin-top: -10px">
                         <input
                             type="url"
                             placeholder="l'image de votre action !"
-                            value={this.state.actionImageUrl || ''}
-                            onchange={e => this.store.updateState({ actionImageUrl: e.target.value }, 'STEP1_REFRESH')}
+                            value={this.cstate.actionImageUrl || ''}
+                            onchange={e => this.updateCState({ actionImageUrl: e.target.value })}
                         />
                     </div>
                 </div>
                 <div class="row">
+                    <div class="popover popover-right">
                     <button class="right btn"
                         onclick={e => {
                             let hasError = false;
                             let errors = {};
-                            if (! !!this.state.actionTitle) {
+                            if (! !!this.cstate.actionTitle) {
                                 hasError = true;
                                 errors = {...errors, errorTitle: 'Titre vide !'};
                             }
-                            if (! !!this.state.actionDescription) {
+                            if (! !!this.cstate.actionDescription) {
                                 hasError = true;
                                 errors = {...errors, errorDescription: 'Description vide !'};
                             }
                             if (hasError) {
-                                this.store.updateState({
+                                this.updateCState({
                                     errorDescription: errors.errorDescription,
                                     errorTitle: errors.errorTitle
                                 }, 'STEP1_REFRESH')
                             } else {
                                 this.updateCState({currStep: 2}, 'CHANGE_STATE');
-                                //this.store.updateState({}, 'CHANGE_STATE');
                             }
                         }}>Passer à la suite</button>
+                    </div>
                 </div>
             </div>
         );
     }
 }
 
-class CreateActionStep2 extends SimpleDom.Component {
+class CreateActionStep2 extends ComposedComponent {
+
     eventsToSubscribe() {
         return ['STEP2_REFRESH'];
     }
@@ -99,10 +104,10 @@ class CreateActionStep2 extends SimpleDom.Component {
                 <div class="row">
                     <p style="font-size: 1.2em">Quel est le type de votre nouvelle action ?</p>
                     <div class="input-field col s12" style="margin-top: -10px">
-                        <select class="action-type">
-                            <option selected value="PERS">Personnel</option>
-                            <option value="REL">Relationnel</option>
-                            <option value="ENV">Environnemental</option>
+                        <select class="action-type" onchange={e => this.updateCState({actionType: e.target.value})}>
+                            <option selected={this.cstate.actionType === 'PERS' || undefined} value="PERS">Personnel</option>
+                            <option selected={this.cstate.actionType === 'REL' || undefined} value="REL">Relationnel</option>
+                            <option selected={this.cstate.actionType === 'ENV' || undefined} value="ENV">Environnemental</option>
                         </select>
                     </div>
                 </div>
@@ -112,7 +117,9 @@ class CreateActionStep2 extends SimpleDom.Component {
                         <div class="switch">
                             <label>
                             Non
-                            <input type="checkbox"/>
+                            <input type="checkbox"
+                                   selected={this.cstate.isPublic || false} 
+                                   onchange={e => this.updateCState({isPublic: !(this.cstate.isPublic || false)})}/>
                             <span class="lever"></span>
                             Oui
                             </label>
@@ -125,8 +132,8 @@ class CreateActionStep2 extends SimpleDom.Component {
                        <input
                             type="text"
                             placeholder="addresse de l'évènement"
-                            value={this.state.actionAddress || ''}
-                            onchange={e => this.store.updateState({ actionAddress: e.target.value }, 'STEP2_REFRESH')}
+                            value={this.cstate.actionAddress || ''}
+                            onchange={e => this.updateCState({ actionAddress: e.target.value })}
                         />
                     </div>
                 </div>
@@ -135,20 +142,19 @@ class CreateActionStep2 extends SimpleDom.Component {
                     <div class="input-field col s12" style="margin-top: -10px">
                        <input
                             type="time"
-                            value={this.state.actionTime || ''}
-                            onchange={e => this.store.updateState({ actionTime: e.target.value }, 'STEP2_REFRESH')}
+                            value={this.cstate.actionTime || ''}
+                            onchange={e => this.updateCState({ actionTime: e.target.value })}
                         />
                     </div>
                 </div>
                 <div class="row">
                     <button class="left btn"    
                         onclick={e => {
-                            this.store.updateState({currStep: 1}, 'CHANGE_STATE');
+                            this.updateCState({currStep: 1}, 'CHANGE_STATE');
                         }}>Retour en arrière</button>
                     <button class="right btn"
                         onclick={e => {
-                            this.props.updatecstate({currStep: 3})
-                            this.store.updateState({currStep: 3}, 'CHANGE_STATE');
+                            this.updateCState({currStep: 3}, 'CHANGE_STATE');
                         }}>Passer à la fin</button>
                 </div>
             </div>
@@ -167,20 +173,34 @@ class CreateActionStep3 extends SimpleDom.Component {
     }   
 }
 
+class Step extends SimpleDom.Component {
+    render() {
+        return (
+            <ul class="step">
+                <li class={`step-item ${this.props.currStep === 1 ? 'active' : undefined}`}>
+                    <a href="#" class="tooltip" data-tooltip="Description de votre nouvelle action"></a>
+                </li>
+                <li class={`step-item ${this.props.currStep === 2 ? 'active' : undefined}`}>
+                    <a href="#" class="tooltip" data-tooltip="Step 2"></a>
+                </li>
+                <li class={`step-item ${this.props.currStep === 3 ? 'active' : undefined}`}>
+                    <a href="#" class="tooltip" data-tooltip="Step 3"></a>
+                </li>
+            </ul>
+        );
+    }
+
+
+}
+
 
 export class CreateAction extends ParentComponent {
     constructor(props, store) {
         super(props, store);
-        this.cstate = {};
     }
     
     eventsToSubscribe() {
         return ['CHANGE_STATE'];
-    }
-
-    cstateSetter(obj, ...events) {
-        this.cstate = {...this.cstate, ...obj};
-        this.store.updateState({}, ...events);
     }
 
     render() {
@@ -200,14 +220,14 @@ export class CreateAction extends ParentComponent {
         return (
             <div>
                 <div class="row">
+                    <Step currStep={this.cstate.currStep || 1}/>
+                </div>
+                <div class="row">
                     <div class="col s8">
                         {stepDiv}
                     </div>
                     <div class="col s4" style='min-height: 600px;background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3ja0wQ5FjkLKKKzjaOduug3YARtDbI7mjQu6qJ17MSzrDfCNG1A"); background-size: cover; background-position: center;'>
                     </div>
-                </div>
-                <div class="progress">
-                    <div class="determinate" style={{ width: `${(this.state.currStep || 1) * 33.33}%` }}></div>
                 </div>
             </div>
         );

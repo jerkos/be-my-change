@@ -1,0 +1,167 @@
+import * as SimpleDom from 'simpledom-component';
+require('../css/layout.less');
+
+
+class InviteModalContent extends SimpleDom.Component {
+    eventsToSubscribe() {
+        return ['INVITE_TO_REFRESH'];
+    }
+
+    render() {
+        return (
+            <div>
+                <div class="modal-content">
+                    <h4>{this.state.test}</h4>
+                    <p>A bunch of text</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+                </div>
+            </div>
+        );
+    }
+}
+
+class ParticipateModalContent extends SimpleDom.Component {
+    eventsToSubscribe() {
+        return ['PARTICPATE_TO_REFRESH']
+    }
+
+    render() {
+        return (
+            <div>
+                <div class="modal-content">
+                    <h4>Participer à une nouvelle action</h4>
+                    <p>Vous aller participer à votre première action. What an excitemtent !</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">C'est parti !</a>
+                </div>
+            </div>
+        );
+    }
+}
+
+export class LookForAction extends SimpleDom.Component {
+
+    static getCategoryLabel(category) {
+        if (category === 'PERS')
+            return 'Personnel';
+        else if (category === 'REL')
+            return 'Relationnel';
+        return 'Environnement';
+    }
+
+    eventsToSubscribe() {
+        return ['LOOK_FOR_UPDATE'];
+    }
+
+    componentDidMount() {
+        if (this.inputRef)
+            this.inputRef.focus();
+        this.inputRef.value = this.value || '';
+        $(this.selectKind).material_select();   
+    }
+
+    render() {
+        return (
+            <div>
+                <div id="modal-invite" class="modal">
+                    <InviteModalContent/>
+                </div>
+                <div id="modal-participate" class="modal">
+                    <ParticipateModalContent/>
+                </div> 
+                <div class="boxed-layout">
+                    <div class="row">
+                        <div class="input-field col s8">
+                            <i class="material-icons prefix">search</i>
+                            <input type="text" value="" ref={ref => this.inputRef = ref}
+                                onkeyup={event => {
+                                    this.lastTimerId = this.timerId;
+                                    if (this.lastTimerId) {
+                                        clearTimeout(this.lastTimerId);
+                                    }
+                                    this.value = event.target.value;
+                                    if (this.value.length < 3) {
+                                        return;
+                                    }
+                                    this.timerId = setTimeout(() => {
+                                        fetchJsonData(`/users/actions/matching-with-text?text=${this.value}`)
+                                            .then(data => this.store.updateState({ lastActions: data }, 'LOOK_FOR_UPDATE'))
+                                    }, 500);
+                                }} />
+                        </div>
+                        <div class="input-field col s4">
+                            <select ref={ref => this.selectKind = ref}>
+                                {/* <option value="" disabled selected>Choisissez un type d'action</option> */}
+                                <option value="PERS">Personnel</option>
+                                <option value="REL">Relationnel</option>
+                                <option value="ENV">Environnement</option>
+                            </select>
+                        </div>
+                    </div>
+                    {
+                        ['PERS', 'REL', 'ENV'].map(category => {
+                            return (
+                                <div>
+                                    <h3><small style="color:lightgrey">#</small>{LookForAction.getCategoryLabel(category)}</h3>
+                                    <div class="container">
+                                        <div class="columns col-gapless" style="min-height: 200px">
+                                            {(this.state.lastActions
+                                                .filter(action => action.kind === category) || [])
+                                                .map(action => {
+                                                    return (
+                                                        <div class="column col-3" style="background-image: url('http://via.placeholder.com/400x200')">
+                                                            <div style="opacity: 0.5; background-color: black; height: 118%;">
+                                                                <div class="fixed-action-btn horizontal click-to-toggle">
+                                                                    <a class="btn-floating btn-large red">
+                                                                        <i class="material-icons">menu</i>
+                                                                    </a>
+                                                                    <ul>
+                                                                        <li><a class="btn-floating grey"><i class="material-icons">insert_chart</i></a></li>
+                                                                        <li><a class="btn-floating grey darken-1"><i class="material-icons">format_quote</i></a></li>
+                                                                        <li><a class="btn-floating grey"><i class="material-icons">publish</i></a></li>
+                                                                        <li><a class="btn-floating grey"><i class="material-icons">attach_file</i></a></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    }
+                    <div class="container">
+                        <div class="columns col-gapless" style="min-height: 200px">
+                            {(this.state.lastActions || []).map(action => {
+                                this.store.updateState({ test: 'hello world' });
+                                return (
+                                    <div class="action-with-hover column col-3" style="background-image: url('http://via.placeholder.com/400x200')">
+                                        <div class="action-hover">
+                                            <ul>
+                                                <li><a class="btn-floating"><i class="material-icons">plus</i></a></li>
+                                                <li>
+                                                    <a class="btn-floating" 
+                                                        onclick={() => $('#modal-participate').modal('open')}>
+                                                        <i class="material-icons"></i>
+                                                    </a>
+                                                </li>
+                                                <li><a class="btn-floating" onclick={() =>
+                                                    $('#modal-invite').modal('open')
+                                                }><i class="material-icons"></i></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}

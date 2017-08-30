@@ -94,12 +94,12 @@ class JsonSerializerMixin(object):
         if isinstance(x, datetime):
             return x.isoformat()
         return x
-    
+
     def to_dict(self, rel=None, backref=None, exclude=()):
         if rel is None:
             rel = self.RELATIONSHIPS_TO_DICT
         res = {column.key: self._get_val(getattr(self, attr))
-               for attr, column in self.__mapper__.c.items() 
+               for attr, column in self.__mapper__.c.items()
                if column.key not in exclude}
         if rel:
             for attr, relation in self.__mapper__.relationships.items():
@@ -121,6 +121,10 @@ class JsonSerializerMixin(object):
         if rel is None:
             rel = self.RELATIONSHIPS_TO_DICT
         return json.dumps(self.to_dict(rel, exclude=exclude))
+
+    @staticmethod
+    def arr_to_dict(arr, rel=None, exclude=None):
+        return [obj.to_dict(rel=rel, exclude=exclude) for obj in arr]
 
     @staticmethod
     def arr_to_json(arr, rel=None, exclude=None):

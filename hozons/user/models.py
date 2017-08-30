@@ -39,7 +39,7 @@ class User(JsonSerializerMixin, UserMixin, SurrogatePK, Model):
     created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
     first_name = Column(db.String(30), nullable=True)
     last_name = Column(db.String(30), nullable=True)
-    
+
     active = Column(db.Boolean(), default=False)
     is_admin = Column(db.Boolean(), default=False)
 
@@ -81,25 +81,26 @@ class Action(JsonSerializerMixin, SurrogatePK, Model):
     description = Column(db.Text, nullable=False)
     initial_nb_days = Column(db.Integer, default=1)
 
+    kind = Column(db.Text, nullable=True, default='PERS')
     is_personal_action = Column(db.Boolean, default=True)
     public = Column(db.Boolean, default=True)
 
     created_at = Column(db.DateTime, default=dt.datetime.utcnow)
     start_date = Column(db.DateTime)
     end_date = Column(db.DateTime)
-    
+
     creator_user_id = reference_col('users', nullable=False)
     creator = relationship('models.User', backref='created_actions')
 
     def __init__(self, creator_id, title, description, initial_nb_days=1):
         db.Model.__init__(self, creator_id = creator_id, title=title, description=description, initial_nb_days=1)
-    
+
     def __repr__(self):
         return '<Action {title}>'.format(title=self.title)
 
     def get_users(self):
-        return 
-        #return db.session.query(func.count(UserAction.id).label('count')).filter(UserAction.action_id == self.id).distinct().all()    
+        return
+        #return db.session.query(func.count(UserAction.id).label('count')).filter(UserAction.action_id == self.id).distinct().all()
 
 class UserAction(JsonSerializerMixin, SurrogatePK, Model):
     __tablename__ = 'user_actions'
@@ -114,7 +115,7 @@ class UserAction(JsonSerializerMixin, SurrogatePK, Model):
     created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
     start_date = Column(db.DateTime, nullable=False)
     end_date = Column(db.DateTime, nullable=False)
-    
+
     last_succeed = Column(db.DateTime)
     nb_succeed = Column(db.Integer, nullable=False, default=0)
 
@@ -124,13 +125,16 @@ class UserAction(JsonSerializerMixin, SurrogatePK, Model):
         self.start_date = start_date
         self.end_date = end_date
 
-    def has_been_realised_today():
+    def has_been_realised_today(self):
         if self.last_succeed is None:
             return False
-        now = dt.utcnow()
+        now = dt.utcnow(self)
         return self.last_succeed.year == now.year and self.last_succeed.day == now.day
+    
+    def have_to_do_it(self, date):
+        return self.start_date <= date and self.end_date >= date
 
-    def realised():
+    def realised(self):
         self.update(last_succeed = dt.utcnow(), nb_succeed=self.nb_succeed + 1)
 
 
@@ -138,10 +142,10 @@ class Followings(JsonSerializerMixin, SurrogatePK, Model):
     __tablename__ = 'followings'
     followed_user_id = reference_col('users', nullable=False)
     followed_users = relationship('User', foreign_keys=[followed_user_id], backref='following_users')
-    
+
     following_user_id = reference_col('users', nullable=False)
     following_users = relationship('User', foreign_keys=[following_user_id], backref='followed_users')
-    
+
     created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
 
     def __init__(self, followed_user_id, following_user_id):
@@ -156,7 +160,7 @@ class Ressource(JsonSerializerMixin, SurrogatePK, Model):
 
     action_id = reference_col('actions', nullable=False)
     action = relationship('Action', backref='ressources')
-    
+
     url = Column(db.Text, nullable=True)
     content = Column(db.Text, nullable=True)
 

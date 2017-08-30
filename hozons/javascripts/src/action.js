@@ -1,11 +1,14 @@
 require('./home')
 const moment = require('moment')
 require('moment/locale/fr');
+const flatpickr = require("flatpickr");
+
 import * as SimpleDom from 'simpledom-component';
 import { withVeilAndMessages } from './veil';
-require('./css/avatar.less')
-import { CreateAction } from './actions/create_action/step1'
-import { ParticipantTab } from './actions/participants'
+require('./css/avatar.less');
+import { CreateAction } from './actions/create_action/step1';
+import { ParticipantTab } from './actions/participants';
+import {LookForAction as LookForActionGrid} from './actions/lookForActions';
 
 class SlideActionInfo extends SimpleDom.Component {
 	eventsToSubscribe() {
@@ -51,16 +54,13 @@ class SlideActionInfo extends SimpleDom.Component {
 				<div class="col s12">
 					<ul class="tabs action-infos">
 						<li class=" tab col s4">
-							<a //class={this.state.tabActive === 'participants' ? 'active': undefined}
-								href="#participants-tab">participants</a>
+							<a href="#participants-tab">participants</a>
 						</li>
 						<li class=" tab col s4">
-							<a //class={this.state.tabActive === 'comments' ? 'active': undefined}
-								href="#commentaires-tab">commentaires</a>
+							<a href="#commentaires-tab">commentaires</a>
 						</li>
 						<li class=" tab col s4">
-							<a //class={this.state.tabActive === 'ressources' ? 'active': undefined} 
-								href="#ressources-tab">ressources</a>
+							<a href="#ressources-tab">ressources</a>
 						</li>
 					</ul>
 				</div>
@@ -182,13 +182,11 @@ class ActionsList extends SimpleDom.Component {
 
 	render() {
 		return <div id="actions-card">
-			{this.partitionList(this.state.selectedActions || [], 2).map(subactions =>
+			{this.partitionList(this.state.selectedActions || [], 3).map(subactions =>
 				<div class="row" style="margin-top: 50px !important">
 					{subactions.map(action =>
-						<div class="col s6">
-							<ActionCard
-								action={action}
-							/>
+						<div class="col s4">
+							<ActionCard action={action} />
 						</div>
 					)}
 				</div>
@@ -280,23 +278,39 @@ class App extends SimpleDom.Component {
 						</div>
 						<div id="actions" class="col s12">
 							<div class="row">
-								<div id="main-picker-container" class="col s4">
-									<input id="main-picker" class="datepicker" />
+								<div class="col s4">
+									<div style="position: fixed; margin-top: -50px;">
+										<input style="visibility: hidden;" class="flatpicker" type="date"/>
+									</div>
 								</div>
 								<div class="col s8">
-									<ActionsList />
+									{SimpleDom.predicate(!this.state.selectedActions.length,
+										() => {
+											return (
+												<section style="margin-top: 50px;" class="empty">
+													<div class="empty-icon">
+														<i class="lnr lnr-user fa-3x"></i>
+													</div>
+													<h4 class="empty-title">Vous n'avez pas encore d'action en cours !</h4>
+													<p class="empty-subtitle">Rechercher une action qui vous correspond !</p>
+												</section>
+											);
+										}, 
+										() => <ActionsList />
+
+									)}
 								</div>
 							</div>
 						</div>
 						<div id="lookfor" class="col s12">
-							<LookForAction />
+							<LookForActionGrid />
 						</div>
 						<div id="create" class="col s12" style="padding: 0 25%">
 							<CreateAction />
 						</div>
 					</div>
 				</div>
-			</div>
+			</div>	
 		)
 	}
 }
@@ -316,23 +330,9 @@ withVeilAndMessages(
 		);
 		SimpleDom.renderToDom('container', <App />, store);
 		// jquery functions
-		$('#begin-action-picker.datepicker').pickadate();
 
-		$('#main-picker.datepicker').pickadate({
-			klass: {
-				picker: "picker picker--opened",
-				opened: "__always-open__"
-			},
-			onSet: function () {
-				store.updateState(
-					{
-						selectedDate: this.get('select', 'yyyy-mm-dd'),
-						selectedActions: store.state.actions.filter(action => (action.dates || []).includes(this.get('select', 'yyyy-mm-dd')))
-
-					}, 'ACTIONS_LIST_TO_UPDATE');
-			}
-		});
 		$('.tabs').tabs();
+		flatpickr('.flatpicker', {inline: true});
 	});
 
 

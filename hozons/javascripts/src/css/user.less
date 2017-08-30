@@ -314,3 +314,31 @@ h6.create-action-title {
         opacity: 0.3;
     }
 }
+
+.action-with-hover {
+
+    .action-hover {
+        display: flex;
+        opacity: 0;
+        background-color: black;
+        height: 0%;
+        margin-top: -15px;
+        align-items: center;
+        justify-content: center;
+        transition: all;    
+        
+        ul {
+            display: inline-flex;
+
+            li {    
+                padding-right: 10px;
+            }
+        }
+    }
+    &:hover .action-hover {
+        height: 118%;   
+        opacity: 0.5;
+        transition-duration: 0.6s;
+        transition-timing-function: ease-in;
+    }
+}   

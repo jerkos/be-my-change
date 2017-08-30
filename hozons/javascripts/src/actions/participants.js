@@ -5,11 +5,10 @@ require('../css/empty.less');
 class Participant extends ComposedComponent {
     render() {
         return (
-            <a onclick={() => {console.log('click event'); 
-                this.updateCState({ selectedUser: this.props.user }, 'UPDATE_USER_PANEL')}}
+            <a onclick={() => this.updateCState({ selectedUser: this.props.user }, 'UPDATE_USER_PANEL')}
                 style="pointer: cursor" class="collection-item">
                 <div class="avatar-spec avatar-spec-sm"
-                    style="color: white;background-color: #5764c6;"
+                    style="color: white; background-color: #5764c6;"
                     data-initial={this.props.user.username.slice(0, 2) || ''}
                 />
                 <strong style="padding-left: 20px;">{this.props.user.username}</strong>
@@ -99,14 +98,13 @@ export class ParticipantTab extends ParentComponent {
     }
 
     componentDidMount() {
-        console.log(this.searchInput);
         setTimeout(this.searchInput.focus(), 1000);
     }
 
     render() {
         return (
             <div>
-                <div class="row" >
+                <div class="row">
                     <div class='col s8 offset-s2'>
                         <nav class="search-nav">
                             <div class="nav-wrapper">
@@ -120,7 +118,7 @@ export class ParticipantTab extends ParentComponent {
                             </div>
                         </nav>
                     </div>
-                </div >
+                </div>
                 <div class="row">
                     <ParticipantList
                         parent={this}
