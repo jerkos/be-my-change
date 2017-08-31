@@ -131,22 +131,16 @@ def get_last_actions():
 def create_action():
     """create an base action"""
     data = request.get_json()
-    print(data);
-    # create action first
     title = data.get('title')
     description = data.get('description')
     kind = data.get('kind')
-    format = data.get('format')
-    Action.create(title=title, description=description)
+    duration = data.get('actionDuration')
+    start_date = data.get('startDate')
+    action_time = data.get('actionTime')
+    action_address = data.get('actionAddress')
 
-    # create associated user action
-    #start_date = data['start_date'] or abort(403)
-    #end_date = data['end_date'] or abort(403)
-    #userAction = UserAction(current_user.id, action.id, start_date, end_date)
-    #userAction.save()
-
-    return jsonify({}), 200
-    #return userAction.to_json(), 200
+    new_action = Action.create(title=title, description=description)
+    return Action.to_json(new_action, 200)
 
 
 @user.route('/inspire', methods=['GET'])
