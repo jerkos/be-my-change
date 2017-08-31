@@ -1,4 +1,5 @@
 const moment = require('moment')
+const flatpickr = require("flatpickr");
 require('moment/locale/fr');
 require('../../css/steps.less');
 require('../../css/tooltips.less');
@@ -34,21 +35,21 @@ class CreateActionStep1 extends ComposedComponent {
                     <p style="font-size: 1.2em;">Quelques mots pour décrire votre action ou évènement</p>
                     <div class="input-field col s12" style="margin-top: -10px">
                         <textarea class="materialize-textarea"
-                            onchange={e => this.updateCState({actionDescription: e.target.value})}
+                            onchange={e => this.updateCState({ actionDescription: e.target.value })}
                         >{this.cstate.actionDescription || 'Entrez une description innovante...'}</textarea>
                     </div>
                     {SimpleDom.predicate(
-                            !!this.cstate.errorDescription,
-                            () => <p class="red-text" style="margin-top: -15px">{this.cstate.errorDescription}</p>
+                        !!this.cstate.errorDescription,
+                        () => <p class="red-text" style="margin-top: -15px">{this.cstate.errorDescription}</p>
                     )}
                 </div>
                 <div class="row">
                     <p style="font-size: 1.2em;">Choisissez une image !
                         {SimpleDom.predicate(!!this.cstate.actionImageUrl,
-                            () => <img src={this.cstate.actionImageUrl} class="responsive-img"/>
+                            () => <img src={this.cstate.actionImageUrl} class="responsive-img" />
                         )}
                     </p>
-                   <div class="input-field col s12" style="margin-top: -10px">
+                    <div class="input-field col s12" style="margin-top: -10px">
                         <input
                             type="url"
                             placeholder="l'image de votre action !"
@@ -59,27 +60,27 @@ class CreateActionStep1 extends ComposedComponent {
                 </div>
                 <div class="row">
                     <div class="popover popover-right">
-                    <button class="right btn"
-                        onclick={e => {
-                            let hasError = false;
-                            let errors = {};
-                            if (! !!this.cstate.actionTitle) {
-                                hasError = true;
-                                errors = {...errors, errorTitle: 'Titre vide !'};
-                            }
-                            if (! !!this.cstate.actionDescription) {
-                                hasError = true;
-                                errors = {...errors, errorDescription: 'Description vide !'};
-                            }
-                            if (hasError) {
-                                this.updateCState({
-                                    errorDescription: errors.errorDescription,
-                                    errorTitle: errors.errorTitle
-                                }, 'STEP1_REFRESH')
-                            } else {
-                                this.updateCState({currStep: 2}, 'CHANGE_STATE');
-                            }
-                        }}>Passer à la suite</button>
+                        <button class="right btn"
+                            onclick={e => {
+                                let hasError = false;
+                                let errors = {};
+                                if (! !!this.cstate.actionTitle) {
+                                    hasError = true;
+                                    errors = { ...errors, errorTitle: 'Titre vide !' };
+                                }
+                                if (! !!this.cstate.actionDescription) {
+                                    hasError = true;
+                                    errors = { ...errors, errorDescription: 'Description vide !' };
+                                }
+                                if (hasError) {
+                                    this.updateCState({
+                                        errorDescription: errors.errorDescription,
+                                        errorTitle: errors.errorTitle
+                                    }, 'STEP1_REFRESH')
+                                } else {
+                                    this.updateCState({ currStep: 2 }, 'CHANGE_STATE');
+                                }
+                            }}>Passer à la suite</button>
                     </div>
                 </div>
             </div>
@@ -93,18 +94,24 @@ class CreateActionStep2 extends ComposedComponent {
         return ['STEP2_REFRESH'];
     }
 
+    handleActionTypeChange(event) {
+        console.log(event);
+        this.updateCState({ actionType: event.target.value });
+    }
     componentDidMount() {
         $('.action-type').material_select();
+        $('.action-type').on('change', this.handleActionTypeChange);
     }
 
     render() {
+        console.log(this.cstate)
         return (
             <div class="boxed-layout">
                 <h3>Dans le vif du sujet</h3>
                 <div class="row">
                     <p style="font-size: 1.2em">Quel est le type de votre nouvelle action ?</p>
                     <div class="input-field col s12" style="margin-top: -10px">
-                        <select class="action-type" onchange={e => this.updateCState({actionType: e.target.value})}>
+                        <select class="action-type">
                             <option selected={this.cstate.actionType === 'PERS' || undefined} value="PERS">Personnel</option>
                             <option selected={this.cstate.actionType === 'REL' || undefined} value="REL">Relationnel</option>
                             <option selected={this.cstate.actionType === 'ENV' || undefined} value="ENV">Environnemental</option>
@@ -116,12 +123,15 @@ class CreateActionStep2 extends ComposedComponent {
                     <div class="input-field col s12" style="margin-top: -10px">
                         <div class="switch">
                             <label>
-                            Non
+                                Non
                             <input type="checkbox"
-                                   selected={this.cstate.isPublic || false} 
-                                   onchange={e => this.updateCState({isPublic: !(this.cstate.isPublic || false)})}/>
-                            <span class="lever"></span>
-                            Oui
+                                    checked={(this.cstate.isPublic || false) ? true : undefined}
+                                    onchange={e => {
+                                        console.log('hello');
+                                        this.updateCState({ isPublic: !(this.cstate.isPublic || false) })
+                                    }} />
+                                <span class="lever"></span>
+                                Oui
                             </label>
                         </div>
                     </div>
@@ -129,7 +139,7 @@ class CreateActionStep2 extends ComposedComponent {
                 <div class="row" style="padding-top: 18px">
                     <p style="font-size: 1.2em">Voulez-vous indiquer une adresse ?</p>
                     <div class="input-field col s12" style="margin-top: -10px">
-                       <input
+                        <input
                             type="text"
                             placeholder="addresse de l'évènement"
                             value={this.cstate.actionAddress || ''}
@@ -140,7 +150,7 @@ class CreateActionStep2 extends ComposedComponent {
                 <div class="row">
                     <p style="font-size: 1.2em">une heure ?</p>
                     <div class="input-field col s12" style="margin-top: -10px">
-                       <input
+                        <input
                             type="time"
                             value={this.cstate.actionTime || ''}
                             onchange={e => this.updateCState({ actionTime: e.target.value })}
@@ -148,13 +158,13 @@ class CreateActionStep2 extends ComposedComponent {
                     </div>
                 </div>
                 <div class="row">
-                    <button class="left btn"    
+                    <button class="left btn"
                         onclick={e => {
-                            this.updateCState({currStep: 1}, 'CHANGE_STATE');
+                            this.updateCState({ currStep: 1 }, 'CHANGE_STATE');
                         }}>Retour en arrière</button>
                     <button class="right btn"
                         onclick={e => {
-                            this.updateCState({currStep: 3}, 'CHANGE_STATE');
+                            this.updateCState({ currStep: 3 }, 'CHANGE_STATE');
                         }}>Passer à la fin</button>
                 </div>
             </div>
@@ -163,14 +173,48 @@ class CreateActionStep2 extends ComposedComponent {
 }
 
 
-class CreateActionStep3 extends SimpleDom.Component {
+class CreateActionStep3 extends ComposedComponent {
+    eventsToSubscribe() {
+        return ['STEP3_REFRESH'];
+    }
+
+    componentDidMount() {
+        flatpickr('.flatpicker-starter');        
+    }
+
     render() {
-        <div class="boxed-layout">
-            <div class="row">
-                <button class="center">Créer</button>
+        return (
+            <div class="boxed-layout">
+                <div class="row">
+                    <p>Combien de temps durera votre action (récurrence quotidienne ?):
+                        <span style="padding-left: 10px">
+                            <em>{`${this.cstate.actionDuration} jours`}</em>
+                        </span>
+                    </p>
+                    <p class="range-field">
+                        <input type="range" 
+                         value={this.cstate.actionDuration || 21}
+                         onchange={e => this.updateCState({actionDuration: e.target.value}, 'STEP3_REFRESH')} min="0" max="30" 
+                        />
+                    </p>
+                </div>
+                <div class="row">
+                    <p> Quand souhaitez-vous commencer votre action ?</p>
+                    <input type="date" class="flatpicker-starter" onchange={e => this.updateCState({startDate: e.target.value})}/>
+                </div>
+                <div class="row">
+                    <button class="left btn"
+                        onclick={e => {
+                            this.updateCState({ currStep: 2 }, 'CHANGE_STATE');
+                        }}>Retour en arrière</button>
+                    <button class="right btn"
+                        onclick={e => {
+                            console.log('action to be created');
+                        }}>Créer la nouvelle action</button>
+                </div>
             </div>
-        </div>
-    }   
+        );
+    }
 }
 
 class Step extends SimpleDom.Component {
@@ -198,7 +242,7 @@ export class CreateAction extends ParentComponent {
     constructor(props, store) {
         super(props, store);
     }
-    
+
     eventsToSubscribe() {
         return ['CHANGE_STATE'];
     }
@@ -208,19 +252,19 @@ export class CreateAction extends ParentComponent {
         switch (this.cstate.currStep) {
             case 1:
             case undefined:
-                stepDiv = <CreateActionStep1 parent={this}/>
-                break;  
+                stepDiv = <CreateActionStep1 parent={this} />
+                break;
             case 2:
-                stepDiv = <CreateActionStep2 parent={this}/>
+                stepDiv = <CreateActionStep2 parent={this} />
                 break;
             case 3:
-                stepDiv = <CreateActionStep3 parent={this}/>
+                stepDiv = <CreateActionStep3 parent={this} />
                 break;
         }
         return (
             <div>
                 <div class="row">
-                    <Step currStep={this.cstate.currStep || 1}/>
+                    <Step currStep={this.cstate.currStep || 1} />
                 </div>
                 <div class="row">
                     <div class="col s8">
