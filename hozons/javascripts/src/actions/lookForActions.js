@@ -112,8 +112,11 @@ export class LookForAction extends SimpleDom.Component {
                                                 .filter(action => action.kind === category) || [])
                                                 .map(action => {
                                                     return (
-                                                        <div class="column col-3" style="background-image: url('http://via.placeholder.com/400x200')">
-                                                            <div style="opacity: 0.5; background-color: black; height: 118%;">
+                                                        <div class="column col-3" style={
+                                                            `background-image: url('${action.image_url || 'http://via.placeholder.com/400x200'}');
+                                                             background-size: cover; background-repeat: no-repeat; background-position: center center;
+                                                        `}>
+                                                            <div style="opacity: 0.0; background-color: black; height: 118%; margin-top: -16px">
                                                                 <div class="fixed-action-btn horizontal click-to-toggle">
                                                                     <a class="btn-floating btn-large red">
                                                                         <i class="material-icons">menu</i>

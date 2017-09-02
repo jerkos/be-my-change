@@ -130,17 +130,25 @@ def get_last_actions():
 @csrf_protect.exempt
 def create_action():
     """create an base action"""
-    data = request.get_json()
-    title = data.get('title')
-    description = data.get('description')
-    kind = data.get('kind')
-    duration = data.get('actionDuration')
+    data = request.get_json(force=True)
+    print(request.json)
+    print(data)
     start_date = data.get('startDate')
-    action_time = data.get('actionTime')
-    action_address = data.get('actionAddress')
+    duration = int(data.get('actionDuration'))
 
-    new_action = Action.create(title=title, description=description)
-    return Action.to_json(new_action, 200)
+    new_action = Action.create(
+        title=data.get('actionTitle'), 
+        description=data.get('actionDescription'),
+        image_url=data.get('actionImageUrl'),
+        initial_nb_days=duration,
+        kind=data.get('kind', 'PERS'),
+        is_personal_action=(not data.get('isPublic')),
+        public=data.get('isPublic'),
+        created_at = dt.datetime.utcnow(),
+        start_date=dt.datetime.strptime(start_date, '%Y-%m-%d'),
+        end_date = dt.datetime.strptime(start_date, '%Y-%m-%d') + dt.timedelta(days=duration), 
+        creator_user_id=current_user.id)
+    return Action.to_json(new_action, exclude={'password'}), 200
 
 
 @user.route('/inspire', methods=['GET'])

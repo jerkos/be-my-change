@@ -36,7 +36,8 @@ class CreateActionStep1 extends ComposedComponent {
                     <div class="input-field col s12" style="margin-top: -10px">
                         <textarea class="materialize-textarea"
                             onchange={e => this.updateCState({ actionDescription: e.target.value })}
-                        >{this.cstate.actionDescription || 'Entrez une description innovante...'}</textarea>
+                            placecholder={!!this.cstate.actionDescription ? undefined : "Entrez une description innovante..."}
+                        >{this.cstate.actionDescription}</textarea>
                     </div>
                     {SimpleDom.predicate(
                         !!this.cstate.errorDescription,
@@ -209,6 +210,13 @@ class CreateActionStep3 extends ComposedComponent {
                         }}>Retour en arrière</button>
                     <button class="right btn"
                         onclick={e => {
+                            withVeilAndMessages(
+                                window.fetchJsonData('/users/actions/create',
+                                {
+                                    method: 'POST',
+                                    body: JSON.stringify(this.cstate)
+                                }).then(console.log('action properly saved !'))
+                            )
                             console.log('action to be created');
                         }}>Créer la nouvelle action</button>
                 </div>

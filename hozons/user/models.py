@@ -79,6 +79,8 @@ class Action(JsonSerializerMixin, SurrogatePK, Model):
 
     title = Column(db.String(200), nullable=False)
     description = Column(db.Text, nullable=False)
+    image_url = Column(db.Text, nullable=True)
+    
     initial_nb_days = Column(db.Integer, default=1)
 
     kind = Column(db.Text, nullable=True, default='PERS')
@@ -91,9 +93,6 @@ class Action(JsonSerializerMixin, SurrogatePK, Model):
 
     creator_user_id = reference_col('users', nullable=False)
     creator = relationship('models.User', backref='created_actions')
-
-    def __init__(self, creator_id, title, description, initial_nb_days=1):
-        db.Model.__init__(self, creator_id = creator_id, title=title, description=description, initial_nb_days=1)
 
     def __repr__(self):
         return '<Action {title}>'.format(title=self.title)

@@ -321,6 +321,7 @@ withVeilAndMessages(
 	Promise.all([fetchJsonData('/users/actions/get'), fetchJsonData('/users/actions/last-actions')]),
 	true)
 	.then(([actions, lastActions]) => {
+		console.log(actions);
 		store.updateState(
 			{
 				actions,
