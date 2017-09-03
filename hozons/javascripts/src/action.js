@@ -318,7 +318,7 @@ class App extends SimpleDom.Component {
 
 const store = new SimpleDom.Store();
 withVeilAndMessages(
-	Promise.all([fetchJsonData('/users/actions/get'), fetchJsonData('/users/actions/last-actions')]),
+	Promise.all([fetchJsonData(`/users/actions/get`), fetchJsonData('/users/actions/last-actions')]),
 	true)
 	.then(([actions, lastActions]) => {
 		console.log(actions);
@@ -333,7 +333,18 @@ withVeilAndMessages(
 		// jquery functions
 
 		$('.tabs').tabs();
-		flatpickr('.flatpicker', {inline: true});
+		flatpickr('.flatpicker', 
+			{
+				inline: true, 
+				onChange: (_, date, inst) => {
+					console.log(date);
+					withVeilAndMessages(
+						fetchJsonData(`/users/actions/get?date=${moment(date).format('YYYY-MM-DD')}`),
+						true
+					).then(actions => store.updateState({actions}, 'ACTIONS_LIST_TO_UPDATE'))
+				}
+			}
+		);
 	});
 
 

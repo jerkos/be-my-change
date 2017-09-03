@@ -45,9 +45,13 @@ def actions():
 @login_required
 def get_user_actions():
     """ get current selected current actions """
+    requested_date = request.args.get('date')
+    if requested_date is None:
+        requested_date = dt.datetime.utcnow().strftime('%Y-%m-%d')
+    else:
+        requested_date = dt.datetime.strptime(requested_date, '%Y-%m-%d')
     user_actions = current_user.user_actions
-    curr_date = dt.datetime.utcnow()
-    valid_actions = [ua for ua in user_actions if ua.have_to_do_it(curr_date)]
+    valid_actions = [ua for ua in user_actions if ua.have_to_do_it(requested_date)]
     print(f'valid actions for user id {current_user.id}: \n {str(valid_actions)}')
     return UserAction.arr_to_json(valid_actions), 200
 
@@ -141,7 +145,7 @@ def create_action():
         description=data.get('actionDescription'),
         image_url=data.get('actionImageUrl'),
         initial_nb_days=duration,
-        kind=data.get('kind', 'PERS'),
+        kind=data.get('actionType', 'PERS'),
         is_personal_action=(not data.get('isPublic')),
         public=data.get('isPublic'),
         created_at = dt.datetime.utcnow(),
