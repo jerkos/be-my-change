@@ -6,8 +6,10 @@ const flatpickr = require("flatpickr");
 import * as SimpleDom from 'simpledom-component';
 import { withVeilAndMessages } from './veil';
 require('./css/avatar.less');
+
 import { CreateAction } from './actions/create_action/step1';
 import { ParticipantTab } from './actions/participants';
+import { CommentariesTab } from './actions/commentaries';
 import {LookForAction as LookForActionGrid} from './actions/lookForActions';
 
 class SlideActionInfo extends SimpleDom.Component {
@@ -17,14 +19,19 @@ class SlideActionInfo extends SimpleDom.Component {
 
 	componentDidMount() {
 		if (!this.state.users) {
-			console.log('fetching data');
 			withVeilAndMessages(
 				fetchJsonData(`/users/actions/${this.props.action.id}/participants`),
 				true
-			).then(users => {
-				//$('ul.tabs.action-infos').tabs();
-				console.log(users)
-				this.store.updateState({ users, tabActive: 'participants-tab' }, 'SLIDE_TO_UPDATE');
+			).then(({users, total_pages, current_page}) => {
+				this.store.updateState(
+					{ 
+						users, 
+						tabActive: 'participants-tab',
+						total_pages,
+						current_page 
+					}, 
+					'SLIDE_TO_UPDATE'
+				);
 			});
 		} else {
 			$('ul.tabs.action-infos')
@@ -65,9 +72,19 @@ class SlideActionInfo extends SimpleDom.Component {
 					</ul>
 				</div>
 				<div id="participants-tab" class="col s12">
-					<ParticipantTab users={this.state.users || []} />
+					<ParticipantTab 
+						users={this.state.users || []} 
+						action={this.props.action}
+						total_pages={this.state.total_pages}
+						current_page={this.state.current_page}
+					/>
 				</div>
-				<div id="commentaires-tab" class="col s12">Hello world</div>
+				<div id="commentaires-tab" class="col s12">
+					<CommentariesTab
+						action={this.props.action}
+						commentaries={this.props.commentaries || []}
+					/>
+				</div>
 				<div id="ressources-tab" class="col s12">A lot of ressources goes here</div>
 			</div>
 		</div>
@@ -76,43 +93,49 @@ class SlideActionInfo extends SimpleDom.Component {
 
 
 class ActionCard extends SimpleDom.Component {
+
+	constructor(props, store) {
+		super(props, store);
+		this.userAction = this.props.userAction;
+	}
+
 	render() {
 		let self = this;
 		return (
 			<div class="card hoverable">
 				<div class="card-image waves-effect waves-block waves-light">
-					<img class="activator" src="http://lorempixel.com/400/200/nature" />
+					<img class="activator" src={this.userAction.action.image_url} />
 				</div>
 				<div class="card-content">
 					<span class="card-title activator grey-text text-darken-4">
-						{this.props.action.title}
+						{this.userAction.action.title}
 						<span class="badge small green white-text"
-							style="border-radius: 5px; position: absolute">env</span>
+							style="border-radius: 5px; position: absolute"></span>
 						<i class="material-icons right">more_vert</i>
 					</span>
 					<div>
 						<div>
 							<div class="chip" style="font-size: 10px">
 								<i class="material-icons tiny">alarm</i>
-								{moment(this.props.action.dates[0]).fromNow(true)}
+								{moment(this.userAction.start_date).fromNow(true)}
 							</div>
 							<div class="chip" style="font-size: 10px">
 								<i class="tiny material-icons">alarm_off</i>
-								{moment(this.props.action.dates[0]).from(moment(this.props.action.end_date), true)}
+								{moment(this.userAction.start_date).from(moment(this.userAction.end_date), true)}
 							</div>
 							<div class="chip" style="font-size: 10px">
 								<i class="tiny material-icons">check</i>
-								{this.props.action.nb_success}
+								{this.userAction.nb_success}
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="card-reveal">
 					<span class="card-title button-collapse">
-						{this.props.action.title}
+						{this.userAction.action.title}
 						<i class="material-icons right">close</i>
 					</span>
-					<p>{self.props.action.description}</p>
+					<p>{this.userAction.action.description}</p>
 					<p class="right-align">
 						<a class="btn-floating waves-effect waves-light purple lighten-2"
 							onclick={function (e) {
@@ -136,7 +159,7 @@ class ActionCard extends SimpleDom.Component {
 										SimpleDom.renderToDom(
 											'slide-out-actions',
 											<SlideActionInfo
-												action={self.props.action}
+												action={self.userAction.action}
 												close={() => $(e.target).sideNav('destroy')}
 											/>,
 											slideStore
@@ -186,7 +209,7 @@ class ActionsList extends SimpleDom.Component {
 				<div class="row" style="margin-top: 50px !important">
 					{subactions.map(action =>
 						<div class="col s4">
-							<ActionCard action={action} />
+							<ActionCard userAction={action} />
 						</div>
 					)}
 				</div>
@@ -315,6 +338,7 @@ class App extends SimpleDom.Component {
 	}
 }
 
+$(document).ready(function() {
 
 const store = new SimpleDom.Store();
 withVeilAndMessages(
@@ -341,11 +365,12 @@ withVeilAndMessages(
 					withVeilAndMessages(
 						fetchJsonData(`/users/actions/get?date=${moment(date).format('YYYY-MM-DD')}`),
 						true
-					).then(actions => store.updateState({actions}, 'ACTIONS_LIST_TO_UPDATE'))
+					).then(actions => store.updateState({actions, selectedActions: actions}, 'ACTIONS_LIST_TO_UPDATE'))
 				}
 			}
 		);
 	});
+});
 
 
 

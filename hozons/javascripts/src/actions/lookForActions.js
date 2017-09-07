@@ -4,7 +4,9 @@ require('../css/tooltips.less');
 require('../css/avatar.less');
 const moment = require('moment');
 require('moment/locale/fr');
-var gravatar = require('gravatar');
+const gravatar = require('gravatar');
+import { withVeilAndMessages } from '../veil';
+
 
 
 class InviteModalContent extends SimpleDom.Component {
@@ -43,6 +45,7 @@ class ParticipateModalContent extends SimpleDom.Component {
                 <div class="modal-footer">
                     <button class="modal-action modal-close waves-effect waves-green btn-flat"
                         onclick={()=> {
+                            console.log("hello there");
                             withVeilAndMessages(
                                 fetchJsonData(`/users/actions/participate/${this.state.participateAction.id}`),
                                 true
@@ -52,7 +55,7 @@ class ParticipateModalContent extends SimpleDom.Component {
                                     .find(actionId => actionId === userAction.action.id);
                                 if (! tryFindAction) {
                                     this.state.actions.push(userAction);
-                                    this.updateState({actions}, 'ACTIONS_LIST_TO_UPDATE');
+                                    this.store.updateState({actions}, 'ACTIONS_LIST_TO_UPDATE');
                                 }
                             })
                         }}

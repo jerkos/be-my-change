@@ -23,17 +23,20 @@ PER_PAGE = 7
 
 def paginate(query, page_nb, total_count, clazz, exclude=frozenset()):
     """ utility query for pagination """
-    nb_pages = (total_count / PER_PAGE)
+    logging.debug(page_nb, total_count, clazz.__tablename__, sep="; ")
+    nb_pages = (total_count // PER_PAGE)
     if total_count % PER_PAGE != 0:
         nb_pages += 1
 
-    count = PER_PAGE * (page - 1) + 1
-    result = query.offset(count).limit(count + 1 + PER_PAGE).all()
-    response = {'total_pages': total_pages,
+    count = PER_PAGE * (page_nb - 1)
+    logging.debug(count, count + PER_PAGE, sep="; ")
+    result = query.offset(count).limit(count + PER_PAGE).all()
+    response = {'total_pages': nb_pages,
                 'current_page': page_nb,
                 clazz.__tablename__: clazz.arr_to_dict(result, exclude=exclude)
     }
     return response
+
 
 @user.route('/actions')
 @login_required
@@ -41,21 +44,34 @@ def actions():
     """ List actions. """
     return render_template('users/actions.html')
 
+
 @user.route('/actions/get')
 @login_required
 def get_user_actions():
     """ get current selected current actions """
     requested_date = request.args.get('date')
     if requested_date is None:
-        requested_date = dt.datetime.utcnow().strftime('%Y-%m-%d')
+        requested_date = dt.datetime.utcnow()
     else:
         requested_date = dt.datetime.strptime(requested_date, '%Y-%m-%d')
-    user_actions = current_user.user_actions
-    valid_actions = [ua for ua in user_actions if ua.have_to_do_it(requested_date)]
-    print(f'valid actions for user id {current_user.id}: \n {str(valid_actions)}')
-    return UserAction.arr_to_json(valid_actions), 200
+   
+    return UserAction.arr_to_json(
+                current_user.user_actions(requested_date), 
+                exclude={'password'}
+            ), 200
 
-@user.route('/actions/participate/<int:action_id>', methods=['POST'])
+@user.route('/actions/get/<int:user_id>/<int:action_id>')
+@login_required
+def find_user_action_for_user(user_id, action_id):
+    return UserAction.to_json((UserAction.query
+        .filter(
+            UserAction.user_id == user_id, 
+            UserAction.action_id == action_id)
+        .order_by(desc(UserAction.end_date))
+        .one()
+    ), exclude={'password'}), 200
+
+@user.route('/actions/participate/<int:action_id>')
 @login_required
 def participate_to_action(action_id):
     action = Action.get_by_id(action_id)
@@ -65,7 +81,7 @@ def participate_to_action(action_id):
     start_date = request.args.get('start_date', dt.datetime.now())
     nb_days = request.args.get('nb_days', action.initial_nb_days)
     user_action = UserAction(
-        current_user.user_id, 
+        current_user.id, 
         action_id, 
         start_date, 
         start_date + dt.timedelta(days=nb_days)
@@ -80,7 +96,7 @@ def get_participants_for_action(action_id):
     """get participants of action"""
     page = request.args.get('page', 1)
     per_page = request.args.get('per_page', PER_PAGE)
-    total_count = (User.query(func.count(User.id))
+    total_count = (db.session.query(func.count(User.id))
                      .join(UserAction)
                      .filter(UserAction.action_id == action_id)
                      .scalar())
@@ -89,6 +105,7 @@ def get_participants_for_action(action_id):
 
     query = (User.query
         .join(UserAction)
+        .join(Action)
         .filter(UserAction.action_id == action_id))
 
     response = paginate(query, page, total_count, User, exclude={'password'})
@@ -120,11 +137,10 @@ def get_last_actions():
     """
     actions = Action.query.order_by(desc(Action.created_at)).limit(5).all();
 
-    last_actions = Action.query.order_by(desc(Action.created_at)).limit(5).subquery();
-    users = db.session.query(User).join(UserAction).join(last_actions, last_actions.c.id == UserAction.action_id).limit(5).all()
-    #for r in result: print(r)
+    #last_actions = Action.query.order_by(desc(Action.created_at)).limit(5).subquery();
+    #users = db.session.query(User).join(UserAction).join(last_actions, last_actions.c.id == UserAction.action_id).limit(5).all()
     return Action.arr_to_json(
-        actions,#Action.query.order_by(desc(Action.created_at)).limit(5).all(),
+        actions,
         exclude={'password'}
     ), 200
 

@@ -1,11 +1,50 @@
 import * as SimpleDom from 'simpledom-component';
 import { ComposedComponent, ParentComponent } from '../composedComponent'
+import { withVeilAndMessages } from '../veil';
 require('../css/empty.less');
+
+
+class Pagination extends SimpleDom.Component {
+    constructor(props, store) {
+        super(props, store);
+        console.log('current_page:' + this.props.current_page);
+        this.current_page = this.props.current_page || 1;
+    }
+    render() {
+        return (
+            <ul class="pagination">
+                <li class={this.current_page === 1 ? "disabled": "waves-effect"}>
+                    <a href="#!"><i class="material-icons">chevron_left</i></a>
+                </li>
+                {[...Array(this.props.total_pages).keys()].map(number => {
+                    return (
+                        <li class={this.current_page === (number + 1) ? "active": "waves-effect"}>
+                            <a href={this.current_page === (number + 1) ? '#': this.props.baseUrl + (number + 1)}>
+                                {number + 1}
+                            </a>
+                        </li>
+                    );
+                })}
+                <li class={this.current_page === this.props.total_pages ? "disabled": "waves-effect"}>
+                    <a href="#!"><i class="material-icons">chevron_right</i></a>
+                </li>
+            </ul>
+        );
+    }
+ }
+
 
 class Participant extends ComposedComponent {
     render() {
         return (
-            <a onclick={() => this.updateCState({ selectedUser: this.props.user }, 'UPDATE_USER_PANEL')}
+            <a onclick={() => {
+                    withVeilAndMessages(
+                        fetchJsonData(`/users/actions/get/${this.props.user.id}/${this.cstate.action.id}`),
+                        true
+                    ).then(userAction =>
+                        this.updateCState({ selectedUser: this.props.user, selectedUserAction: userAction }, 'UPDATE_USER_PANEL')
+                    )
+                }}
                 style="pointer: cursor" class="collection-item">
                 <div class="avatar-spec avatar-spec-sm"
                     style="color: white; background-color: #5764c6;"
@@ -26,6 +65,11 @@ class ParticipantList extends ComposedComponent {
                         <Participant parent={this.props.parent} user={user} />
                     )}
                 </ul>
+                <Pagination
+                    total_pages={this.cstate.total_pages}
+                    current_page={this.cstate.current_page}
+                    baseUrl={`/users/actions/${this.cstate.action.id}/participants?page=`}
+                />
             </div>
         );
     }
@@ -41,7 +85,7 @@ class InformationPane extends ComposedComponent {
         return (
             <div class={`col s${this.props.col || 6}`}>
                 {SimpleDom.predicate(this.cstate.selectedUser, () => {
-                    const userAction = this.cstate.selectedUser.user_actions.find(uaction => uaction.id === uaction.id);
+                    const userAction = this.cstate.selectedUserAction;
                     return (
                         <div>
                             <h1>{this.cstate.selectedUser.username}</h1>
@@ -93,7 +137,12 @@ class InformationPane extends ComposedComponent {
 export class ParticipantTab extends ParentComponent {
     constructor(props, store) {
         super(props, store);
-        this.cstate = { users: this.props.users };
+        this.cstate = { 
+            users: this.props.users, 
+            action: this.props.action, 
+            total_pages: this.props.total_pages,
+            current_page: this.props.current_page
+        };
         console.log(this.cstate);
     }
 

@@ -71,7 +71,13 @@ class User(JsonSerializerMixin, UserMixin, SurrogatePK, Model):
     def __repr__(self):
         """Represent instance as a unique string."""
         return '<User({username!r})>'.format(username=self.username)
-
+    
+    def user_actions(self, requested_date):
+        data = UserAction.query.filter(
+            UserAction.start_date <= requested_date,
+            UserAction.end_date >= requested_date).join(Action).all()
+        return data
+           
 
 class Action(JsonSerializerMixin, SurrogatePK, Model):
     __tablename__ = 'actions'
@@ -92,7 +98,7 @@ class Action(JsonSerializerMixin, SurrogatePK, Model):
     end_date = Column(db.DateTime)
 
     creator_user_id = reference_col('users', nullable=False)
-    creator = relationship('models.User', backref='created_actions')
+    creator = relationship('models.User') #, backref='created_actions')
 
     def __repr__(self):
         return '<Action {title}>'.format(title=self.title)
@@ -106,16 +112,16 @@ class UserAction(JsonSerializerMixin, SurrogatePK, Model):
     RELATIONSHIPS_TO_DICT = True
 
     user_id = reference_col('users', nullable=False)
-    user = relationship('models.User', backref='user_actions', lazy='joined')
+    user = relationship('models.User')
 
     action_id = reference_col('actions', nullable=False)
-    #action = relationship('Action', backref='user_actions', uselist=True, lazy='dynamic')
+    action = relationship('models.Action')
 
     created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
     start_date = Column(db.DateTime, nullable=False)
     end_date = Column(db.DateTime, nullable=False)
 
-    last_succeed = Column(db.DateTime)
+    last_succeed = Column(db.DateTime, nullable=True)
     nb_succeed = Column(db.Integer, nullable=False, default=0)
 
     def __init__(self, user_id, action_id, start_date, end_date):
@@ -131,7 +137,9 @@ class UserAction(JsonSerializerMixin, SurrogatePK, Model):
         return self.last_succeed.year == now.year and self.last_succeed.day == now.day
     
     def have_to_do_it(self, date):
-        return self.start_date <= date and self.end_date >= date
+        if not isinstance(date, dt.datetime):
+            raise ValueError('date not an instance of datetime')
+        return self.start_date.date() <= date.date() and self.end_date.date() >= date.date()
 
     def realised(self):
         self.update(last_succeed = dt.utcnow(), nb_succeed=self.nb_succeed + 1)
@@ -168,3 +176,17 @@ class Ressource(JsonSerializerMixin, SurrogatePK, Model):
         self.action_id = action_id
         self.content = content
         self.url = url
+
+
+class Commentary(JsonSerializerMixin, SurrogatePK, Model):
+    __tablename__ = 'commentaries'
+
+    title = Column(db.Text, nullable=True)
+    content = Column(db.Text, nullable=False)
+    created_at = Column(db.DateTime, default=dt.datetime.utcnow())
+
+    user_id = reference_col('users', nullable=False)
+    user = relationship('User')
+
+    action_id = reference_col('actions', nullable=False)
+    action = relationship('Action')

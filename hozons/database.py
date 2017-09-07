@@ -116,17 +116,17 @@ class JsonSerializerMixin(object):
                                          for i in value]
         return res
 
-    def to_json(self, rel=None, exclude=None):
+    def to_json(self, rel=None, backref=None, exclude=None):
         """convert model to json"""
         if rel is None:
             rel = self.RELATIONSHIPS_TO_DICT
-        return json.dumps(self.to_dict(rel, exclude=exclude))
+        return json.dumps(self.to_dict(rel, backref=backref, exclude=exclude))
 
     @staticmethod
-    def arr_to_dict(arr, rel=None, exclude=None):
-        return [obj.to_dict(rel=rel, exclude=exclude) for obj in arr]
+    def arr_to_dict(arr, rel=None, backref=None, exclude=None):
+        return [obj.to_dict(rel=rel, backref=backref, exclude=exclude) for obj in arr]
 
     @staticmethod
-    def arr_to_json(arr, rel=None, exclude=None):
+    def arr_to_json(arr, rel=None, backref=None, exclude=None):
         """convert an array to json"""
-        return json.dumps([obj.to_dict(rel=rel, exclude=exclude) for obj in arr])
+        return json.dumps([obj.to_dict(rel=rel, backref=backref, exclude=exclude) for obj in arr])
