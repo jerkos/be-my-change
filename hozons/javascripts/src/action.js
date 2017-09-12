@@ -20,15 +20,19 @@ class SlideActionInfo extends SimpleDom.Component {
 	componentDidMount() {
 		if (!this.state.users) {
 			withVeilAndMessages(
-				fetchJsonData(`/users/actions/${this.props.action.id}/participants`),
+				Promise.all([
+					fetchJsonData(`/users/actions/${this.props.action.id}/participants`),
+					fetchJsonData(`/users/actions/${this.props.action.id}/commentaries`)
+				]),
 				true
-			).then(({users, total_pages, current_page}) => {
+			).then(([{users, total_pages, current_page}, commentaries]) => {
 				this.store.updateState(
 					{ 
 						users, 
 						tabActive: 'participants-tab',
 						total_pages,
-						current_page 
+						current_page,
+						commentaries
 					}, 
 					'SLIDE_TO_UPDATE'
 				);
@@ -82,7 +86,7 @@ class SlideActionInfo extends SimpleDom.Component {
 				<div id="commentaires-tab" class="col s12">
 					<CommentariesTab
 						action={this.props.action}
-						commentaries={this.props.commentaries || []}
+						commentaries={this.state.commentaries || []}
 					/>
 				</div>
 				<div id="ressources-tab" class="col s12">A lot of ressources goes here</div>

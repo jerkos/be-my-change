@@ -16,6 +16,7 @@ from hozons.extensions import db
 from .models import Action
 from .models import User
 from .models import UserAction
+from .models import Commentary
 
 user = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
 
@@ -169,6 +170,26 @@ def create_action():
         end_date = dt.datetime.strptime(start_date, '%Y-%m-%d') + dt.timedelta(days=duration), 
         creator_user_id=current_user.id)
     return Action.to_json(new_action, exclude={'password'}), 200
+
+
+@user.route('/actions/<int:action_id>/commentaries', methods=['GET'])
+@login_required
+def get_commentaries(action_id):
+    commentaries = Commentary.query.filter(Commentary.action_id == action_id).all()
+    return Commentary.arr_to_json(commentaries, exclude={'password'}), 200
+
+
+@user.route('/actions/<int:action_id>/commentaries', methods=['POST'])
+@login_required
+@csrf_protect.exempt
+def save_commentary(action_id):
+    data = request.get_json(force=True)
+    commentary = Commentary.create(
+        content=data.get('content'), 
+        user_id=current_user.id,
+        action_id=data.get('action_id')
+    )
+    return Commentary.to_json(commentary, exclude={'password'}), 200
 
 
 @user.route('/inspire', methods=['GET'])

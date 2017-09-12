@@ -180,8 +180,8 @@ class Ressource(JsonSerializerMixin, SurrogatePK, Model):
 
 class Commentary(JsonSerializerMixin, SurrogatePK, Model):
     __tablename__ = 'commentaries'
+    RELATIONSHIPS_TO_DICT = True
 
-    title = Column(db.Text, nullable=True)
     content = Column(db.Text, nullable=False)
     created_at = Column(db.DateTime, default=dt.datetime.utcnow())
 
@@ -190,3 +190,9 @@ class Commentary(JsonSerializerMixin, SurrogatePK, Model):
 
     action_id = reference_col('actions', nullable=False)
     action = relationship('Action')
+
+    def __init__(self, content, user_id, action_id):
+        """Create instance."""
+        self.content = content
+        self.user_id = user_id
+        self.action_id = action_id
