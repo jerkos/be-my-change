@@ -3,6 +3,7 @@ import { ComposedComponent, ParentComponent } from '../composedComponent'
 import { withVeilAndMessages } from '../veil';
 const SimpleMDE = require('simplemde');
 require('../../node_modules/simplemde/dist/simplemde.min.css')
+const gravatar = require('gravatar');
 
 
 let node_id = 0;
@@ -24,8 +25,8 @@ class Commentary extends SimpleDom.Component {
         ++node_id;
         return (
             <li class="collection-item avatar">
-                <img src="images/yuna.jpg" alt="" class="circle" />
-                <span class="title">User email goes here</span>
+                <img class="circle" src={gravatar.url(this.props.commentary.user.email, { s: '30' })} />
+                <span class="title">{this.props.commentary.user.username}</span>
                 <p>
                     <div id={`node-${this.props.index}`}>
                     </div>
