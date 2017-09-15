@@ -41,11 +41,47 @@ def paginate(query, page_nb, total_count, clazz, exclude=frozenset()):
 
 @user.route('/actions')
 @login_required
-def actions():
+def actions_view():
     """ List actions. """
     return render_template('users/actions.html')
 
 
+@user.route('/actions/current')
+@login_required
+def current_actions_view():
+    return render_template('users/current_actions.html')
+
+
+@user.route('/actions/look-for-actions')
+@login_required
+def look_for_actions_view():
+    return render_template('users/look_for_actions.html')
+
+
+@user.route('/actions/create-action', methods=['GET'])
+@login_required
+def create_action_view():
+    return render_template('users/create_action.html')
+
+
+@user.route('/inspire', methods=['GET'])
+@login_required
+def inspire():
+    """List inspirations"""
+    return render_template('users/inspire.html')
+
+
+@user.route('/profile', methods=['GET'])
+@login_required
+def profile():
+    """profile page"""
+    name = request.args.get("name")
+    user = current_user if name is None else User.query.filter(User.username == name).first_or_404()
+    return render_template('users/profile.html', user=user)
+
+
+### services
+#--------------------------------------------------------------------------
 @user.route('/actions/get')
 @login_required
 def get_user_actions():
@@ -61,6 +97,7 @@ def get_user_actions():
                 exclude={'password'}
             ), 200
 
+
 @user.route('/actions/get/<int:user_id>/<int:action_id>')
 @login_required
 def find_user_action_for_user(user_id, action_id):
@@ -71,6 +108,7 @@ def find_user_action_for_user(user_id, action_id):
         .order_by(desc(UserAction.end_date))
         .one()
     ), exclude={'password'}), 200
+
 
 @user.route('/actions/participate/<int:action_id>')
 @login_required
@@ -190,19 +228,3 @@ def save_commentary(action_id):
         action_id=data.get('action_id')
     )
     return Commentary.to_json(commentary, exclude={'password'}), 200
-
-
-@user.route('/inspire', methods=['GET'])
-@login_required
-def inspire():
-    """List inspirations"""
-    return render_template('users/inspire.html')
-
-
-@user.route('/profile', methods=['GET'])
-@login_required
-def profile():
-    """profile page"""
-    name = request.args.get("name")
-    user = current_user if name is None else User.query.filter(User.username == name).first_or_404()
-    return render_template('users/profile.html', user=user)

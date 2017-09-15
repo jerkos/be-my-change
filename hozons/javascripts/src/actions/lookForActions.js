@@ -1,10 +1,13 @@
+require('../home');
 import * as SimpleDom from 'simpledom-component';
 require('../css/layout.less');
 require('../css/tooltips.less');
 require('../css/avatar.less');
+
 const moment = require('moment');
 require('moment/locale/fr');
 const gravatar = require('gravatar');
+
 import { withVeilAndMessages } from '../veil';
 
 
@@ -107,7 +110,7 @@ export class LookForAction extends SimpleDom.Component {
                 </div>
                 <div class="boxed-layout">
                     <div class="row">
-                        <div class="input-field col s8">
+                        <div class="input-field col s8 offset-s2">
                             <i class="material-icons prefix">search</i>
                             <input type="text" value="" ref={ref => this.inputRef = ref}
                                 onkeyup={event => {
@@ -124,13 +127,6 @@ export class LookForAction extends SimpleDom.Component {
                                             .then(data => this.store.updateState({ lastActions: data }, 'LOOK_FOR_UPDATE'))
                                     }, 500);
                                 }} />
-                        </div>
-                        <div class="input-field col s4">
-                            <select ref={ref => this.selectKind = ref}>
-                                <option value="PERS">Personnel</option>
-                                <option value="REL">Relationnel</option>
-                                <option value="ENV">Environnement</option>
-                            </select>
                         </div>
                     </div>
                     {
@@ -210,3 +206,38 @@ export class LookForAction extends SimpleDom.Component {
         );
     }
 }
+
+
+class App extends SimpleDom.Component {
+	render() {
+		console.log(this.state);
+		return (
+			<div id="top" class="action">
+				<h2 class="en-tete">J'agis</h2>
+				<div class="boxed-layout" style="margin-top: 50px;">
+					<div class="row">
+						<div id="lookfor" class="col s12">
+							<LookForAction />
+						</div>
+					</div>
+				</div>
+			</div>	
+		)
+	}
+}
+
+$(document).ready(function() {
+
+const store = new SimpleDom.Store();
+withVeilAndMessages(
+	fetchJsonData('/users/actions/last-actions'),
+	true)
+	.then(lastActions => {
+		store.updateState({lastActions});
+		SimpleDom.renderToDom('container', <App />, store);
+		
+	});
+});
+
+
+

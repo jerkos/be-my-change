@@ -15,6 +15,14 @@ module.exports = {
             ],
         home : [
             './src/home.js'
+        ],
+        currentActions: [
+            './src/actions/currentActions.js',
+            './src/css/user.less'
+        ],
+        lookForActions: [
+            './src/actions/lookForActions.js',
+            './src/css/user.less'
         ]
         //,campagne: ['./src/campagne/less/main.less', './src/campagne/routes.es6']
     },
