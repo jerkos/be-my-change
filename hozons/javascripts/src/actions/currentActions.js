@@ -6,6 +6,11 @@ const flatpickr = require("flatpickr");
 import * as SimpleDom from 'simpledom-component';
 import { withVeilAndMessages } from '../veil';
 import { createSlider } from '../slider'
+import { CommentariesTab } from './commentaries'
+import { ParticipantTab } from './participants'
+
+
+
 require('../css/avatar.less');
 
 
@@ -55,8 +60,47 @@ class ActionCard extends SimpleDom.Component {
                         <i class="material-icons right">close</i>
                     </span>
                     <p>{this.userAction.action.description}</p>
-                    <p class="right-align">
+                    <p style="display: flex;align-items: center;justify-content: space-around;">
                         <a class="btn-floating waves-effect waves-light purple lighten-2"
+                            onclick={event => {
+                                withVeilAndMessages(
+                                    fetchJsonData(`/users/actions/${this.props.userAction.action.id}/commentaries`),
+                                    true
+                                ).then(commentaries =>
+                                    createSlider(
+                                        `Commentaires associées à cette action`,
+                                        <CommentariesTab
+                                            action={this.props.userAction.action}
+                                            commentaries={commentaries || []}
+                                        />, 
+                                        event
+                                ));
+                            }}
+                        >
+                            <i class="material-icons">question_answer</i>
+                        </a>
+                        <a class="btn-floating waves-effect waves-light purple lighten-2"
+                            onclick={event => {
+                                    withVeilAndMessages(
+                                        fetchJsonData(`/users/actions/${this.props.userAction.action.id}/participants`),
+                                        true
+                                    ).then(({users, total_pages, current_page}) => {
+                                        createSlider(
+                                            `Participants`,
+                                            <ParticipantTab 
+                                                users={users || []} 
+                                                action={this.props.userAction.action}
+                                                total_pages={total_pages}
+                                                current_page={current_page}
+                                            />, 
+                                            event
+                                    )})
+                                }}
+                        >
+                            <i class="material-icons">people</i>
+                        </a>
+
+                        <a class="btn-floating btn-large waves-effect waves-light purple lighten-2"
                             onclick={function (e) {
                                 if (!document.getElementById('slide-out-actions')) {
                                     let slideContainer = document.createElement('div');
@@ -125,7 +169,7 @@ class ActionsList extends SimpleDom.Component {
     render() {
         return <div id="actions-card">
             {this.partitionList(this.state.selectedActions || [], 3).map(subactions =>
-                <div class="row" style="margin-top: 50px !important">
+                <div class="row">
                     {subactions.map(action =>
                         <div class="col s4">
                             <ActionCard userAction={action} />

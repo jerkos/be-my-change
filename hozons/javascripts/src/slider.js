@@ -1,7 +1,7 @@
 require('./home')
 import * as SimpleDom from 'simpledom-component';
 
-export function createSlider(node) {
+export function createSlider(title, node, e) {
     if (!document.getElementById('slide-out-actions')) {
         let slideContainer = document.createElement('div');
         slideContainer.id = "slide-out-actions";
@@ -20,12 +20,37 @@ export function createSlider(node) {
             SimpleDom.renderToDom(
                 'slide-out-actions',
                 <SlideActionInfo
-                    action={self.userAction.action}
+                    title={title}
                     close={() => $(e.target).sideNav('destroy')}
+                    node={node}
                 />,
                 slideStore
             );
         }
     });
     $(e.target).sideNav('show');
+}
+
+class SlideActionInfo extends SimpleDom.Component {
+	eventsToSubscribe() {
+		return ['SLIDE_TO_UPDATE'];
+	}
+
+	render() {
+		return <div style="padding: 0 10%">
+			<div class="row">
+				<span class="lnr lnr-cross fa-3x" style="position: absolute; right: 5px; top: 5px; cursor: pointer;"
+					onclick={this.props.close}
+				></span>
+			</div>
+			<div class="row">
+				<p style="text-align: center; font-weight: bold; font-size: 20px">{this.props.title}</p>
+			</div>
+			<div class="row">
+				<div class="col s12">
+					{this.props.node}
+				</div>
+			</div>
+		</div>
+	}
 }

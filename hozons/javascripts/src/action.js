@@ -7,7 +7,6 @@ import * as SimpleDom from 'simpledom-component';
 import { withVeilAndMessages } from './veil';
 require('./css/avatar.less');
 
-import { CreateAction } from './actions/create_action/step1';
 import { ParticipantTab } from './actions/participants';
 import { CommentariesTab } from './actions/commentaries';
 import {LookForAction as LookForActionGrid} from './actions/lookForActions';
@@ -200,7 +199,6 @@ class App extends SimpleDom.Component {
 							<LookForActionGrid />
 						</div>
 						<div id="create" class="col s12" style="padding: 0 25%">
-							<CreateAction />
 						</div>
 					</div>
 				</div>

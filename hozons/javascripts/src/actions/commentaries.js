@@ -25,7 +25,8 @@ class Commentary extends SimpleDom.Component {
         ++node_id;
         return (
             <li class="collection-item avatar">
-                <img class="circle" src={gravatar.url(this.props.commentary.user.email, { s: '30' })} />
+                <img class="circle" 
+                    src={gravatar.url(this.props.commentary.user.email, { s: '30' })} />
                 <span class="title">{this.props.commentary.user.username}</span>
                 <p>
                     <div id={`node-${this.props.index}`}>
@@ -87,7 +88,7 @@ export class CommentariesTab extends SimpleDom.Component {
                                 `/users/actions/${this.props.action.id}/commentaries`,
                                 {method: 'POST', body: JSON.stringify(comm)}
                             ), true)
-                        .then(() => {
+                        .then(comm => {
                             this.commentaries.push(comm)
                             this.store.updateState(
                                 { newIndex: this.commentaries.length - 1 },

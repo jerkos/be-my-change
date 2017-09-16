@@ -23,6 +23,10 @@ module.exports = {
         lookForActions: [
             './src/actions/lookForActions.js',
             './src/css/user.less'
+        ],
+        createAction: [
+            './src/actions/step1.js',
+            './src/css/user.less'
         ]
         //,campagne: ['./src/campagne/less/main.less', './src/campagne/routes.es6']
     },

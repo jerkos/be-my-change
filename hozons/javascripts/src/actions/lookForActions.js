@@ -3,6 +3,7 @@ import * as SimpleDom from 'simpledom-component';
 require('../css/layout.less');
 require('../css/tooltips.less');
 require('../css/avatar.less');
+require('../css/popovers.less');
 
 const moment = require('moment');
 require('moment/locale/fr');
