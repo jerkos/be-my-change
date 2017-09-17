@@ -142,7 +142,7 @@ class UserAction(JsonSerializerMixin, SurrogatePK, Model):
         return self.start_date.date() <= date.date() and self.end_date.date() >= date.date()
 
     def realised(self):
-        self.update(last_succeed = dt.utcnow(), nb_succeed=self.nb_succeed + 1)
+        return self.update(last_succeed = dt.datetime.utcnow(), nb_succeed=self.nb_succeed + 1)
 
 
 class Followings(JsonSerializerMixin, SurrogatePK, Model):

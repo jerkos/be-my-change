@@ -15,6 +15,10 @@ require('../css/avatar.less');
 
 class ActionCard extends SimpleDom.Component {
 
+    eventsToSubscribe() {
+        return ['ACTION_CARD_RELOAD'];
+    }
+
     constructor(props, store) {
         super(props, store);
         this.userAction = this.props.userAction;
@@ -92,13 +96,13 @@ class ActionCard extends SimpleDom.Component {
                             data-tooltip="Voir les commentaires à propros de cette action"
                             onclick={event => {
                                 withVeilAndMessages(
-                                    fetchJsonData(`/users/actions/${this.props.userAction.action.id}/commentaries`),
+                                    fetchJsonData(`/users/actions/${this.userAction.action.id}/commentaries`),
                                     true
                                 ).then(commentaries =>
                                     createSlider(
                                         `Commentaires associées à cette action`,
                                         <CommentariesTab
-                                            action={this.props.userAction.action}
+                                            action={this.userAction.action}
                                             commentaries={commentaries || []}
                                         />,
                                         event
@@ -110,14 +114,14 @@ class ActionCard extends SimpleDom.Component {
                         <a class="btn-floating waves-effect waves-light cyan lighten-2"
                             onclick={event => {
                                 withVeilAndMessages(
-                                    fetchJsonData(`/users/actions/${this.props.userAction.action.id}/participants`),
+                                    fetchJsonData(`/users/actions/${this.userAction.action.id}/participants`),
                                     true
                                 ).then(({ users, total_pages, current_page }) => {
                                     createSlider(
                                         `Participants`,
                                         <ParticipantTab
                                             users={users || []}
-                                            action={this.props.userAction.action}
+                                            action={this.userAction.action}
                                             total_pages={total_pages}
                                             current_page={current_page}
                                         />,
@@ -139,9 +143,24 @@ class ActionCard extends SimpleDom.Component {
                 </div>
                 <div class="card-action">
                     <p>
-                        <a class="purple-text lighten-2-text" href="#" style="color: black, margin-right: 0">
-                            J'ai effectué cette action !
-                            </a>
+                        {SimpleDom.predicate(
+                            moment(this.userAction.last_succeed).format('YYYY/MM') === moment(new Date()).format('YYYY/MM'),
+                            () => <p>Déjà fait !</p>,
+                            () => <a class="purple-text lighten-2-text" href="#" style="color: black, margin-right: 0"
+                                    onclick={ e => {
+                                        withVeilAndMessages(
+                                            fetchJsonData(`/users/actions/user-action/done/${this.userAction.id}`),
+                                            true
+                                        ).then(userAction => {
+                                            this.userAction = userAction;
+                                            this.store.updateState({}, 'ACTION_CARD_RELOAD');
+                                        })
+                                    }}
+                    
+                                    >
+                                        J'ai effectué cette action !
+                                    </a>
+                        )}
                         <a class="right grey-text" style="font-size: 8px">Abandon</a>
                     </p>
                 </div>
@@ -229,7 +248,7 @@ $(document).ready(function () {
         true)
         .then(actions => {
             console.log(actions);
-            store.updateState({ actions, selectedActions: actions });
+            store.updateState({ actions, selectedActions: actions, selectedDate: new Date() });
             SimpleDom.renderToDom('container', <App />, store);
 
             // jquery functions
@@ -243,7 +262,7 @@ $(document).ready(function () {
                             fetchJsonData(`/users/actions/get?date=${moment(date).format('YYYY-MM-DD')}`),
                             true
                         ).then(actions =>
-                            store.updateState({ actions, selectedActions: actions }, 'ACTIONS_LIST_TO_UPDATE')
+                            store.updateState({ actions, selectedActions: actions, selectedDate: date }, 'ACTIONS_LIST_TO_UPDATE')
                             )
                     }
                 }

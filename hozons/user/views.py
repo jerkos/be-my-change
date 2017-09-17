@@ -110,6 +110,16 @@ def find_user_action_for_user(user_id, action_id):
     ), exclude={'password'}), 200
 
 
+@user.route('/actions/user-action/done/<int:user_action_id>', methods=['GET'])
+@login_required
+def user_action_done(user_action_id):
+    user_action = UserAction.get_by_id(user_action_id)
+    if user_action is None:
+        return '{}', 404
+    user_action = user_action.realised()
+    return UserAction.to_json(user_action, exclude={'password'})
+
+
 @user.route('/actions/participate/<int:action_id>')
 @login_required
 def participate_to_action(action_id):
