@@ -9,12 +9,8 @@ module.exports = {
         extensions: ['.jsx', '.es6', '.js', '.json']
     },
     entry: {
-        actions: [
-            './src/action.js',
-            './src/css/user.less'
-            ],
         home : [
-            './src/home.js'
+            './src/home.js',
         ],
         currentActions: [
             './src/actions/currentActions.js',

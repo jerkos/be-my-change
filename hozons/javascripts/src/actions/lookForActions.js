@@ -122,7 +122,7 @@ export class LookForAction extends SimpleDom.Component {
                                         clearTimeout(this.lastTimerId);
                                     }
                                     this.value = event.target.value;
-                                    if (this.value.length < 3) {
+                                    if (this.value.length < 3 && this.value) {
                                         return;
                                     }
                                     this.timerId = setTimeout(() => {
@@ -145,22 +145,15 @@ export class LookForAction extends SimpleDom.Component {
                                                     return (
                                                         <div class="column col-3">
                                                             <div class="popover popover-right" style="width: 100%">
-                                                                <div style={
+                                                                <div class="lozad" style={
                                                                     `background-image: url('${action.image_url || 'http://via.placeholder.com/400x200'}');
                                                                 background-size: cover; background-repeat: no-repeat; background-position: center center;
                                                                 min-height: 200px; max-height: 200px; width: 100% important;
                                                                 cursor: pointer;
-                                                                `}
-                                                                    onclick={() => {
-                                                                        this.store.updateState({ participateAction: action }, 'PARTICIPATE_TO_REFRESH')
-                                                                        $('#modal-participate').modal('open');
-                                                                    }}
-                                                                ></div>
-                                                                <div class="popover-container" style="max-width: 250px">
-                                                                    <div class="arrow-left"></div>
-                                                                    <div class="card">
-                                                                    <div class="card-content">
-                                                                    <p style="display: flex;align-items: center;justify-content: space-around;">
+                                                                `}  
+                                                                />
+                                                                <div class="popover-container"  style="max-width: 30px;">
+                                                                    <p style="display: inline-grid; grid-gap: 10px; position:relative; right: 65px;">
                                                                         <a class="btn-floating waves-effect waves-light cyan lighten-2 tooltipped"
                                                                             data-position="bottom"
                                                                             data-tooltip="Voir les commentaires à propros de cette action"
@@ -204,14 +197,13 @@ export class LookForAction extends SimpleDom.Component {
                                                                         </a>
 
                                                                         <a class="btn-floating waves-effect waves-light cyan lighten-2"
-                                                                            onclick={function (e) {
-                                                                                console.log('clicked')
+                                                                            onclick={() => {
+                                                                                this.store.updateState({ participateAction: action }, 'PARTICIPATE_TO_REFRESH')
+                                                                                $('#modal-participate').modal('open');
                                                                             }}>
                                                                             <i class="material-icons">add</i>
                                                                         </a>
                                                                     </p>
-                                                                    </div>
-                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div class="row" style="padding-top: 10px;">

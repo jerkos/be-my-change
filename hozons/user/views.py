@@ -6,9 +6,9 @@ from collections import defaultdict
 import json
 import time
 
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, jsonify, render_template, request, url_for, redirect
 from flask_login import current_user, login_required
-from sqlalchemy import desc, func
+from sqlalchemy import desc, func, or_
 
 from hozons.extensions import csrf_protect
 from hozons.extensions import db
@@ -157,8 +157,8 @@ def get_participants_for_action(action_id):
 def get_matching_text_actions():
     """search actions given a query string"""
     text_to_search = request.args.get('text', None)
-    if text_to_search is None:
-        return '{}', 403
+    if not text_to_search:
+        redirect(url_for('user.get_last_actions'))
     like_query = '%' + text_to_search + '%'
     return Action.arr_to_json(
         Action.query.filter(
@@ -174,7 +174,30 @@ def get_last_actions():
     """get last actions created by users
         used as default values on actions page
     """
-    actions = Action.query.order_by(desc(Action.created_at)).limit(5).all();
+
+    actions_pers = db.session.query(Action.id).filter(Action.kind == 'PERS').order_by(desc(Action.created_at)).limit(5).subquery()
+    actions_env = db.session.query(Action.id).filter(Action.kind == 'ENV').order_by(desc(Action.created_at)).limit(5).subquery()
+    actions_rel = db.session.query(Action.id).filter(Action.kind == 'REL').order_by(desc(Action.created_at)).limit(5).subquery()
+
+    actions = Action.query.filter(
+        or_(
+            Action.id.in_(actions_pers),
+            Action.id.in_(actions_env),
+            Action.id.in_(actions_rel)
+        )        
+    ).all()
+
+    # subquery = db.session.query(
+    #     Action,
+    #     func.rank().over(
+    #         order_by=Action.created_at.desc(),
+    #         partition_by=Action.kind
+    #     ).label('rnk')
+    # ).subquery()
+
+    # query = db.session.query(subquery).filter(subquery.c.rnk >= 5)
+    # actions = query.all()
+    print(actions)
 
     #last_actions = Action.query.order_by(desc(Action.created_at)).limit(5).subquery();
     #users = db.session.query(User).join(UserAction).join(last_actions, last_actions.c.id == UserAction.action_id).limit(5).all()
