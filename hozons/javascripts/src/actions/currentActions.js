@@ -9,8 +9,7 @@ import { createSlider } from '../slider'
 import { CommentariesTab } from './commentaries'
 import { ParticipantTab } from './participants'
 
-
-
+require('../css/popovers.less')
 require('../css/avatar.less');
 
 
@@ -24,124 +23,134 @@ class ActionCard extends SimpleDom.Component {
     render() {
         let self = this;
         return (
-            <div class="card hoverable">
-                <div class="card-image waves-effect waves-block waves-light">
-                    <a href={this.userAction.action.image_url} data-fancybox data-caption={this.userAction.action.title}>
-                        <img class="activator" src={this.userAction.action.image_url} />
-                    </a>
-                </div>
-                <div class="card-content">
-                    <span class="card-title activator grey-text text-darken-4">
-                        {this.userAction.action.title}
-                        <span class="badge small green white-text"
-                            style="border-radius: 5px; position: absolute"></span>
-                        <i class="material-icons right">more_vert</i>
-                    </span>
-                    <div>
+            <div class="popover popover-right">
+                <div class="card">
+                    <div class="card-image waves-effect waves-block waves-light">
+                        <img src={this.userAction.action.image_url} />
+                    </div>
+                    <div class="card-content">
+                        <span class="card-title activator grey-text text-darken-4">
+                            {this.userAction.action.title}
+                            <span class="badge small green white-text"
+                                style="border-radius: 5px; position: absolute"></span>
+                            <i class="material-icons right">more_vert</i>
+                        </span>
                         <div>
-                            <div class="chip" style="font-size: 10px">
-                                <i class="material-icons tiny">alarm</i>
-                                {moment(this.userAction.start_date).fromNow(true)}
-                            </div>
-                            <div class="chip" style="font-size: 10px">
-                                <i class="tiny material-icons">alarm_off</i>
-                                {moment(this.userAction.start_date).from(moment(this.userAction.end_date), true)}
-                            </div>
-                            <div class="chip" style="font-size: 10px">
-                                <i class="tiny material-icons">check</i>
-                                {this.userAction.nb_success}
+                            <div>
+                                <div class="chip" style="font-size: 10px">
+                                    <i class="material-icons tiny">alarm</i>
+                                    {moment(this.userAction.start_date).fromNow(true)}
+                                </div>
+                                <div class="chip" style="font-size: 10px">
+                                    <i class="tiny material-icons">alarm_off</i>
+                                    {moment(this.userAction.start_date).from(moment(this.userAction.end_date), true)}
+                                </div>
+                                <div class="chip" style="font-size: 10px">
+                                    <i class="tiny material-icons">check</i>
+                                    {this.userAction.nb_success}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-reveal">
-                    <span class="card-title button-collapse">
-                        {this.userAction.action.title}
-                        <i class="material-icons right">close</i>
-                    </span>
-                    <p>{this.userAction.action.description}</p>
-                    <p style="display: flex;align-items: center;justify-content: space-around;">
-                        <a class="btn-floating waves-effect waves-light purple lighten-2"
-                            onclick={event => {
-                                withVeilAndMessages(
-                                    fetchJsonData(`/users/actions/${this.props.userAction.action.id}/commentaries`),
-                                    true
-                                ).then(commentaries =>
-                                    createSlider(
-                                        `Commentaires associées à cette action`,
-                                        <CommentariesTab
-                                            action={this.props.userAction.action}
-                                            commentaries={commentaries || []}
-                                        />, 
-                                        event
-                                ));
-                            }}
-                        >
-                            <i class="material-icons">question_answer</i>
-                        </a>
-                        <a class="btn-floating waves-effect waves-light purple lighten-2"
-                            onclick={event => {
-                                    withVeilAndMessages(
-                                        fetchJsonData(`/users/actions/${this.props.userAction.action.id}/participants`),
-                                        true
-                                    ).then(({users, total_pages, current_page}) => {
-                                        createSlider(
-                                            `Participants`,
-                                            <ParticipantTab 
-                                                users={users || []} 
-                                                action={this.props.userAction.action}
-                                                total_pages={total_pages}
-                                                current_page={current_page}
-                                            />, 
-                                            event
-                                    )})
-                                }}
-                        >
-                            <i class="material-icons">people</i>
-                        </a>
+                    <div class="card-reveal">
+                        <span class="card-title button-collapse">
+                            {this.userAction.action.title}
+                            <i class="material-icons right">close</i>
+                        </span>
+                        <p>{this.userAction.action.description}</p>
 
-                        <a class="btn-floating btn-large waves-effect waves-light purple lighten-2"
-                            onclick={function (e) {
-                                if (!document.getElementById('slide-out-actions')) {
-                                    let slideContainer = document.createElement('div');
-                                    slideContainer.id = "slide-out-actions";
-                                    slideContainer.classList.add('side-nav');
-                                    document.body.appendChild(slideContainer);
-                                }
-                                const slideStore = new SimpleDom.Store();
-
-                                $(e.target).attr('data-activates', 'slide-out-actions');
-                                $(e.target).sideNav({
-                                    // $('#test-sidenav').sideNav({
-                                    menuWidth: 700, // Default is 300
-                                    edge: 'right', // Choose the horizontal origin
-                                    closeOnClick: false, // Closes side-nav on <a> clicks, useful for Angular/Meteor
-                                    draggable: true, // Choose whether you can drag to open on touch screens
-                                    onOpen: el => {
-                                        console.log(el);
-                                        SimpleDom.renderToDom(
-                                            'slide-out-actions',
-                                            <SlideActionInfo
-                                                action={self.userAction.action}
-                                                close={() => $(e.target).sideNav('destroy')}
-                                            />,
-                                            slideStore
-                                        );
-                                    }
-                                });
-                                $(e.target).sideNav('show');
-                            }}>
-                            <i class="material-icons">add</i>
-                        </a>
-                    </p>
-                </div>
-                <div class="card-action">
-                    <p>
-                        <a class="purple-text lighten-2-text" href="#" style="color: black, margin-right: 0">
-                            J'ai effectué cette action !
+                    </div>
+                    <div class="card-action">
+                        <p>
+                            <a class="purple-text lighten-2-text" href="#" style="color: black, margin-right: 0">
+                                J'ai effectué cette action !
                             </a>
-                        <a class="right grey-text" style="font-size: 8px">Abandon</a>
-                    </p>
+                            <a class="right grey-text" style="font-size: 8px">Abandon</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="popover-container" style="max-width: 250px;">
+                    <div class="card" style="border: none !important; box-shadow: none">
+                        <div class="card-content">
+                            <p style="display: flex;align-items: center;justify-content: space-around;">
+                                <a class="btn-floating waves-effect waves-light purple lighten-2 tooltipped"
+                                    data-position="bottom"
+                                    data-tooltip="Voir les commentaires à propros de cette action"
+                                    onclick={event => {
+                                        withVeilAndMessages(
+                                            fetchJsonData(`/users/actions/${this.props.userAction.action.id}/commentaries`),
+                                            true
+                                        ).then(commentaries =>
+                                            createSlider(
+                                                `Commentaires associées à cette action`,
+                                                <CommentariesTab
+                                                    action={this.props.userAction.action}
+                                                    commentaries={commentaries || []}
+                                                />,
+                                                event
+                                            ));
+                                    }}
+                                >
+                                    <i class="material-icons">question_answer</i>Hello
+                                </a>
+                                <a class="btn-floating waves-effect waves-light purple lighten-2"
+                                    onclick={event => {
+                                        withVeilAndMessages(
+                                            fetchJsonData(`/users/actions/${this.props.userAction.action.id}/participants`),
+                                            true
+                                        ).then(({ users, total_pages, current_page }) => {
+                                            createSlider(
+                                                `Participants`,
+                                                <ParticipantTab
+                                                    users={users || []}
+                                                    action={this.props.userAction.action}
+                                                    total_pages={total_pages}
+                                                    current_page={current_page}
+                                                />,
+                                                event
+                                            )
+                                        })
+                                    }}
+                                >
+                                    <i class="material-icons">people</i>
+                                </a>
+
+                                <a class="btn-floating btn-large waves-effect waves-light purple lighten-2"
+                                    onclick={function (e) {
+                                        if (!document.getElementById('slide-out-actions')) {
+                                            let slideContainer = document.createElement('div');
+                                            slideContainer.id = "slide-out-actions";
+                                            slideContainer.classList.add('side-nav');
+                                            document.body.appendChild(slideContainer);
+                                        }
+                                        const slideStore = new SimpleDom.Store();
+
+                                        $(e.target).attr('data-activates', 'slide-out-actions');
+                                        $(e.target).sideNav({
+                                            // $('#test-sidenav').sideNav({
+                                            menuWidth: 700, // Default is 300
+                                            edge: 'right', // Choose the horizontal origin
+                                            closeOnClick: false, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+                                            draggable: true, // Choose whether you can drag to open on touch screens
+                                            onOpen: el => {
+                                                console.log(el);
+                                                SimpleDom.renderToDom(
+                                                    'slide-out-actions',
+                                                    <SlideActionInfo
+                                                        action={self.userAction.action}
+                                                        close={() => $(e.target).sideNav('destroy')}
+                                                    />,
+                                                    slideStore
+                                                );
+                                            }
+                                        });
+                                        $(e.target).sideNav('show');
+                                    }}>
+                                    <i class="material-icons">add</i>
+                                </a>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
@@ -171,7 +180,7 @@ class ActionsList extends SimpleDom.Component {
             {this.partitionList(this.state.selectedActions || [], 3).map(subactions =>
                 <div class="row">
                     {subactions.map(action =>
-                        <div class="col s4">
+                        <div class="col m4 s12">
                             <ActionCard userAction={action} />
                         </div>
                     )}

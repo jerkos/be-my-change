@@ -10,7 +10,9 @@ require('moment/locale/fr');
 const gravatar = require('gravatar');
 
 import { withVeilAndMessages } from '../veil';
-
+import { createSlider } from '../slider';
+import { CommentariesTab } from './commentaries';
+import { ParticipantTab } from './participants';
 
 
 class InviteModalContent extends SimpleDom.Component {
@@ -48,7 +50,7 @@ class ParticipateModalContent extends SimpleDom.Component {
                 </div>
                 <div class="modal-footer">
                     <button class="modal-action modal-close waves-effect waves-green btn-flat"
-                        onclick={()=> {
+                        onclick={() => {
                             console.log("hello there");
                             withVeilAndMessages(
                                 fetchJsonData(`/users/actions/participate/${this.state.participateAction.id}`),
@@ -57,9 +59,9 @@ class ParticipateModalContent extends SimpleDom.Component {
                                 const tryFindAction = this.state.actions
                                     .map(action => action.id)
                                     .find(actionId => actionId === userAction.action.id);
-                                if (! tryFindAction) {
+                                if (!tryFindAction) {
                                     this.state.actions.push(userAction);
-                                    this.store.updateState({actions}, 'ACTIONS_LIST_TO_UPDATE');
+                                    this.store.updateState({ actions }, 'ACTIONS_LIST_TO_UPDATE');
                                 }
                             })
                         }}
@@ -142,17 +144,76 @@ export class LookForAction extends SimpleDom.Component {
                                                 .map(action => {
                                                     return (
                                                         <div class="column col-3">
-                                                            <div style={
-                                                                `background-image: url('${action.image_url || 'http://via.placeholder.com/400x200'}');
+                                                            <div class="popover popover-right" style="width: 100%">
+                                                                <div style={
+                                                                    `background-image: url('${action.image_url || 'http://via.placeholder.com/400x200'}');
                                                                 background-size: cover; background-repeat: no-repeat; background-position: center center;
-                                                                min-height: 200px;
+                                                                min-height: 200px; max-height: 200px; width: 100% important;
                                                                 cursor: pointer;
                                                                 `}
-                                                                onclick={() => {
-                                                                    this.store.updateState({participateAction: action}, 'PARTICIPATE_TO_REFRESH')
-                                                                    $('#modal-participate').modal('open');
-                                                                }}
-                                                            />
+                                                                    onclick={() => {
+                                                                        this.store.updateState({ participateAction: action }, 'PARTICIPATE_TO_REFRESH')
+                                                                        $('#modal-participate').modal('open');
+                                                                    }}
+                                                                ></div>
+                                                                <div class="popover-container" style="max-width: 250px">
+                                                                    <div class="arrow-left"></div>
+                                                                    <div class="card">
+                                                                    <div class="card-content">
+                                                                    <p style="display: flex;align-items: center;justify-content: space-around;">
+                                                                        <a class="btn-floating waves-effect waves-light cyan lighten-2 tooltipped"
+                                                                            data-position="bottom"
+                                                                            data-tooltip="Voir les commentaires à propros de cette action"
+                                                                            onclick={event => {
+                                                                                withVeilAndMessages(
+                                                                                    fetchJsonData(`/users/actions/${action.id}/commentaries`),
+                                                                                    true
+                                                                                ).then(commentaries =>
+                                                                                    createSlider(
+                                                                                        `Commentaires associées à cette action`,
+                                                                                        <CommentariesTab
+                                                                                            action={action}
+                                                                                            commentaries={commentaries || []}
+                                                                                        />,
+                                                                                        event
+                                                                                    ));
+                                                                            }}
+                                                                        >
+                                                                            <i class="material-icons">question_answer</i>Hello
+                                                                        </a>
+                                                                        <a class="btn-floating waves-effect waves-light cyan lighten-2"
+                                                                            onclick={event => {
+                                                                                withVeilAndMessages(
+                                                                                    fetchJsonData(`/users/actions/${action.id}/participants`),
+                                                                                    true
+                                                                                ).then(({ users, total_pages, current_page }) => {
+                                                                                    createSlider(
+                                                                                        `Participants`,
+                                                                                        <ParticipantTab
+                                                                                            users={users || []}
+                                                                                            action={action}
+                                                                                            total_pages={total_pages}
+                                                                                            current_page={current_page}
+                                                                                        />,
+                                                                                        event
+                                                                                    )
+                                                                                })
+                                                                            }}
+                                                                        >
+                                                                            <i class="material-icons">people</i>
+                                                                        </a>
+
+                                                                        <a class="btn-floating waves-effect waves-light cyan lighten-2"
+                                                                            onclick={function (e) {
+                                                                                console.log('clicked')
+                                                                            }}>
+                                                                            <i class="material-icons">add</i>
+                                                                        </a>
+                                                                    </p>
+                                                                    </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                             <div class="row" style="padding-top: 10px;">
                                                                 <div class="col s6">
                                                                     <span style="font-weight: bold; padding-left: 5px;">
@@ -170,12 +231,12 @@ export class LookForAction extends SimpleDom.Component {
                                                                                 <div class="card-content black-text">
                                                                                     <span class="card-title">{action.creator.username}<small> life changer {moment(action.creator.created_at).fromNow()}</small></span>
                                                                                     <p><em>Titre:</em> Overlord</p>
-                                                                                    <p>
-                                                                                        <figure class="avatar-spec" data-intial="PERS">
+                                                                                    <p style="display: flex;align-items: center;justify-content: space-around;">
+                                                                                        <figure class="avatar-spec white-text" data-intial="100">
                                                                                         </figure>
-                                                                                        <figure class="avatar-spec" data-intial="REL">
+                                                                                        <figure class="avatar-spec white-text" data-intial="100">
                                                                                         </figure>
-                                                                                        <figure class="avatar-spec" data-intial="ENV">
+                                                                                        <figure class="avatar-spec white-text" data-intial="100">
                                                                                         </figure>
                                                                                     </p>
                                                                                 </div>
@@ -210,34 +271,34 @@ export class LookForAction extends SimpleDom.Component {
 
 
 class App extends SimpleDom.Component {
-	render() {
-		console.log(this.state);
-		return (
-			<div id="top" class="action">
-				<h2 class="en-tete">J'agis</h2>
-				<div class="boxed-layout" style="margin-top: 50px;">
-					<div class="row">
-						<div id="lookfor" class="col s12">
-							<LookForAction />
-						</div>
-					</div>
-				</div>
-			</div>	
-		)
-	}
+    render() {
+        console.log(this.state);
+        return (
+            <div id="top" class="action">
+                <h2 class="en-tete">J'agis</h2>
+                <div class="boxed-layout" style="margin-top: 50px;">
+                    <div class="row">
+                        <div id="lookfor" class="col s12">
+                            <LookForAction />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
 
-const store = new SimpleDom.Store();
-withVeilAndMessages(
-	fetchJsonData('/users/actions/last-actions'),
-	true)
-	.then(lastActions => {
-		store.updateState({lastActions});
-		SimpleDom.renderToDom('container', <App />, store);
-		
-	});
+    const store = new SimpleDom.Store();
+    withVeilAndMessages(
+        fetchJsonData('/users/actions/last-actions'),
+        true)
+        .then(lastActions => {
+            store.updateState({ lastActions });
+            SimpleDom.renderToDom('container', <App />, store);
+
+        });
 });
 
 
