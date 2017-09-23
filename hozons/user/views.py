@@ -106,7 +106,7 @@ def find_user_action_for_user(user_id, action_id):
             UserAction.user_id == user_id, 
             UserAction.action_id == action_id)
         .order_by(desc(UserAction.end_date))
-        .one()
+        .first()
     ), exclude={'password'}), 200
 
 

@@ -2,6 +2,7 @@ import * as SimpleDom from 'simpledom-component';
 import { ComposedComponent, ParentComponent } from '../composedComponent'
 import { withVeilAndMessages } from '../veil';
 require('../css/empty.less');
+const gravatar = require('gravatar');
 
 
 class Pagination extends SimpleDom.Component {
@@ -35,6 +36,10 @@ class Pagination extends SimpleDom.Component {
 
 
 class Participant extends ComposedComponent {
+    eventsToSubscribe() {
+        return ['PARTICIPANT_TO_UPDATE'];
+    }
+
     render() {
         return (
             <a onclick={() => {
@@ -46,10 +51,13 @@ class Participant extends ComposedComponent {
                     )
                 }}
                 style="pointer: cursor" class="collection-item">
-                <div class="avatar-spec avatar-spec-sm"
-                    style="color: white; background-color: #5764c6;"
-                    data-initial={this.props.user.username.slice(0, 2) || ''}
-                />
+                {SimpleDom.predicate(this.props.user.email,
+                    () => <img class="circle" src={gravatar.url(this.props.user.email, { s: '30' })} />,
+                    () => <div class="avatar-spec avatar-spec-sm"
+                            style="color: white; background-color: #5764c6;"
+                            data-initial={this.props.user.username.slice(0, 2) || ''}
+                          />
+                )}
                 <strong style="padding-left: 20px;">{this.props.user.username}</strong>
             </a>
         );
@@ -71,8 +79,10 @@ class ParticipantList extends ComposedComponent {
                 <div>
                     {this.partitionList((this.cstate.users || []), 2).map(userList =>
                         <div class="row">
-                            {userList.map(user => 
-                                <Participant parent={this.props.parent} user={user} />
+                            {userList.map(user =>
+                                <div class="col m6 s12">
+                                    <Participant parent={this.props.parent} user={user} />
+                                </div>
                             )}
                         </div>
                     )}
