@@ -56,15 +56,27 @@ class Participant extends ComposedComponent {
     }
 }
 
-class ParticipantList extends ComposedComponent {   
+class ParticipantList extends ComposedComponent {
+    partitionList(input, spacing) {
+        let output = [];
+        for (let i = 0; i < input.length; i += spacing) {
+            output[output.length] = input.slice(i, i + spacing);
+        }
+        return output;
+    }
+
     render() {
         return (
             <div class={`col s${this.props.col || 6}`}>
-                <ul class="collection">
-                    {(this.cstate.users || []).map(user =>
-                        <Participant parent={this.props.parent} user={user} />
+                <div>
+                    {this.partitionList((this.cstate.users || []), 2).map(userList =>
+                        <div class="row">
+                            {userList.map(user => 
+                                <Participant parent={this.props.parent} user={user} />
+                            )}
+                        </div>
                     )}
-                </ul>
+                </div>
                 <Pagination
                     total_pages={this.cstate.total_pages}
                     current_page={this.cstate.current_page}

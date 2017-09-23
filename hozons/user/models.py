@@ -3,7 +3,7 @@
 import datetime as dt
 
 from flask_login import UserMixin
-from sqlalchemy import func
+from sqlalchemy import func, and_, or_
 
 from hozons.database import Column, Model, SurrogatePK, db, reference_col, relationship, JsonSerializerMixin
 from hozons.extensions import bcrypt
@@ -74,8 +74,10 @@ class User(JsonSerializerMixin, UserMixin, SurrogatePK, Model):
     
     def user_actions(self, requested_date):
         data = UserAction.query.filter(
-            UserAction.start_date <= requested_date,
-            UserAction.end_date >= requested_date).join(Action).all()
+            or_(UserAction.start_date <= requested_date,
+            UserAction.end_date >= requested_date), 
+            UserAction.user_id == self.get_id()).join(Action).all()
+        print(data)
         return data
            
 

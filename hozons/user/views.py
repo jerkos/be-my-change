@@ -8,7 +8,7 @@ import time
 
 from flask import Blueprint, jsonify, render_template, request, url_for, redirect
 from flask_login import current_user, login_required
-from sqlalchemy import desc, func, or_
+from sqlalchemy import desc, func, or_, and_
 
 from hozons.extensions import csrf_protect
 from hozons.extensions import db
@@ -91,7 +91,7 @@ def get_user_actions():
         requested_date = dt.datetime.utcnow()
     else:
         requested_date = dt.datetime.strptime(requested_date, '%Y-%m-%d')
-   
+    
     return UserAction.arr_to_json(
                 current_user.user_actions(requested_date), 
                 exclude={'password'}

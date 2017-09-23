@@ -55,7 +55,7 @@ class ParticipateModalContent extends SimpleDom.Component {
                             withVeilAndMessages(
                                 fetchJsonData(`/users/actions/participate/${this.state.participateAction.id}`),
                                 true
-                            ).then(userAction => {
+                            )/* ).then(userAction => {
                                 const tryFindAction = this.state.actions
                                     .map(action => action.id)
                                     .find(actionId => actionId === userAction.action.id);
@@ -63,8 +63,8 @@ class ParticipateModalContent extends SimpleDom.Component {
                                     this.state.actions.push(userAction);
                                     this.store.updateState({ actions }, 'ACTIONS_LIST_TO_UPDATE');
                                 }
-                            })
-                        }}
+                            }) */}
+                        }
                     >
                         C'est parti !
                     </button>
