@@ -142,27 +142,29 @@ class ActionCard extends SimpleDom.Component {
                     </p>
                 </div>
                 <div class="card-action">
-                    <p>
-                        {SimpleDom.predicate(
-                            moment(this.userAction.last_succeed).format('YYYY/MM') === moment(new Date()).format('YYYY/MM'),
-                            () => <p>Déjà fait !</p>,
-                            () => <a class="purple-text lighten-2-text" href="#" style="color: black, margin-right: 0"
-                                    onclick={ e => {
-                                        withVeilAndMessages(
-                                            fetchJsonData(`/users/actions/user-action/done/${this.userAction.id}`),
-                                            true
-                                        ).then(userAction => {
-                                            this.userAction = userAction;
-                                            this.store.updateState({}, 'ACTION_CARD_RELOAD');
-                                        })
-                                    }}
-                    
-                                    >
-                                        J'ai effectué cette action !
-                                    </a>
-                        )}
-                        <a class="right grey-text" style="font-size: 8px">Abandon</a>
-                    </p>
+                    {SimpleDom.predicate(this.state.selectedDate === moment(new Date()).format('YYYY-MM-DD'), 
+                        () => <p> 
+                                {SimpleDom.predicate(
+                                    moment(this.userAction.last_succeed).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD'),  
+                                    () => <p>Déjà fait !</p>,
+                                    () => <a class="purple-text lighten-2-text" href="#" style="color: black, margin-right: 0"
+                                            onclick={ e => {
+                                                withVeilAndMessages(
+                                                    fetchJsonData(`/users/actions/user-action/done/${this.userAction.id}`),
+                                                    true
+                                                ).then(userAction => {
+                                                    this.userAction = userAction;
+                                                    this.store.updateState({}, 'ACTION_CARD_RELOAD');
+                                                })
+                                            }}
+                            
+                                            >
+                                                J'ai effectué cette action !
+                                            </a>
+                                )}
+                                <a class="right grey-text" style="font-size: 8px">Abandon</a>
+                            </p>
+                    )}
                 </div>
             </div>
         );
@@ -248,7 +250,7 @@ $(document).ready(function () {
         true)
         .then(actions => {
             console.log(actions);
-            store.updateState({ actions, selectedActions: actions, selectedDate: new Date() });
+            store.updateState({ actions, selectedActions: actions, selectedDate: moment(new Date()).format('YYYY-MM-DD')});
             SimpleDom.renderToDom('container', <App />, store);
 
             // jquery functions
