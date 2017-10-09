@@ -1,5 +1,6 @@
-require('./home')
+import '../../home';
 import * as SimpleDom from 'simpledom-component';
+import './slider.less';
 
 export function createSlider(title, node, e) {
     if (!document.getElementById('slide-out-actions')) {
@@ -16,7 +17,6 @@ export function createSlider(title, node, e) {
         closeOnClick: false, // Closes side-nav on <a> clicks, useful for Angular/Meteor
         draggable: true, // Choose whether you can drag to open on touch screens
         onOpen: el => {
-            console.log(el);
             SimpleDom.renderToDom(
                 'slide-out-actions',
                 <SlideActionInfo
@@ -37,9 +37,9 @@ class SlideActionInfo extends SimpleDom.Component {
 	}
 
 	render() {
-		return <div style="padding: 0 10%">
+		return <div class="boxed-layout slider">
 			<div class="row">
-				<span class="lnr lnr-cross fa-3x" style="position: absolute; right: 5px; top: 5px; cursor: pointer;"
+				<span class="lnr lnr-cross fa-3x slider-cross"
 					onclick={this.props.close}
 				></span>
 			</div>

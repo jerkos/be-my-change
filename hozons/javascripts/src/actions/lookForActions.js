@@ -9,8 +9,8 @@ const moment = require('moment');
 require('moment/locale/fr');
 const gravatar = require('gravatar');
 
-import { withVeilAndMessages } from '../veil';
-import { createSlider } from '../slider';
+import { withVeilAndMessages } from '../components/veil/veil';
+import { createSlider } from '../components/slider/slider';
 import { CommentariesTab } from './commentaries';
 import { ParticipantTab } from './participants';
 
@@ -51,7 +51,6 @@ class ParticipateModalContent extends SimpleDom.Component {
                 <div class="modal-footer">
                     <button class="modal-action modal-close waves-effect waves-green btn-flat"
                         onclick={() => {
-                            console.log("hello there");
                             withVeilAndMessages(
                                 fetchJsonData(`/users/actions/participate/${this.state.participateAction.id}`),
                                 true

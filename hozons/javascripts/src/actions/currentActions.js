@@ -2,16 +2,20 @@ require('../home')
 const moment = require('moment')
 require('moment/locale/fr');
 const flatpickr = require("flatpickr");
+const francese = require("flatpickr/dist/l10n/fr.js").fr;
+flatpickr.localize(francese);
 
 import * as SimpleDom from 'simpledom-component';
-import { withVeilAndMessages } from '../veil';
-import { createSlider } from '../slider'
-import { CommentariesTab } from './commentaries'
-import { ParticipantTab } from './participants'
+import { withVeilAndMessages } from '../components/veil/veil';
+import { createSlider } from '../components/slider/slider';
+import { CommentariesTab } from './commentaries';
+import { ParticipantTab } from './participants';
+import {SidebarAction} from './sidebarActions';
 
 require('../css/popovers.less')
 require('../css/avatar.less');
 
+import './currentActions.less';
 
 class ActionCard extends SimpleDom.Component {
 
@@ -48,23 +52,22 @@ class ActionCard extends SimpleDom.Component {
     render() {
         let self = this;
         return (
-            <div class="card">
-                <div class="card-image waves-effect waves-block waves-light">
+            <div class="card my-card">
+                <div class="card-image waves-block waves-light">
                     <a data-fancybox 
                         data-caption={this.userAction.action.title} 
                         href={this.userAction.action.image_url}>
-                        <img height="150" class="lozad" src={this.userAction.action.image_url} />
+                        <img class="lozad" src={this.userAction.action.image_url} />
                     </a>
+                    <span class={`badge ${this.getBadgeColour()} white-text my-card-indicator`}>
+                            {this.userAction.action.kind}
+                    </span>
                 </div>
-                <div class="card-content">
+                <div class="card-content" data-tooltip={this.userAction.action.title}>
                     <span class="card-title activator grey-text text-darken-4"
                         style="font-size: 1.4em;"
                     >
-                        {ActionCard.cropTitle(this.userAction.action.title, 10)}
-                        <span class={`badge small ${this.getBadgeColour()} white-text`}
-                            style="border-radius: 5px; position: absolute">
-                            {this.userAction.action.kind}
-                        </span>
+                        {ActionCard.cropTitle(this.userAction.action.title, 20)}
                         <i class="material-icons right">more_vert</i>
                     </span>
                     <div>
@@ -209,20 +212,34 @@ class App extends SimpleDom.Component {
         return (
             <div id="top" class="action">
                 <h2 class="en-tete">J'agis</h2>
-                <div class="boxed-layout" style="margin-top: 50px;">
+                <div class="boxed-layout">
+                    <SidebarAction />
                     <div class="row">
                         <div id="actions" class="col s12">
-                            <div class="row">
-                                <div class="col s4">
-                                    <div style="position: fixed; margin-top: -50px;">
-                                        <input style="visibility: hidden;" class="flatpicker" type="date" />
-                                    </div>
+                            <h1 class="main-title">
+                                Mes actions en cours ({this.state.selectedActions.length})
+                                <a class="right hbtn purple white-text hbtn-action-text">Créer une action</a>
+                                <a class="right hbtn purple white-text hbtn-action-text">Rechercher une action</a>
+                            </h1>
+                            <hr/>
+                            <div class="row action-filter">
+                                <div class="action-date-picker input-field">
+                                    <i class="lnr lnr-calendar-full prefix">
+                                    </i>
+                                    <input class="flatpicker" type="date"/>
                                 </div>
-                                <div class="col s8">
+                                <div class="action-search input-field">
+                                    <i class="lnr lnr-magnifier prefix">
+                                    </i>
+                                    <input type="search"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12">
                                     {SimpleDom.predicate(!this.state.selectedActions.length,
                                         () => {
                                             return (
-                                                <section style="margin-top: 50px;" class="empty">
+                                                <section class="empty">
                                                     <div class="empty-icon">
                                                         <i class="lnr lnr-user fa-3x"></i>
                                                     </div>
@@ -249,15 +266,14 @@ $(document).ready(function () {
     withVeilAndMessages(fetchJsonData(`/users/actions/get`),
         true)
         .then(actions => {
-            console.log(actions);
             store.updateState({ actions, selectedActions: actions, selectedDate: moment(new Date()).format('YYYY-MM-DD')});
             SimpleDom.renderToDom('container', <App />, store);
-
+            console.log(actions);
             // jquery functions
-            $('.tabs').tabs();
             flatpickr('.flatpicker',
                 {
-                    inline: true,
+                    altInput: true,
+                    defaultDate: new Date(),
                     onChange: (_, date, inst) => {
                         console.log(date);
                         withVeilAndMessages(

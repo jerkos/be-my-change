@@ -116,7 +116,7 @@ class JsonSerializerMixin(object):
                                          for i in value]
         return res
 
-    def to_json(self, rel=None, backref=None, exclude=None):
+    def to_json(self, rel=None, backref=None, exclude=('password')):
         """convert model to json"""
         if rel is None:
             rel = self.RELATIONSHIPS_TO_DICT

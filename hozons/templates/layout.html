@@ -22,7 +22,7 @@
   <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
   <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/materialize.min.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='bundles/css/actions.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bundles/css/currentActions.css') }}">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.1.20/jquery.fancybox.min.css" />
   <script src="https://use.fontawesome.com/a911e2def4.js"></script>
@@ -57,7 +57,10 @@
 {% endblock %}
 
 
-
+<script>
+  window.currentUser = JSON.parse({{current_user.to_json(exclude=('password'))|tojson|safe}});
+  console.log(window.currentUser);
+</script>
 {% block js %}
   <script src='/static/bundles/home.js'></script>
 {% endblock %}

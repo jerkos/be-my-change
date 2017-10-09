@@ -1,6 +1,6 @@
     <!-- Modal Structure -->
   {% if not current_user or not current_user.is_authenticated %}
-  <div id="login" class="modal">
+  <div id="login" class="modal modal-login">
     <div class="modal-content">
       <form id="loginForm" method="POST" class="navbar-form form-inline navbar-right" action="/" role="login">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -23,12 +23,12 @@
   {% endif %}
   <!-- Dropdown Structure -->
   <ul id='dropdown1' class='dropdown-content'>
-    <li><a href="{{url_for('user.profile')}}">Profil</a></li>
-    <li><a href="{{url_for('user.current_actions_view')}}">Action en cours</a></li>
-    <li><a href="{{url_for('user.look_for_actions_view')}}">Rechercher une action</a></li>        
-    <li><a href="{{url_for('user.create_action_view')}}">Créer une action</a></li>    
+    <li class="dropdown-item"><a href="{{url_for('user.profile')}}">Profil</a></li>
+    <li class="dropdown-item"><a href="{{url_for('user.current_actions_view')}}">Action en cours</a></li>
+    <li class="dropdown-item"><a href="{{url_for('user.look_for_actions_view')}}">Rechercher une action</a></li>        
+    <li class="dropdown-item"><a href="{{url_for('user.create_action_view')}}">Créer une action</a></li>    
     <li class="divider"></li>
-    <li><a href="{{url_for('public.logout')}}">Se déconnecter</a></li>
+    <li class="dropdown-item"><a href="{{url_for('public.logout')}}">Se déconnecter</a></li>
   </ul>
 
   <ul id='connection' class='dropdown-content'>
@@ -36,43 +36,30 @@
     <li><a href="{{url_for('public.register')}}">S'inscrire</a></li>
   </ul>
 
-  <nav>
-      <div class="nav-wrapper">
+  <nav class="main-nav">
+      <div class="main-nav-wrapper">
         <a href="/" class="brand-logo"><img src="{{url_for('static', filename='img/Logo-autre-8.png')}}" alt="Be my Change"></a>
-        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="lnr lnr-menu"></i></a>
-        <ul class="right hide-on-med-and-down">
-
-          <li><a>Accueil</a></li>
-          <li><a>About</a></li>
-          <li><a>Blog</a></li>
+        <div class="hide-on-med-and-down">
+          <div class="spacer"></div>
+          <div><a>Accueil</a></div>
+          <div><a>About</a></div>
+          <div><a>Blog</a></div>
           {%if current_user and current_user.is_authenticated %}
-
-            <li><a class="waves-effect waves-light btn" href="{{url_for('user.inspire')}}" style="background-color:#31c7d5;color:#FFF !important">Je m'inspire</a></li>
-            <li><a class="waves-effect waves-light btn" href="{{url_for('user.current_actions_view')}}" style="background-color:#31c7d5;color:#FFF !important">J'agis</a></li>
-            <li>
+            <a class="waves-effect waves-light btn" href="{{url_for('user.inspire')}}" style="background-color:#31c7d5;color:#FFF !important">Je m'inspire</a>
+            <a class="waves-effect waves-light btn" href="{{url_for('user.current_actions_view')}}" style="background-color:#31c7d5;color:#FFF !important">J'agis</a>
+            <div>
                 <a class='dropdown-button' href='#' data-activates='dropdown1'>
-                  <i class="fa fa-user fa-2x" style="margin-left:10px"></i>
+                  <i class="lnr lnr-user fa-2x" style="margin-left:10px"></i>
                 </a>
-            </li>
-            <li>
-                <a>
-                  <i class="fa fa-globe fa-2x" style="margin-right:20px"></i>
-                </a> 
-            </li>
+              </div>
               
           {% else %}
-            <li>
+            <div>
               <a class='dropdown-button' href='#' data-activates='connection'>
-                  <i class="lnr lnr-user fa-2x" style="margin-right:30px;margin-left:10px"></i>
+                  <i class="lnr lnr-user fa-2x"></i>
                 </a>
-            </li>
+              </div>
           {% endif %}
-        </ul>
-        <ul class="side-nav" id="mobile-demo">
-          <li><a href="http://facebook.com">Je m'inspire</a></li>
-          <li><a href="badges.html">J'agis</a></li>
-          <li><a href="collapsible.html">Profil</a></li>
-          <li><a href="mobile.html">Réseau</a></li>
         </ul>
       </div>
     </nav>

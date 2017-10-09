@@ -1,13 +1,12 @@
-require('../home');
+import '../home';
 const moment = require('moment')
-const flatpickr = require("flatpickr");
+const flatpickr = require('flatpickr');
 require('moment/locale/fr');
 require('../css/steps.less');
 require('../css/tooltips.less');
 require('../css/popovers.less');
-require('../css/user.less');
 import * as SimpleDom from 'simpledom-component';
-import { withVeilAndMessages } from '../veil';
+import { withVeilAndMessages } from '../components/veil/veil';
 import { ComposedComponent, ParentComponent } from '../composedComponent'
 
 class CreateActionStep1 extends ComposedComponent {

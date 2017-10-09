@@ -43,59 +43,6 @@ h3 {
     }
 }
 
-nav {
-    background-color:rgba(0,0,0,0) !important;
-    /*background-color:#FFF !important;*/
-    /*position:fixed;*/
-    /*border-bottom:2px solid #f7fafb;*/
-    z-index:1;
-    top:0px;
-    a {
-        font-weight:700;
-        font-size:12px !important;
-    }
-    
-    box-shadow: none;
-
-    i {
-        color:#111;
-    } 
-
-    .btn {
-        border-radius:0px !important;
-        box-shadow:none !important;
-        cursor:pointer;
-        margin-left:0px !important;
-        width:140px;
-
-        &:hover {
-          opacity:0.8 !important;
-          background-color:#31c7d5 !important;
-        }
-    }
-    
-    img {
-        width: 180px;
-        margin-top: 8px;
-        margin-left: 20px;
-    }
-}
-
-nav ul a {
-    color:#111 !important;
-    text-transform:uppercase;
-}
-nav ul a:hover {
-    background-color:rgba(0,0,0,0) !important;
-    opacity:0.8;
-}
-
-@media(max-width:600px) {
-    nav img {
-    width:130px
-    }
-}
-
 .btn {
 letter-spacing:0px !important;
 }

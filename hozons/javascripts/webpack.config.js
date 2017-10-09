@@ -10,19 +10,16 @@ module.exports = {
     },
     entry: {
         home : [
-            './src/home.js',
+            './src/home.js'
         ],
         currentActions: [
-            './src/actions/currentActions.js',
-            './src/css/user.less'
+            './src/actions/currentActions.js'
         ],
         lookForActions: [
-            './src/actions/lookForActions.js',
-            './src/css/user.less'
+            './src/actions/lookForActions.js'
         ],
         createAction: [
-            './src/actions/step1.js',
-            './src/css/user.less'
+            './src/actions/step1.js'
         ]
         //,campagne: ['./src/campagne/less/main.less', './src/campagne/routes.es6']
     },
