@@ -211,15 +211,15 @@ class App extends SimpleDom.Component {
     render() {
         return (
             <div id="top" class="action">
-                <h2 class="en-tete">J'agis</h2>
                 <div class="boxed-layout">
                     <SidebarAction />
                     <div class="row">
                         <div id="actions" class="col s12">
                             <h1 class="main-title">
                                 Mes actions en cours ({this.state.selectedActions.length})
-                                <a class="right hbtn purple white-text hbtn-action-text">Créer une action</a>
-                                <a class="right hbtn purple white-text hbtn-action-text">Rechercher une action</a>
+                                <a href="#create-action" class="right hbtn-action hbtn-main-color add-action">
+                                    <i class="material-icons white-text">add</i>
+                                </a>
                             </h1>
                             <hr/>
                             <div class="row action-filter">

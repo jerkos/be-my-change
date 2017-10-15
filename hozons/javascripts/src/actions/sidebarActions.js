@@ -75,19 +75,7 @@ export class SidebarAction extends SimpleDom.Component {
                     </p>
                     <p class="sidebar-action-content-entry">
                         <span class="lnr lnr-paw fa-2x"></span>                
-                        <a href="">Créer une action</a>
-                    </p>
-                    <p class="sidebar-action-content-entry">
-                        <span class="lnr lnr-users fa-2x"></span>                
-                        <a href="">Groupes</a>
-                    </p>
-                    <p class="sidebar-action-content-entry">
-                        <span class="lnr lnr-inbox fa-2x"></span>                
-                        <a href="">Messages</a>
-                    </p>
-                    <p class="sidebar-action-content-entry">
-                        <span class="lnr lnr-power-switch fa-2x"></span>                        
-                        <a href="">Se déconneter</a>
+                        <a href="/users/actions/create">Créer une action</a>
                     </p>
                 </div>
                 <div class="sidebar-action-spacer"></div>
