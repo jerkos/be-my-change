@@ -194,10 +194,10 @@ class ActionsList extends SimpleDom.Component {
 
     render() {
         return <div id="actions-card">
-            {this.partitionList(this.state.selectedActions || [], 3).map(subactions =>
+            {this.partitionList(this.state.selectedActions || [], 4).map(subactions =>
                 <div class="row">
                     {subactions.map(action =>
-                        <div class="col m4 s12">
+                        <div class="col m3 s12">
                             <ActionCard userAction={action} />
                         </div>
                     )}

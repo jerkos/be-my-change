@@ -20,7 +20,7 @@
   <!-- Mobile viewport optimized: h5bp.com/viewport -->
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
-  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/materialize.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='bundles/css/currentActions.css') }}">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -58,11 +58,9 @@
 
 {% if current_user and current_user.is_authenticated %}
 <script>
-  window.currentUser = JSON.parse({{current_user.to_json(exclude=('password'))|tojson|safe}});
-  console.log(window.currentUser);
+    window.currentUser = JSON.parse({{current_user.to_json(exclude=('password'))|tojson|safe}});
 </script>
-{% endif %}
-
+{% endif %}  
 {% block js %}
   <script src='/static/bundles/home.js'></script>
 {% endblock %}

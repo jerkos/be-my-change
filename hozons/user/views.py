@@ -93,7 +93,7 @@ def get_user_actions():
         requested_date = dt.datetime.strptime(requested_date, '%Y-%m-%d')
     
     return UserAction.arr_to_json(
-                current_user.user_actions(requested_date), 
+                current_user.user_actions(requested_date) * 5, 
                 exclude={'password'}
             ), 200
 
@@ -212,7 +212,7 @@ def get_last_actions():
     #last_actions = Action.query.order_by(desc(Action.created_at)).limit(5).subquery();
     #users = db.session.query(User).join(UserAction).join(last_actions, last_actions.c.id == UserAction.action_id).limit(5).all()
     return Action.arr_to_json(
-        actions,
+        actions * 2,
         exclude={'password'}
     ), 200
 

@@ -2,6 +2,7 @@ require('../home');
 import * as SimpleDom from 'simpledom-component';
 import './sidebarActions.less';
 import '../css/avatar.less';
+import '../css/tooltips.less';
 const gravatar = require('gravatar');
 
 export class SidebarAction extends SimpleDom.Component {
@@ -35,7 +36,6 @@ export class SidebarAction extends SimpleDom.Component {
 
     render() {
         if (this.isLoading) {
-            console.log("loading...")
             return undefined;
         }
         return (
@@ -47,7 +47,7 @@ export class SidebarAction extends SimpleDom.Component {
                         const main = document.getElementsByClassName('boxed-layout')[0];
                         main.classList.toggle('boxed-layout-maximized');
                     }}>
-                        <i class="lnr lnr-arrow-left"></i>
+                        <i class="lnr lnr-arrow-left-circle"></i>
                     </div>
                     <div class="sidebar-action-header-img">
                         {SimpleDom.predicate(this.hasImage,
@@ -65,14 +65,34 @@ export class SidebarAction extends SimpleDom.Component {
                     <h2>{currentUser.email}</h2>
                 </div>
                 <div class="sidebar-action-content">
-                    <p><a href="">Mes actions en cours</a></p>
-                    <p><a href="">Rechercher une action</a></p>
-                    <p><a href="">Créer une action</a></p>
-                    <p><a href="">Se déconneter</a></p>
+                    <p class="sidebar-action-content-entry">
+                        <span class="lnr lnr-rocket fa-2x tooltip tooltip-right" data-tooltip="Mes actions en cours"></span>
+                        <a href="/users/actions/current">Mes actions en cours</a>
+                    </p>
+                    <p class="sidebar-action-content-entry">
+                        <span class="lnr lnr-magnifier fa-2x"></span>                      
+                        <a href="/users/actions/look-for-actions">Rechercher une action</a>
+                    </p>
+                    <p class="sidebar-action-content-entry">
+                        <span class="lnr lnr-paw fa-2x"></span>                
+                        <a href="">Créer une action</a>
+                    </p>
+                    <p class="sidebar-action-content-entry">
+                        <span class="lnr lnr-users fa-2x"></span>                
+                        <a href="">Groupes</a>
+                    </p>
+                    <p class="sidebar-action-content-entry">
+                        <span class="lnr lnr-inbox fa-2x"></span>                
+                        <a href="">Messages</a>
+                    </p>
+                    <p class="sidebar-action-content-entry">
+                        <span class="lnr lnr-power-switch fa-2x"></span>                        
+                        <a href="">Se déconneter</a>
+                    </p>
                 </div>
                 <div class="sidebar-action-spacer"></div>
                 <div class="sidebar-action-footer">
-                    <p class="sidebar-action-copyright">copyright mathieu dubois for winning money</p>
+                    <p class="sidebar-action-copyright">copyright bemychange-2017</p>
                 </div>
             </div>
         );

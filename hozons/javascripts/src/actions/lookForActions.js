@@ -4,7 +4,7 @@ require('../css/layout.less');
 require('../css/tooltips.less');
 require('../css/avatar.less');
 require('../css/popovers.less');
-
+import './lookForActions.less';
 const moment = require('moment');
 require('moment/locale/fr');
 const gravatar = require('gravatar');
@@ -13,6 +13,7 @@ import { withVeilAndMessages } from '../components/veil/veil';
 import { createSlider } from '../components/slider/slider';
 import { CommentariesTab } from './commentaries';
 import { ParticipantTab } from './participants';
+import {SidebarAction} from './sidebarActions';
 
 
 class InviteModalContent extends SimpleDom.Component {
@@ -110,151 +111,173 @@ export class LookForAction extends SimpleDom.Component {
                 <div id="modal-participate" class="modal">
                     <ParticipateModalContent />
                 </div>
-                <div class="boxed-layout">
-                    <div class="row">
-                        <div class="input-field col s8 offset-s2">
-                            <i class="material-icons prefix">search</i>
-                            <input type="text" value="" ref={ref => this.inputRef = ref}
-                                onkeyup={event => {
-                                    this.lastTimerId = this.timerId;
-                                    if (this.lastTimerId) {
-                                        clearTimeout(this.lastTimerId);
-                                    }
-                                    this.value = event.target.value;
-                                    if (this.value.length < 3 && this.value) {
-                                        return;
-                                    }
-                                    this.timerId = setTimeout(() => {
-                                        fetchJsonData(`/users/actions/matching-with-text?text=${this.value}`)
-                                            .then(data => this.store.updateState({ lastActions: data }, 'LOOK_FOR_UPDATE'))
-                                    }, 500);
-                                }} />
-                        </div>
+                <div class="row">
+                    <div class="input-field col s8 offset-s2">
+                        <i class="material-icons prefix">search</i>
+                        <input type="text" value="" ref={ref => this.inputRef = ref}
+                            onkeyup={event => {
+                                this.lastTimerId = this.timerId;
+                                if (this.lastTimerId) {
+                                    clearTimeout(this.lastTimerId);
+                                }
+                                this.value = event.target.value;
+                                if (this.value.length < 3 && this.value) {
+                                    return;
+                                }
+                                this.timerId = setTimeout(() => {
+                                    fetchJsonData(`/users/actions/matching-with-text?text=${this.value}`)
+                                        .then(data => this.store.updateState({ lastActions: data }, 'LOOK_FOR_UPDATE'))
+                                }, 500);
+                            }} />
                     </div>
-                    {
-                        ['PERS', 'REL', 'ENV'].map(category => {
-                            return (
-                                <div>
-                                    <h3><small style="color:lightgrey">#</small>{LookForAction.getCategoryLabel(category)}</h3>
-                                    <div class="container">
-                                        <div class="columns col-gapless" style="min-height: 200px">
-                                            {(this.state.lastActions
-                                                .filter(action => action.kind === category) || [])
-                                                .map(action => {
-                                                    return (
-                                                        <div class="column col-3">
-                                                            <div class="popover popover-right" style="width: 100%">
-                                                                <div class="lozad" style={
-                                                                    `background-image: url('${action.image_url || 'http://via.placeholder.com/400x200'}');
-                                                                background-size: cover; background-repeat: no-repeat; background-position: center center;
-                                                                min-height: 200px; max-height: 200px; width: 100% important;
-                                                                cursor: pointer;
-                                                                `}  
-                                                                />
-                                                                <div class="popover-container"  style="max-width: 30px;">
-                                                                    <p style="display: inline-grid; grid-gap: 10px; position:relative; right: 65px;">
-                                                                        <a class="btn-floating waves-effect waves-light cyan lighten-2 tooltipped"
-                                                                            data-position="bottom"
-                                                                            data-tooltip="Voir les commentaires à propros de cette action"
-                                                                            onclick={event => {
-                                                                                withVeilAndMessages(
-                                                                                    fetchJsonData(`/users/actions/${action.id}/commentaries`),
-                                                                                    true
-                                                                                ).then(commentaries =>
-                                                                                    createSlider(
-                                                                                        `Commentaires associées à cette action`,
-                                                                                        <CommentariesTab
-                                                                                            action={action}
-                                                                                            commentaries={commentaries || []}
-                                                                                        />,
-                                                                                        event
-                                                                                    ));
-                                                                            }}
-                                                                        >
-                                                                            <i class="material-icons">question_answer</i>Hello
-                                                                        </a>
-                                                                        <a class="btn-floating waves-effect waves-light cyan lighten-2"
-                                                                            onclick={event => {
-                                                                                withVeilAndMessages(
-                                                                                    fetchJsonData(`/users/actions/${action.id}/participants`),
-                                                                                    true
-                                                                                ).then(({ users, total_pages, current_page }) => {
-                                                                                    createSlider(
-                                                                                        `Participants`,
-                                                                                        <ParticipantTab
-                                                                                            users={users || []}
-                                                                                            action={action}
-                                                                                            total_pages={total_pages}
-                                                                                            current_page={current_page}
-                                                                                        />,
-                                                                                        event
-                                                                                    )
-                                                                                })
-                                                                            }}
-                                                                        >
-                                                                            <i class="material-icons">people</i>
-                                                                        </a>
+                </div>
+                {
+                    ['PERS', 'REL', 'ENV'].map(category => {
+                        return (
+                            <div>
+                                <h3><small style="color:lightgrey">#</small>{LookForAction.getCategoryLabel(category)}</h3>
+                                <div class="container">
+                                    <div class="container-wrapper">
+                                        {SimpleDom.predicate(this.state.lastActions.filter(action => action.kind === category).length > 5,                                      
+                                                [
+                                                <div class="translater-left" 
+                                                    onclick={() => {
+                                                        const elem = document.getElementById(`columns-${category.toLowerCase()}`);
+                                                        elem.classList.remove('move-right');
+                                                        elem.classList.remove('move-left');                                                        
+                                                        elem.classList.add('move-left');
+                                                    }}>
+                                                    <span class="lnr lnr-chevron-left"></span>
+                                                </div>,
+                                                <div class="translater-right"
+                                                    onclick={() => {
+                                                        const elem = document.getElementById(`columns-${category.toLowerCase()}`);
+                                                        elem.classList.remove('move-left');
+                                                        elem.classList.remove('move-right')                                                        
+                                                        elem.classList.add('move-right');
+                                                    }}>
+                                                    <span class="lnr lnr-chevron-right"></span>
+                                                </div>
+                                                ]
+                                            )}
+                                    <div id={`columns-${category.toLowerCase()}`} class="columns col-gapless no-wrap">
+                                        {(this.state.lastActions
+                                            .filter(action => action.kind === category) || [])
+                                            .map(action => {
+                                                return (
+                                                    <div class="column col-3">
+                                                        <div class="popover popover-right" style="width: 100%">
+                                                            <div class="lozad" style={
+                                                                `background-image: url('${action.image_url || 'http://via.placeholder.com/400x200'}');
+                                                            background-size: cover; background-repeat: no-repeat; background-position: center center;
+                                                            min-height: 200px; max-height: 200px; width: 100% important;
+                                                            cursor: pointer;
+                                                            `}  
+                                                            />
+                                                            <div class="popover-container"  style="max-width: 30px;">
+                                                                <p style="display: inline-grid; grid-gap: 10px; position:relative; right: 65px;">
+                                                                    <a class="btn-floating waves-effect waves-light cyan lighten-2 tooltipped"
+                                                                        data-position="bottom"
+                                                                        data-tooltip="Voir les commentaires à propros de cette action"
+                                                                        onclick={event => {
+                                                                            withVeilAndMessages(
+                                                                                fetchJsonData(`/users/actions/${action.id}/commentaries`),
+                                                                                true
+                                                                            ).then(commentaries =>
+                                                                                createSlider(
+                                                                                    `Commentaires associées à cette action`,
+                                                                                    <CommentariesTab
+                                                                                        action={action}
+                                                                                        commentaries={commentaries || []}
+                                                                                    />,
+                                                                                    event
+                                                                                ));
+                                                                        }}
+                                                                    >
+                                                                        <i class="material-icons">question_answer</i>Hello
+                                                                    </a>
+                                                                    <a class="btn-floating waves-effect waves-light cyan lighten-2"
+                                                                        onclick={event => {
+                                                                            withVeilAndMessages(
+                                                                                fetchJsonData(`/users/actions/${action.id}/participants`),
+                                                                                true
+                                                                            ).then(({ users, total_pages, current_page }) => {
+                                                                                createSlider(
+                                                                                    `Participants`,
+                                                                                    <ParticipantTab
+                                                                                        users={users || []}
+                                                                                        action={action}
+                                                                                        total_pages={total_pages}
+                                                                                        current_page={current_page}
+                                                                                    />,
+                                                                                    event
+                                                                                )
+                                                                            })
+                                                                        }}
+                                                                    >
+                                                                        <i class="material-icons">people</i>
+                                                                    </a>
 
-                                                                        <a class="btn-floating waves-effect waves-light cyan lighten-2"
-                                                                            onclick={() => {
-                                                                                this.store.updateState({ participateAction: action }, 'PARTICIPATE_TO_REFRESH')
-                                                                                $('#modal-participate').modal('open');
-                                                                            }}>
-                                                                            <i class="material-icons">add</i>
-                                                                        </a>
-                                                                    </p>
-                                                                </div>
+                                                                    <a class="btn-floating waves-effect waves-light cyan lighten-2"
+                                                                        onclick={() => {
+                                                                            this.store.updateState({ participateAction: action }, 'PARTICIPATE_TO_REFRESH')
+                                                                            $('#modal-participate').modal('open');
+                                                                        }}>
+                                                                        <i class="material-icons">add</i>
+                                                                    </a>
+                                                                </p>
                                                             </div>
-                                                            <div class="row" style="padding-top: 10px;">
-                                                                <div class="col s6">
-                                                                    <span style="font-weight: bold; padding-left: 5px;">
-                                                                        {LookForAction.cropTitle(action.title)}
-                                                                    </span>
-                                                                </div>
-                                                                <div class="col s3">
-                                                                    <div class="popover popover-right">
-                                                                        <img src={gravatar.url(action.creator.email, { s: '30' })}
-                                                                            class="circle"
-                                                                            style="margin-left: 10px"
-                                                                        />
-                                                                        <div class="popover-container">
-                                                                            <div class="card">
-                                                                                <div class="card-content black-text">
-                                                                                    <span class="card-title">{action.creator.username}<small> life changer {moment(action.creator.created_at).fromNow()}</small></span>
-                                                                                    <p><em>Titre:</em> Overlord</p>
-                                                                                    <p style="display: flex;align-items: center;justify-content: space-around;">
-                                                                                        <figure class="avatar-spec white-text" data-intial="100">
-                                                                                        </figure>
-                                                                                        <figure class="avatar-spec white-text" data-intial="100">
-                                                                                        </figure>
-                                                                                        <figure class="avatar-spec white-text" data-intial="100">
-                                                                                        </figure>
-                                                                                    </p>
-                                                                                </div>
-                                                                                <div class="card-action">
-                                                                                    <a href="#">Voir son profile</a>
-                                                                                </div>
+                                                        </div>
+                                                        <div class="row" style="padding-top: 10px;">
+                                                            <div class="col s6">
+                                                                <span style="font-weight: bold; padding-left: 5px;">
+                                                                    {LookForAction.cropTitle(action.title)}
+                                                                </span>
+                                                            </div>
+                                                            <div class="col s3">
+                                                                <div class="popover popover-right">
+                                                                    <img src={gravatar.url(action.creator.email, { s: '30' })}
+                                                                        class="circle"
+                                                                        style="margin-left: 10px"
+                                                                    />
+                                                                    <div class="popover-container">
+                                                                        <div class="card">
+                                                                            <div class="card-content black-text">
+                                                                                <span class="card-title">{action.creator.username}<small> life changer {moment(action.creator.created_at).fromNow()}</small></span>
+                                                                                <p><em>Titre:</em> Overlord</p>
+                                                                                <p style="display: flex;align-items: center;justify-content: space-around;">
+                                                                                    <figure class="avatar-spec white-text" data-intial="100">
+                                                                                    </figure>
+                                                                                    <figure class="avatar-spec white-text" data-intial="100">
+                                                                                    </figure>
+                                                                                    <figure class="avatar-spec white-text" data-intial="100">
+                                                                                    </figure>
+                                                                                </p>
+                                                                            </div>
+                                                                            <div class="card-action">
+                                                                                <a href="#">Voir son profile</a>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col s3">
-                                                                    <div class="chip pull-right"
-                                                                        style="margin-right: 15px;">
-                                                                        {action.initial_nb_days + 'j'}
-                                                                    </div>
+                                                            </div>
+                                                            <div class="col s3">
+                                                                <div class="chip pull-right"
+                                                                    style="margin-right: 15px;">
+                                                                    {action.initial_nb_days + 'j'}
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    );
-                                                })}
-                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                    </div>
                                     </div>
                                 </div>
-                            );
-                        })
-                    }
-                </div>
+                            </div>
+                        );
+                    })
+                }
             </div>
         );
     }
@@ -268,6 +291,7 @@ class App extends SimpleDom.Component {
             <div id="top" class="action">
                 <h2 class="en-tete">J'agis</h2>
                 <div class="boxed-layout" style="margin-top: 50px;">
+                    <SidebarAction />
                     <div class="row">
                         <div id="lookfor" class="col s12">
                             <LookForAction />
