@@ -6,6 +6,7 @@ from datetime import datetime
 from uuid import uuid4
 
 from sqlalchemy.ext.declarative import DeclarativeMeta
+import sqlalchemy
 
 from .compat import basestring
 from .extensions import db
@@ -98,9 +99,10 @@ class JsonSerializerMixin(object):
     def to_dict(self, rel=None, backref=None, exclude=()):
         if rel is None:
             rel = self.RELATIONSHIPS_TO_DICT
+        
         res = {column.key: self._get_val(getattr(self, attr))
                for attr, column in self.__mapper__.c.items()
-               if column.key not in exclude}
+               if not isinstance(column.type, db.Binary)}
         if rel:
             for attr, relation in self.__mapper__.relationships.items():
                 # Avoid recursive loop between to tables.

@@ -17,12 +17,13 @@ from .models import Action
 from .models import User
 from .models import UserAction
 from .models import Commentary
+from .models import Tags
 
 user = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
 
 PER_PAGE = 7
 
-def paginate(query, page_nb, total_count, clazz, exclude=frozenset()):
+def paginate(query, page_nb, total_count, clazz):
     """ utility query for pagination """
     logging.debug(page_nb, total_count, clazz.__tablename__, sep="; ")
     nb_pages = (total_count // PER_PAGE)
@@ -34,11 +35,13 @@ def paginate(query, page_nb, total_count, clazz, exclude=frozenset()):
     result = query.offset(count).limit(count + PER_PAGE).all()
     response = {'total_pages': nb_pages,
                 'current_page': page_nb,
-                clazz.__tablename__: clazz.arr_to_dict(result, exclude=exclude)
+                clazz.__tablename__: clazz.arr_to_dict(result)
     }
     return response
 
 
+###
+# Base route-----------------------------------------------------------
 @user.route('/actions')
 @login_required
 def actions_view():
@@ -93,8 +96,7 @@ def get_user_actions():
         requested_date = dt.datetime.strptime(requested_date, '%Y-%m-%d')
     
     return UserAction.arr_to_json(
-                current_user.user_actions(requested_date) * 5, 
-                exclude={'password'}
+                current_user.user_actions(requested_date) * 5,
             ), 200
 
 
@@ -107,7 +109,7 @@ def find_user_action_for_user(user_id, action_id):
             UserAction.action_id == action_id)
         .order_by(desc(UserAction.end_date))
         .first()
-    ), exclude={'password'}), 200
+    )), 200
 
 
 @user.route('/actions/user-action/done/<int:user_action_id>', methods=['GET'])
@@ -117,7 +119,7 @@ def user_action_done(user_action_id):
     if user_action is None:
         return '{}', 404
     user_action = user_action.realised()
-    return UserAction.to_json(user_action, exclude={'password'})
+    return UserAction.to_json(user_action)
 
 
 @user.route('/actions/participate/<int:action_id>')
@@ -136,7 +138,7 @@ def participate_to_action(action_id):
         start_date + dt.timedelta(days=nb_days)
     )
     user_action.save()
-    return UserAction.to_json(user_action, exclude={'password'}), 200
+    return UserAction.to_json(user_action), 200
 
 
 @user.route('/actions/<int:action_id>/participants', methods=['GET'])
@@ -157,7 +159,7 @@ def get_participants_for_action(action_id):
         .join(Action)
         .filter(UserAction.action_id == action_id))
 
-    response = paginate(query, page, total_count, User, exclude={'password'})
+    response = paginate(query, page, total_count, User)
     logging.info('participants for action send response: \n' + str(response))
     return json.dumps(response), 200
 
@@ -174,8 +176,7 @@ def get_matching_text_actions():
         Action.query.filter(
             (Action.title.like(like_query)) |
             (Action.description.like(like_query))
-        ).all(), exclude={'password'}
-    ), 200
+        ).all()), 200
 
 
 @user.route('/actions/last-actions')
@@ -212,9 +213,7 @@ def get_last_actions():
     #last_actions = Action.query.order_by(desc(Action.created_at)).limit(5).subquery();
     #users = db.session.query(User).join(UserAction).join(last_actions, last_actions.c.id == UserAction.action_id).limit(5).all()
     return Action.arr_to_json(
-        actions * 2,
-        exclude={'password'}
-    ), 200
+        actions * 2), 200
 
 
 @user.route('/actions/create', methods=['POST'])
@@ -240,14 +239,14 @@ def create_action():
         start_date=dt.datetime.strptime(start_date, '%Y-%m-%d'),
         end_date = dt.datetime.strptime(start_date, '%Y-%m-%d') + dt.timedelta(days=duration), 
         creator_user_id=current_user.id)
-    return Action.to_json(new_action, exclude={'password'}), 200
+    return Action.to_json(new_action), 200
 
 
 @user.route('/actions/<int:action_id>/commentaries', methods=['GET'])
 @login_required
 def get_commentaries(action_id):
     commentaries = Commentary.query.filter(Commentary.action_id == action_id).all()
-    return Commentary.arr_to_json(commentaries, exclude={'password'}), 200
+    return Commentary.arr_to_json(commentaries), 200
 
 
 @user.route('/actions/<int:action_id>/commentaries', methods=['POST'])
@@ -260,4 +259,10 @@ def save_commentary(action_id):
         user_id=current_user.id,
         action_id=data.get('action_id')
     )
-    return Commentary.to_json(commentary, exclude={'password'}), 200
+    return Commentary.to_json(commentary), 200
+
+
+@user.route('/tags/all', methods=['GET'])
+@login_required
+def get_all_tags():
+    return Tags.arr_to_json(Tags.get_tree()), 200

@@ -58,7 +58,7 @@
 
 {% if current_user and current_user.is_authenticated %}
 <script>
-    window.currentUser = JSON.parse({{current_user.to_json(exclude=('password'))|tojson|safe}});
+    window.currentUser = JSON.parse({{current_user.to_json()|tojson|safe}});
 </script>
 {% endif %}  
 {% block js %}

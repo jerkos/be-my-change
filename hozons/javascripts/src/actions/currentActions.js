@@ -263,9 +263,14 @@ class App extends SimpleDom.Component {
 $(document).ready(function () {
 
     const store = new SimpleDom.Store();
-    withVeilAndMessages(fetchJsonData(`/users/actions/get`),
+    withVeilAndMessages(
+        Promise.all([
+            fetchJsonData(`/users/actions/get`), 
+            fetchJsonData('/users/tags/all')
+        ]),
         true)
-        .then(actions => {
+        .then(([actions, tags]) => {
+            console.log(tags)
             store.updateState({ actions, selectedActions: actions, selectedDate: moment(new Date()).format('YYYY-MM-DD')});
             SimpleDom.renderToDom('container', <App />, store);
             console.log(actions);

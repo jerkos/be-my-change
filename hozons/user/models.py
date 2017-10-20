@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """User models."""
 import datetime as dt
+from itertools import groupby
 
 from flask_login import UserMixin
 from sqlalchemy import func, and_, or_
@@ -39,6 +40,8 @@ class User(JsonSerializerMixin, UserMixin, SurrogatePK, Model):
     created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
     first_name = Column(db.String(30), nullable=True)
     last_name = Column(db.String(30), nullable=True)
+
+    has_image = Column(db.Boolean(), default=False)
 
     active = Column(db.Boolean(), default=False)
     is_admin = Column(db.Boolean(), default=False)
@@ -94,6 +97,7 @@ class Action(JsonSerializerMixin, SurrogatePK, Model):
     kind = Column(db.Text, nullable=True, default='PERS')
     is_personal_action = Column(db.Boolean, default=True)
     public = Column(db.Boolean, default=True)
+    is_event = Column(db.Boolean, default=False)
 
     created_at = Column(db.DateTime, default=dt.datetime.utcnow)
     start_date = Column(db.DateTime)
@@ -147,13 +151,30 @@ class UserAction(JsonSerializerMixin, SurrogatePK, Model):
         return self.update(last_succeed = dt.datetime.utcnow(), nb_succeed=self.nb_succeed + 1)
 
 
+class Tags(JsonSerializerMixin, SurrogatePK, Model):
+    __tablename__ = 'tags'
+    RELATIONSHIPS_TO_DICT = True
+
+    name = Column(db.Text, nullable=False)
+    parent_id = reference_col('tags', nullable=True)
+    sons = relationship('Tags', uselist=True)
+
+    #sons = relationship('Tags', uselist=True, backref='parent')
+    
+    rank = Column(db.Integer, default=1)
+
+    @classmethod
+    def get_tree(cls):
+        return Tags.query.filter(Tags.rank == 1).all()
+
+
 class Followings(JsonSerializerMixin, SurrogatePK, Model):
     __tablename__ = 'followings'
     followed_user_id = reference_col('users', nullable=False)
-    followed_users = relationship('User', foreign_keys=[followed_user_id], backref='following_users')
+    followed_users = relationship('models.User', foreign_keys=[followed_user_id], backref='following_users')
 
     following_user_id = reference_col('users', nullable=False)
-    following_users = relationship('User', foreign_keys=[following_user_id], backref='followed_users')
+    following_users = relationship('models.User', foreign_keys=[following_user_id], backref='followed_users')
 
     created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
 
@@ -165,7 +186,7 @@ class Followings(JsonSerializerMixin, SurrogatePK, Model):
 class Ressource(JsonSerializerMixin, SurrogatePK, Model):
     __tablename__ = 'ressources'
     user_id = reference_col('users', nullable=False)
-    user = relationship('User', backref='ressources')
+    user = relationship('models.User', backref='ressources')
 
     action_id = reference_col('actions', nullable=False)
     action = relationship('Action', backref='ressources')
@@ -188,7 +209,7 @@ class Commentary(JsonSerializerMixin, SurrogatePK, Model):
     created_at = Column(db.DateTime, default=dt.datetime.utcnow())
 
     user_id = reference_col('users', nullable=False)
-    user = relationship('User')
+    user = relationship('models.User')
 
     action_id = reference_col('actions', nullable=False)
     action = relationship('Action')
