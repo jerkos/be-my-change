@@ -85,6 +85,28 @@
             }
         }
 
+        .main-tag-list {
+            padding: 0 5%;
+            transition: all 0.2s;
+
+            li {
+                cursor: pointer;
+            }
+
+            .sub-tag-list {
+                display: none;
+                li {
+                    padding-left: 20px;
+                    cursor: pointer;
+                }
+
+                &.active {
+                    opacity: 1;
+                    display: block;
+                }
+            }
+        }
+
         // & p:last-child {
         //     margin-top: 5em;
         // }

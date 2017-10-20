@@ -5,12 +5,80 @@ import '../css/avatar.less';
 import '../css/tooltips.less';
 const gravatar = require('gravatar');
 
+
+class Tag extends SimpleDom.Component {
+
+    constructor(props, store) {
+        super(props, store);
+        this.tag = this.props.tag;
+        this.editMode = false;
+    }
+
+    eventsToSubscribe() {
+        return [`REFRESH_TAG_${this.props.tag.id}`];
+    }
+
+    render() {
+        return (
+            <li onclick={event => {
+                const elem = document.getElementsByClassName(`sub-${this.tag.id}`)[0];
+                if (elem) {
+                    elem.classList.toggle('active');
+                }
+                event.stopPropagation();
+            }}
+                ondblclick={event => {
+                    this.editMode = true;
+                    this.store.updateState({}, [`REFRESH_TAG_${this.tag.id}`]);
+                    event.stopPropagation();
+                }}
+            >
+            {SimpleDom.predicate(!this.editMode,
+                () => this.tag.name,
+                () => <input type="text" value={this.tag.name} />
+            )}
+            {SimpleDom.predicate(this.tag.sons && this.tag.sons.length,
+                () => {
+                    return (
+                        <ul class={`sub-tag-list sub-${this.tag.id}`}>
+                            {this.tag.sons.map(son => {
+                                if (!son) {
+                                    console.log("HOLAAAAAAA");
+                                }
+                                return <Tag tag={son} />
+                            })}
+                        </ul>
+                    );
+                }
+            )}
+            </li>
+        );
+    }
+}
+
+class TagList extends SimpleDom.Component {
+
+    render() {
+        return (
+            <ul class="main-tag-list">
+                {this.props.tags.map(tag => {
+                    if (!tag) {
+                        console.log("HOLLLAAAA 1");
+                    }
+                    return <Tag tag={tag} />
+                })}
+            </ul>
+        );
+    }
+}
+
 export class SidebarAction extends SimpleDom.Component {
     constructor(props, store) {
         super(props, store);
         this.isLoading = true;
         this.hasImage = true;
-
+        this.tags = this.props.tags;
+        console.log(this.tags);
     }
 
     eventsToSubscribe() {
@@ -65,18 +133,7 @@ export class SidebarAction extends SimpleDom.Component {
                     <h2>{currentUser.email}</h2>
                 </div>
                 <div class="sidebar-action-content">
-                    <p class="sidebar-action-content-entry">
-                        <span class="lnr lnr-rocket fa-2x tooltip tooltip-right" data-tooltip="Mes actions en cours"></span>
-                        <a href="/users/actions/current">Mes actions en cours</a>
-                    </p>
-                    <p class="sidebar-action-content-entry">
-                        <span class="lnr lnr-magnifier fa-2x"></span>                      
-                        <a href="/users/actions/look-for-actions">Rechercher une action</a>
-                    </p>
-                    <p class="sidebar-action-content-entry">
-                        <span class="lnr lnr-paw fa-2x"></span>                
-                        <a href="/users/actions/create">Créer une action</a>
-                    </p>
+                    <TagList tags={this.props.tags} />
                 </div>
                 <div class="sidebar-action-spacer"></div>
                 <div class="sidebar-action-footer">

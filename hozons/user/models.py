@@ -158,8 +158,6 @@ class Tags(JsonSerializerMixin, SurrogatePK, Model):
     name = Column(db.Text, nullable=False)
     parent_id = reference_col('tags', nullable=True)
     sons = relationship('Tags', uselist=True)
-
-    #sons = relationship('Tags', uselist=True, backref='parent')
     
     rank = Column(db.Integer, default=1)
 

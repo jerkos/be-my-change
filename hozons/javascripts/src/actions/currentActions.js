@@ -212,7 +212,9 @@ class App extends SimpleDom.Component {
         return (
             <div id="top" class="action">
                 <div class="boxed-layout">
-                    <SidebarAction />
+                    <SidebarAction 
+                        tags={this.state.tags}
+                    />
                     <div class="row">
                         <div id="actions" class="col s12">
                             <h1 class="main-title">
@@ -270,10 +272,14 @@ $(document).ready(function () {
         ]),
         true)
         .then(([actions, tags]) => {
-            console.log(tags)
-            store.updateState({ actions, selectedActions: actions, selectedDate: moment(new Date()).format('YYYY-MM-DD')});
+            console.log(tags);
+            store.updateState({ 
+                actions, 
+                selectedActions: actions, 
+                selectedDate: moment(new Date()).format('YYYY-MM-DD'),
+                tags
+            });
             SimpleDom.renderToDom('container', <App />, store);
-            console.log(actions);
             // jquery functions
             flatpickr('.flatpicker',
                 {
