@@ -98,7 +98,7 @@
 
                 &.hovered {
                     & > .sub-tag-edit {
-                        margin-left: 50px;
+                        margin-left: 20px;
                         opacity: 1;
                     }
                 }
@@ -106,6 +106,12 @@
                 & > .sub-tag-edit {
                     opacity: 0;
                     transition: all 0.2s;
+                    font-size: 0.7em;              
+                }
+
+                & > .sub-tag-list-icon {
+                    font-size: 0.7em;              
+                    margin-left: 10px;                    
                 }
             }
 
@@ -118,9 +124,18 @@
                     cursor: pointer;
                     color: black !important;
 
+                    // &:before {
+                    //     content: '\f054';
+                    //     font-weight: lighter;
+                    //     font-size: 0.7em;
+                    //     margin-right: 10px;
+                    //     display: inline-block;
+                    //     font-family: 'FontAwesome';
+                    // }
+
                     &.hovered {
                         & > .sub-tag-edit {
-                            margin-left: 50px;
+                            margin-left: 20px;
                             opacity: 1;
                         }
                     }
@@ -128,6 +143,7 @@
                     & > .sub-tag-edit {
                         opacity: 0;
                         transition: all 0.2s;
+                        font-size: 0.7em;                        
                     }
                 }
 
