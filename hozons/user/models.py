@@ -156,9 +156,12 @@ class Tags(JsonSerializerMixin, SurrogatePK, Model):
     RELATIONSHIPS_TO_DICT = True
 
     name = Column(db.Text, nullable=False)
+    
     parent_id = reference_col('tags', nullable=True)
     sons = relationship('Tags', uselist=True)
     
+    user_id = reference_col('users', nullable=True)
+
     rank = Column(db.Integer, default=1)
 
     @classmethod

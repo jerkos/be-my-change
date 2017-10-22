@@ -20,21 +20,26 @@ class Tag extends SimpleDom.Component {
 
     render() {
         return (
-            <li onclick={event => {
-                const elem = document.getElementsByClassName(`sub-${this.tag.id}`)[0];
-                if (elem) {
-                    elem.classList.toggle('active');
-                }
-                event.stopPropagation();
-            }}
-                ondblclick={event => {
-                    this.editMode = true;
-                    this.store.updateState({}, [`REFRESH_TAG_${this.tag.id}`]);
+            <li class="sub-tag" 
+                onclick={event => {
                     event.stopPropagation();
+                    const elem = document.getElementsByClassName(`sub-${this.tag.id}`)[0];
+                    if (elem) {
+                        elem.classList.toggle('active');
+                    }
                 }}
             >
             {SimpleDom.predicate(!this.editMode,
-                () => this.tag.name,
+                () => [
+                        <span>{this.tag.name}</span>, 
+                        <span
+                            onclick={event => {
+                                event.stopPropagation();
+                                this.editMode = true;
+                                this.store.updateState({}, [`REFRESH_TAG_${this.tag.id}`]);
+                            }} class="lnr lnr-pencil sub-tag-edit">
+                        </span>
+                ],
                 () => <input type="text" value={this.tag.name} />
             )}
             {SimpleDom.predicate(this.tag.sons && this.tag.sons.length,
@@ -42,9 +47,6 @@ class Tag extends SimpleDom.Component {
                     return (
                         <ul class={`sub-tag-list sub-${this.tag.id}`}>
                             {this.tag.sons.map(son => {
-                                if (!son) {
-                                    console.log("HOLAAAAAAA");
-                                }
                                 return <Tag tag={son} />
                             })}
                         </ul>
@@ -62,9 +64,6 @@ class TagList extends SimpleDom.Component {
         return (
             <ul class="main-tag-list">
                 {this.props.tags.map(tag => {
-                    if (!tag) {
-                        console.log("HOLLLAAAA 1");
-                    }
                     return <Tag tag={tag} />
                 })}
             </ul>
@@ -100,6 +99,18 @@ export class SidebarAction extends SimpleDom.Component {
                 this.store.updateState({}, 'SIDEBAR_TO_UPDATE');
             })
         }
+        $(function() {
+            $('.sub-tag').hover(
+                function(event) {
+                    $(this).addClass('hovered'); 
+                    $(this).parents('li.sub-tag').removeClass('hovered');                 
+                },
+                function(event){
+                    $(this).removeClass('hovered');
+                    $(this).parents('.sub-tag').removeClass('hovered');                                     
+                }
+            );
+        });
     }
 
     render() {

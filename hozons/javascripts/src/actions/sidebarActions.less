@@ -1,3 +1,5 @@
+@import '../css/variables';
+
 .sidebar-action {
     height: 100%;
     display: flex;
@@ -89,15 +91,44 @@
             padding: 0 5%;
             transition: all 0.2s;
 
-            li {
+            li.sub-tag {
+                font-size: 1.3em;
+                color: @main-blue;
                 cursor: pointer;
+
+                &.hovered {
+                    & > .sub-tag-edit {
+                        margin-left: 50px;
+                        opacity: 1;
+                    }
+                }
+
+                & > .sub-tag-edit {
+                    opacity: 0;
+                    transition: all 0.2s;
+                }
             }
 
             .sub-tag-list {
                 display: none;
-                li {
+                 
+                li.sub-tag {
+                    font-size: 1rem;
                     padding-left: 20px;
                     cursor: pointer;
+                    color: black !important;
+
+                    &.hovered {
+                        & > .sub-tag-edit {
+                            margin-left: 50px;
+                            opacity: 1;
+                        }
+                    }
+
+                    & > .sub-tag-edit {
+                        opacity: 0;
+                        transition: all 0.2s;
+                    }
                 }
 
                 &.active {
