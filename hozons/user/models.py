@@ -164,6 +164,12 @@ class Tags(JsonSerializerMixin, SurrogatePK, Model):
 
     rank = Column(db.Integer, default=1)
 
+    def __init__(self, name, parent_id, user_id, rank):
+        self.name = name
+        self.parent_id = parent_id
+        self.user_id = user_id
+        self.rank = rank
+
     @classmethod
     def get_tree(cls):
         return Tags.query.filter(Tags.rank == 1).all()

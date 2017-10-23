@@ -1,44 +1,39 @@
 require('../home');
 import * as SimpleDom from 'simpledom-component';
+import { withVeilAndMessages } from '../components/veil/veil';
+
 import './sidebarActions.less';
 import '../css/avatar.less';
 import '../css/tooltips.less';
 const gravatar = require('gravatar');
 
 
+let technicalId = 1;
+
 class Tag extends SimpleDom.Component {
 
     constructor(props, store) {
         super(props, store);
         this.tag = this.props.tag;
-        this.editMode = false;
+        this.editMode = this.tag === null ? true : false;
         this.isActive = false;
     }
 
     eventsToSubscribe() {
-        return [`REFRESH_TAG_${this.props.tag.id}`];
-    }
-
-    componentDidMount() {
-        $('.sub-tag').hover(
-            function(event) {
-                $(this).addClass('hovered'); 
-                $(this).parents('li.sub-tag').removeClass('hovered');                 
-            },
-            function(event){
-                $(this).removeClass('hovered');
-                $(this).parents('.sub-tag').removeClass('hovered');                                     
-            }
-        );
+        return [`REFRESH_TAG_${this.props.id}`];
     }
 
     render() {
         return (
-            <li class="sub-tag" 
+            <li class={`sub-tag ${this.isActive ? 'active' : ''}`} 
                 onclick={event => {
-                    event.stopPropagation();                    
+                    event.stopPropagation();
+                    $('.sub-tag').removeClass('active');
+                    if (this.editMode) {
+                        return;
+                    }                
                     this.isActive = !this.isActive;
-                    this.store.updateState({}, `REFRESH_TAG_${this.props.tag.id}`);
+                    this.store.updateState({}, `REFRESH_TAG_${this.props.id}`);
                 }}
             >
             {SimpleDom.predicate(!this.editMode,
@@ -49,23 +44,73 @@ class Tag extends SimpleDom.Component {
                         : <span class="lnr lnr-chevron-down sub-tag-list-icon"></span>;
                     return [
                         hasIcon ? icon : undefined,
-                        <span>{this.tag.name}</span>, 
+                        <span class="sub-tag-name">{this.tag.name}</span>,
+                        currentUser.id === this.tag.user_id ?
                         <span
                             onclick={event => {
                                 event.stopPropagation();
                                 this.editMode = true;
-                                this.store.updateState({}, [`REFRESH_TAG_${this.tag.id}`]);
-                            }} class="lnr lnr-pencil sub-tag-edit">
-                        </span>
+                                this.store.updateState({}, [`REFRESH_TAG_${this.props.id}`]);
+                            }} 
+                            class="hbtn-action lnr lnr-pencil sub-tag-edit">
+                        </span> : undefined,
+                        <span 
+                            onclick={event => {
+                                event.stopPropagation();
+                                this.tag.sons.push(null);
+                                this.isActive = true;
+                                this.store.updateState({}, [`REFRESH_TAG_${this.props.id}`]);                                
+                            }}  
+                            class="hbtn-action lnr lnr-plus-circle sub-tag-edit">
+                        </span> 
                 ]},
-                () => <input type="text" value={this.tag.name} />
+                () => <input type="text" 
+                            class="sub-tag-input" 
+                            onblur={event => {
+                                event.stopPropagation();
+                                const value = event.target.value;                                
+                                if (!this.tag) {
+                                    const sonTag = {
+                                        name: value, 
+                                        parent_id: this.props.parentTag.id,
+                                        rank: this.props.parentTag.rank + 1,
+                                        user_id: currentUser.id
+                                    }
+                                    withVeilAndMessages(
+                                        fetchJsonData('/users/tags/create', {
+                                            method: 'POST',
+                                            body: JSON.stringify(sonTag)
+                                        }), 
+                                        true
+                                    ).then((tag) => {
+                                        this.tag = tag;
+                                        this.editMode = false;
+                                        this.store.updateState({}, [`REFRESH_TAG_${this.props.id}`]);
+                                    })
+                                    return;
+                                }
+                                console.log('updating...');
+                                withVeilAndMessages(
+                                    fetchJsonData('/users/tags/update', {
+                                        method: 'PUT',
+                                        body: JSON.stringify({id: this.tag.id, name: value})
+                                    }), 
+                                    true
+                                ).then((tag) => {
+                                    this.tag.name = tag.name;
+                                    this.editMode = false;
+                                    this.store.updateState({}, [`REFRESH_TAG_${this.props.id}`]);                                    
+                                })
+                            }}
+                            value={(this.tag || {}).name} 
+                        />
             )}
-            {SimpleDom.predicate(this.tag.sons && this.tag.sons.length,
+            {SimpleDom.predicate(this.tag && this.tag.sons && this.tag.sons.length,
                 () => {
                     return (
                         <ul class={`sub-tag-list sub-${this.tag.id} ${this.isActive ? 'active' : ''}`}>
-                            {this.tag.sons.map(son => {
-                                return <Tag tag={son} />
+                            {this.tag.sons.map((son,i) => {       
+                                return <Tag tag={son} id={technicalId++} parentTag={this.tag}/>
                             })}
                         </ul>
                     );
@@ -82,7 +127,7 @@ class TagList extends SimpleDom.Component {
         return (
             <ul class="main-tag-list">
                 {this.props.tags.map(tag => {
-                    return <Tag tag={tag} />
+                    return <Tag tag={tag} id={technicalId++} />
                 })}
             </ul>
         );
@@ -153,7 +198,7 @@ export class SidebarAction extends SimpleDom.Component {
                 </div>
                 <div class="sidebar-action-spacer"></div>
                 <div class="sidebar-action-footer">
-                    <p class="sidebar-action-copyright">copyright bemychange-2017</p>
+                    <p class="sidebar-action-copyright">&copy; bemychange-2017</p>
                 </div>
             </div>
         );

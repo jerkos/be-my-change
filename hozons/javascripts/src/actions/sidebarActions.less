@@ -1,5 +1,10 @@
 @import '../css/variables';
 
+
+// .lnr + .lnr {
+//     margin-left: 10px;
+// }
+
 .sidebar-action {
     height: 100%;
     display: flex;
@@ -95,6 +100,7 @@
                 font-size: 1.3em;
                 color: @main-blue;
                 cursor: pointer;
+                padding: 5px 0;
 
                 &.hovered {
                     & > .sub-tag-edit {
@@ -106,12 +112,17 @@
                 & > .sub-tag-edit {
                     opacity: 0;
                     transition: all 0.2s;
-                    font-size: 0.7em;              
+                    font-size: 0.7em;
+                    display: inline;          
                 }
 
                 & > .sub-tag-list-icon {
                     font-size: 0.7em;              
-                    margin-left: 10px;                    
+                    margin-right: 10px;   
+                }
+
+                & > .sub-tag-input {
+                    font-size: 0.8em;
                 }
             }
 
@@ -120,31 +131,44 @@
                  
                 li.sub-tag {
                     font-size: 1rem;
-                    padding-left: 20px;
+                    //padding-left: 20px;
                     cursor: pointer;
                     color: black !important;
+                    padding: 5px 20px;
+                    position: relative;
+                    
+                    &.active {
+                        font-weight: bolder;
+                    }
 
-                    // &:before {
-                    //     content: '\f054';
-                    //     font-weight: lighter;
-                    //     font-size: 0.7em;
-                    //     margin-right: 10px;
-                    //     display: inline-block;
-                    //     font-family: 'FontAwesome';
-                    // }
-
-                    &.hovered {
-                        & > .sub-tag-edit {
-                            margin-left: 20px;
-                            opacity: 1;
+                    .sub-tag-name{
+                        text-overflow: ellipsis;
+                        &:hover {
+                            & ~ .sub-tag-edit {
+                                //margin-right: -10px;
+                                opacity: 1;
+                            }
                         }
                     }
 
-                    & > .sub-tag-edit {
+                    .sub-tag-edit {
                         opacity: 0;
                         transition: all 0.2s;
-                        font-size: 0.7em;                        
+                        font-size: 0.8em;
+                        display: inline-flex;
+                        position: absolute;
+                        background-color: @main-blue;
+                        color: white;
+                        max-height: 20px !important;
+                        max-width: 20px !important;
+                        margin-left: 10px;
+                        
+                        &:last-child {
+                            margin-left: 35px;
+                        }
                     }
+
+
                 }
 
                 &.active {

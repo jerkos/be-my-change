@@ -241,7 +241,7 @@ def create_action():
         creator_user_id=current_user.id)
     return Action.to_json(new_action), 200
 
-
+# --- commentaries
 @user.route('/actions/<int:action_id>/commentaries', methods=['GET'])
 @login_required
 def get_commentaries(action_id):
@@ -261,8 +261,32 @@ def save_commentary(action_id):
     )
     return Commentary.to_json(commentary), 200
 
-
+# ---tags
 @user.route('/tags/all', methods=['GET'])
 @login_required
 def get_all_tags():
     return Tags.arr_to_json(Tags.get_tree()), 200
+
+@user.route('/tags/update', methods=['PUT'])
+@login_required
+@csrf_protect.exempt
+def update_tag():
+    data = request.get_json(force=True)
+    tag_id = data.get('id')
+    tag = Tags.query.filter(Tags.id == tag_id).first_or_404()
+    tag.name = data.get('name')
+    tag.update()
+    return Tags.to_json(tag)
+
+@user.route('/tags/create', methods=['POST'])
+@login_required
+@csrf_protect.exempt
+def save_tag():
+    data = request.get_json(force=True)
+    tag = Tags.create(
+        name=data.get('name'),
+        parent_id=data.get('parent_id'),
+        user_id=current_user.id,
+        rank=data.get('rank')
+    )
+    return Tags.to_json(tag)
