@@ -103,6 +103,8 @@ class Action(JsonSerializerMixin, SurrogatePK, Model):
     start_date = Column(db.DateTime)
     end_date = Column(db.DateTime)
 
+    default_tag = Column(db.Text, nullable=True)
+
     creator_user_id = reference_col('users', nullable=False)
     creator = relationship('models.User') #, backref='created_actions')
 
@@ -129,6 +131,9 @@ class UserAction(JsonSerializerMixin, SurrogatePK, Model):
 
     last_succeed = Column(db.DateTime, nullable=True)
     nb_succeed = Column(db.Integer, nullable=False, default=0)
+
+    tag = Column(db.Text, nullable=True)
+
 
     def __init__(self, user_id, action_id, start_date, end_date):
         self.user_id = user_id

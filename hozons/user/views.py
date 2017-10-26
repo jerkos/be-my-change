@@ -96,7 +96,7 @@ def get_user_actions():
         requested_date = dt.datetime.strptime(requested_date, '%Y-%m-%d')
     
     return UserAction.arr_to_json(
-                current_user.user_actions(requested_date) * 5,
+                current_user.user_actions(requested_date)
             ), 200
 
 

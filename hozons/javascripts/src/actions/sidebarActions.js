@@ -33,7 +33,12 @@ class Tag extends SimpleDom.Component {
                         return;
                     }                
                     this.isActive = !this.isActive;
-                    this.store.updateState({}, `REFRESH_TAG_${this.props.id}`);
+                    if (this.props.onFilterClick) {
+                        this.props.onFilterClick(this.tag);
+                    }
+                    this.store.updateState({
+                        selectedTagSlug: this.tag.tag_slug
+                    }, `REFRESH_TAG_${this.props.id}`, 'ACTION_VIEW_TO_UPDATE');
                 }}
             >
             {SimpleDom.predicate(!this.editMode,
@@ -42,28 +47,34 @@ class Tag extends SimpleDom.Component {
                     let icon = !this.isActive ? 
                         <span class="lnr lnr-chevron-right sub-tag-list-icon"></span>
                         : <span class="lnr lnr-chevron-down sub-tag-list-icon"></span>;
-                    return [
-                        hasIcon ? icon : undefined,
-                        <span class="sub-tag-name">{this.tag.name}</span>,
-                        currentUser.id === this.tag.user_id ?
-                        <span
-                            onclick={event => {
-                                event.stopPropagation();
-                                this.editMode = true;
-                                this.store.updateState({}, [`REFRESH_TAG_${this.props.id}`]);
-                            }} 
-                            class="hbtn-action lnr lnr-pencil sub-tag-edit">
-                        </span> : undefined,
-                        <span 
-                            onclick={event => {
-                                event.stopPropagation();
-                                this.tag.sons.push(null);
-                                this.isActive = true;
-                                this.store.updateState({}, [`REFRESH_TAG_${this.props.id}`]);                                
-                            }}  
-                            class="hbtn-action lnr lnr-plus-circle sub-tag-edit">
-                        </span> 
-                ]},
+                    return (
+                        <div class="sub-tag-name">
+                            <div class="sub-tag-name-item"> 
+                                {SimpleDom.predicate(hasIcon, () => icon)}
+                                {`${this.tag.name} (${this.state.countByTagSlug[this.tag.tag_slug] || 0})`}
+                            </div>
+                            <div class="sub-tag-hover-icons">
+                                <span
+                                    onclick={event => {
+                                        event.stopPropagation();
+                                        this.editMode = true;
+                                        this.store.updateState({}, [`REFRESH_TAG_${this.props.id}`]);
+                                    }} 
+                                    class="hbtn-action lnr lnr-pencil sub-tag-edit">
+                                </span>
+                                <span 
+                                    onclick={event => {
+                                        event.stopPropagation();
+                                        this.tag.sons.push(null);
+                                        this.isActive = true;
+                                        this.store.updateState({}, [`REFRESH_TAG_${this.props.id}`]);                                
+                                    }}  
+                                    class="hbtn-action sub-tag-edit">&#43;
+                                </span>
+                            </div>
+                        </div>
+                    )
+                },
                 () => <input type="text" 
                             class="sub-tag-input" 
                             onblur={event => {
@@ -179,19 +190,13 @@ export class SidebarAction extends SimpleDom.Component {
                         <i class="lnr lnr-arrow-left-circle"></i>
                     </div>
                     <div class="sidebar-action-header-img">
-                        {SimpleDom.predicate(this.hasImage,
-                            () => <img class="circle" src={this.profilImgUrl}/>,
-                            () => <div class="avatar-spec avatar-spec-lg"
-                            style="color: white; background-color: #5764c6;"
-                            data-initial={currentUser.username.slice(0, 2) || ''}
-
-                          ><span class="sidebar-action-header-img-conf">
-                              <i class="lnr lnr-cog"></i>
+                        <div class="avatar-spec avatar-spec-lg"
+                            style="color: white; background-color: #5764c6; display:inline-flex; flex-direction: column; justify-content: center; text-align:center;">
+                            <span class="lnr lnr-layers fa-2x">
                             </span>
-                            </div>
-                        )}
+                         </div>
                     </div>
-                    <h2>{currentUser.email}</h2>
+                    {/* <h2>{currentUser.email}</h2> */}
                 </div>
                 <div class="sidebar-action-content">
                     <TagList tags={this.props.tags} />

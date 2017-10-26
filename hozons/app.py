@@ -3,7 +3,7 @@
 from flask import Flask, render_template
 
 from hozons import commands, public, user
-from hozons.extensions import bcrypt, cache, db, debug_toolbar, login_manager, migrate, csrf_protect
+from hozons.extensions import bcrypt, cache, db, debug_toolbar, login_manager, migrate, csrf_protect, gravatar
 from hozons.settings import ProdConfig, DevConfig
 
 
@@ -31,6 +31,7 @@ def register_extensions(app):
     login_manager.init_app(app)
     debug_toolbar.init_app(app)
     migrate.init_app(app, db)
+    gravatar.init_app(app)
     return None
 
 

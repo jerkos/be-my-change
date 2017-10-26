@@ -276,3 +276,36 @@ h3 {
         box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
     }
 }
+
+.nav-header-img {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    
+    img {
+        max-width: 50px;
+        height: 50px;
+    }
+
+    .nav-header-img-conf {
+        transition: all 0.2s;
+        position: absolute;
+        min-height: 26px;
+        min-width: 26px;
+        font-size: 0.5em;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        color: black;
+        flex-direction: column;
+        justify-content: center;
+        top: 52px;
+        left: 40px;
+        box-shadow: 1px 1px 12px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+    }
+    &:hover .nav-header-img-conf {
+        opacity: 1;
+    }
+}

@@ -264,7 +264,48 @@ class App extends SimpleDom.Component {
 
 $(document).ready(function () {
 
+    function fillUptag(tags, val='') {
+        for (let tag of tags) {
+            let value = val ? val + '-' + tag.id : tag.id + '';
+            tag.tag_slug = value; 
+
+            if (tag.sons && tag.sons.length) {
+                fillUptag(tag.sons, value);
+            }
+        }
+    }
+
+    function getTagsNumber(actions, result) {
+        function plusOne(key) {
+            if (!Object.keys(result).includes(key)) {
+                result[key] = 0;
+            }
+            result[key] += 1;
+        }
+
+        for (let action of actions) {
+            const targetTag = action.tag;
+            plusOne(targetTag);
+
+            let val = targetTag.split('-');
+            val.pop();
+            while (val.length !== 0) {
+                plusOne(val.join('-'));
+                val.pop();
+            }
+        }   
+    }
+
     const store = new SimpleDom.Store();
+
+    store.subscribe('ACTION_VIEW_TO_UPDATE', (state, oldState) => {
+        store.updateState({
+            selectedActions: store.state.actions.filter(action => 
+                action.tag.startsWith(store.state.selectedTagSlug)
+            )
+        }, 'ACTIONS_LIST_TO_UPDATE');
+    })
+
     withVeilAndMessages(
         Promise.all([
             fetchJsonData(`/users/actions/get`), 
@@ -272,14 +313,21 @@ $(document).ready(function () {
         ]),
         true)
         .then(([actions, tags]) => {
-            console.log(tags);
+
+            fillUptag(tags);
+            const countByTagSlug = {};
+            getTagsNumber(actions, countByTagSlug);
+
             store.updateState({ 
-                actions, 
+                actions,
+                countByTagSlug,
                 selectedActions: actions, 
                 selectedDate: moment(new Date()).format('YYYY-MM-DD'),
                 tags
             });
+            
             SimpleDom.renderToDom('container', <App />, store);
+            
             // jquery functions
             flatpickr('.flatpicker',
                 {

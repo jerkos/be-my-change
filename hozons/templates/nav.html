@@ -55,7 +55,20 @@
             <a class="waves-effect waves-light hbtn hbtn-main-color" href="{{url_for('user.current_actions_view')}}">J'agis</a>
             <div>
                 <a class='dropdown-button' href='#' data-activates='dropdown1'>
-                  <i class="lnr lnr-user fa-2x" style="margin-left:10px"></i>
+                    <div class="nav-header-img">
+                        {% if True %}
+                            <img class="circle" src={{current_user.email | gravatar(size=50, default=None, rating=None)}} />
+                        {% else %}
+                            <div class="avatar-spec avatar-spec-lg"
+                              style="color: white; background-color: #5764c6;"
+                              data-initial={{current_user.username[0:2] or ''}}
+                            ><span class="nav-header-img-conf">
+                              <i class="lnr lnr-cog"></i>
+                            </span>
+                            </div>
+                        {% endif %}
+                    </div>
+                  <!-- <i class="lnr lnr-user fa-2x" style="margin-left:10px"></i> -->
                 </a>
               </div>
               
