@@ -222,8 +222,6 @@ def get_last_actions():
 def create_action():
     """create an base action"""
     data = request.get_json(force=True)
-    print(request.json)
-    print(data)
     start_date = data.get('startDate')
     duration = int(data.get('actionDuration'))
 
@@ -265,7 +263,12 @@ def save_commentary(action_id):
 @user.route('/tags/all', methods=['GET'])
 @login_required
 def get_all_tags():
-    return Tags.arr_to_json(Tags.get_tree()), 200
+    rank = request.args.get('rank');
+    if rank is None:
+        return Tags.arr_to_json(Tags.get_tree()), 200
+    return Tags.arr_to_json(
+        Tags.query.filter(Tags.rank == rank).all()
+    ), 200
 
 @user.route('/tags/update', methods=['PUT'])
 @login_required

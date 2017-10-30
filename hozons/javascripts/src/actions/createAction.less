@@ -1,0 +1,43 @@
+@import '../css/variables';
+
+.tag-selector {
+    display: flex;
+    flex-wrap: wrap;
+
+    .tag-selector-input {
+        //margin: 0 10px;
+        flex-basis: 16.666666%;
+        flex-grow: 0;
+        flex-shrink: 0;
+
+        .autocomplete-content {
+            position: absolute;
+        }
+    }
+
+    .tag-selector-separator {
+        padding: 0 5px;
+        flex-grow: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-weight: bolder;
+        font-size: 1.2em;
+    }
+
+    .tag-selector-plus {
+        flex-grow: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        color: black;
+        cursor: pointer;
+        font-size: 1.2em;
+    }
+}
+
+a.hbtn {
+    font-size: 1.1em;
+    background: @main-blue;
+    color: white !important;
+}

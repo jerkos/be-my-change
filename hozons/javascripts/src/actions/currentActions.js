@@ -11,6 +11,9 @@ import { createSlider } from '../components/slider/slider';
 import { CommentariesTab } from './commentaries';
 import { ParticipantTab } from './participants';
 import {SidebarAction} from './sidebarActions';
+import {CreateAction} from './step1';
+import anime from 'animejs'
+
 
 require('../css/popovers.less')
 require('../css/avatar.less');
@@ -52,7 +55,7 @@ class ActionCard extends SimpleDom.Component {
     render() {
         let self = this;
         return (
-            <div class="card my-card">
+            <div class="card my-card" style="opacity: 0">
                 <div class="card-image waves-block waves-light">
                     <a data-fancybox 
                         data-caption={this.userAction.action.title} 
@@ -184,6 +187,15 @@ class ActionsList extends SimpleDom.Component {
         super(props, store);
     }
 
+    componentDidMount() {
+        const allCallbacks = anime({
+            targets: '.card',
+            opacity: 1,
+            delay: function(el, i) { return 100 + (i * 100); },
+            duration: function(el, i) { return 500 + (i * 500); }
+          });
+    }
+
     partitionList(input, spacing) {
         let output = [];
         for (let i = 0; i < input.length; i += spacing) {
@@ -211,6 +223,11 @@ class App extends SimpleDom.Component {
     render() {
         return (
             <div id="top" class="action">
+                <div id="createAction" class="modal">
+                    <div class="modal-content">
+                        {<CreateAction />}
+                    </div>
+                </div>
                 <div class="boxed-layout">
                     <SidebarAction 
                         tags={this.state.tags}
@@ -219,7 +236,13 @@ class App extends SimpleDom.Component {
                         <div id="actions" class="col s12">
                             <h1 class="main-title">
                                 Mes actions en cours ({this.state.selectedActions.length})
-                                <a href="#create-action" class="right hbtn-action hbtn-main-color add-action">
+                                <a href="#createAction" class="right hbtn-action hbtn-main-color add-action"
+                                    onclick={event => {
+                                        $('#createAction').modal({
+                                            startingTop: '2%'
+                                        });
+                                    }}
+                                >
                                     <i class="material-icons white-text">add</i>
                                 </a>
                             </h1>
