@@ -205,11 +205,13 @@ class ActionsList extends SimpleDom.Component {
     }
 
     render() {
+        const nbActions = this.state.minisidebar ? 4 : 3;
+        const colSize = this.state.minisidebar ?  'm3' : 'm4';
         return <div id="actions-card">
-            {this.partitionList(this.state.selectedActions || [], 4).map(subactions =>
+            {this.partitionList(this.state.selectedActions || [], nbActions).map(subactions =>
                 <div class="row">
                     {subactions.map(action =>
-                        <div class="col m3 s12">
+                        <div class={`col ${colSize} s12`}>
                             <ActionCard userAction={action} />
                         </div>
                     )}
