@@ -327,9 +327,11 @@ class CreateActionStep3 extends ComposedComponent {
                                             tagSlugToCreate: this.state.tagSlugToCreate,
                                             tagsToCreate: this.state.tagsToCreate
                                         })
-                                    }).then(console.log('action properly saved !'))
-                            )
-                            console.log('action to be created');
+                                    }), true
+                            ).then(data => {
+                                console.log('action properly saved !')
+                                $('#createAction').modal('close');
+                            })
                         }}>Créer la nouvelle action</button>
                 </div>
             </div>
