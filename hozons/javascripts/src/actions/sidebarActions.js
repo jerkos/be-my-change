@@ -187,12 +187,12 @@ export class SidebarAction extends SimpleDom.Component {
                         const main = document.getElementsByClassName('boxed-layout')[0];
                         main.classList.toggle('boxed-layout-maximized');
                     }}>
-                        <i class="lnr lnr-arrow-left-circle"></i>
+                        <i class="lnr lnr-arrow-left"></i>
                     </div>
                     <div class="sidebar-action-header-img">
                         <div class="avatar-spec avatar-spec-lg"
                             style="color: white; background-color: #5764c6; display:inline-flex; flex-direction: column; justify-content: center; text-align:center;">
-                            <span class="lnr lnr-layers fa-2x">
+                            <span class="lnr lnr-list">
                             </span>
                          </div>
                     </div>

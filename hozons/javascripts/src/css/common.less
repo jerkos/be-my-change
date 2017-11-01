@@ -10,11 +10,12 @@ html {
 
 body {
     min-height: 100%;;
-    font-family:Poppins;
+    font-family:avenir;
     font-size:13px;
     font-weight:lighter;
     background-color: #F9FAFB;
     overflow-x: hidden;
+    margin-top:78px;
 }
 
 a {
@@ -91,10 +92,16 @@ h3 {
     top:0px;
     box-shadow: none;
     border-bottom: 1px solid lightgray;
+    position:fixed;
 
     .main-nav-wrapper {
         height: 100%;
         display: block;
+
+        .brand-logo img {
+        width:200px;
+        margin-top:25px;
+        }
 
         .hide-on-med-and-down {
             display: flex;
@@ -105,6 +112,7 @@ h3 {
             a.hbtn {
                 width: 110px;
                 height: 40px;
+                text-transform:uppercase;
                 color: white !important;
                 font-size: 1em;
             }
@@ -124,6 +132,7 @@ h3 {
                 a {
                     height: 100%;
                     max-height: 78px;
+                    text-transform:uppercase;
                     color: black;
                     text-align: center;
                     flex:1;
@@ -132,6 +141,7 @@ h3 {
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
+                    font-weight:600;
 
                     &.dropdown-button {
                         display: flex;
@@ -165,8 +175,6 @@ h3 {
             }
         }
         img {
-            width: 180px;
-            margin-top: 8px;
             margin-left: 20px;
         }
     }
@@ -247,6 +255,7 @@ h3 {
 
 .hbtn-main-color {
     background-color: @main-blue;
+    border-radius:5px;
     color: white;
 }
 
@@ -263,7 +272,7 @@ h3 {
 }
 
 .hbtn-action {
-    border-radius: 50%;
+    border-radius: 5px;
     height: 40px;
     width: 40px;
     transition: all 0.2s;
