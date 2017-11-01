@@ -6,38 +6,32 @@
 
     .tag-selector-input {
         //margin: 0 10px;
-        flex-basis: 16.666666%;
+        flex-basis: 100%;
         flex-grow: 0;
         flex-shrink: 0;
 
-        .autocomplete-content {
-            position: absolute;
+        & > input {
+            color: white;
+            background-color: @main-blue;
+            border-radius: 5px;
+            border:none !important;
+            box-shadow: none !important;
+
+            &:focus {
+                border:none !important;
+                box-shadow: none !important; 
+            }
         }
     }
+}
 
-    .tag-selector-separator {
-        padding: 0 5px;
-        flex-grow: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        font-weight: bolder;
-        font-size: 1.2em;
-    }
-
-    .tag-selector-plus {
-        flex-grow: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        color: black;
-        cursor: pointer;
-        font-size: 1.2em;
-    }
+.prompt {
+    font-size: 1.2em;
+    font-weight: bolder;
 }
 
 a.hbtn {
     font-size: 1.1em;
     background: @main-blue;
     color: white !important;
-}
+}   

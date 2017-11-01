@@ -63,7 +63,7 @@ class CreateActionStep1 extends ComposedComponent {
                 </div>
                 <div class="row">
                     <div class="popover popover-right">
-                        <button class="right btn"
+                        <a class="right hbtn hbtn-big"
                             onclick={e => {
                                 let hasError = false;
                                 let errors = {};
@@ -83,7 +83,7 @@ class CreateActionStep1 extends ComposedComponent {
                                 } else {
                                     this.updateCState({ currStep: 2 }, 'CHANGE_STATE');
                                 }
-                            }}>Passer à la suite</button>
+                            }}>Passer à la suite</a>
                     </div>
                 </div>
             </div>
@@ -96,128 +96,19 @@ class TagSelector extends SimpleDom.Component {
         return ['TAG_SELECTOR_UPDATE'];
     }
 
-    constructor(props, store) {
-        super(props, store);
-
-        this.currentTagRank = 1;
-        this.tagsByRank = {};
-        this.selectedTagByRank = {};
-
-        // results
-        this.store.updateState({
-            tagSlugToCreate: '',
-            tagsToCreate: []            
-        })
-    }
-
-    componentDidMount() {
-        withVeilAndMessages(
-            fetchJsonData(`/users/tags/all?rank=${this.currentTagRank}`),
-            true
-        ).then(tags => {
-            this.tagsByRank[this.currentTagRank] = tags;
-            const self = this;
-            Object.keys(this.tagsByRank).forEach(rank => {
-                const tagsRanked = this.tagsByRank[rank];
-                const tagsIds = {};
-                tagsRanked.forEach(t => tagsIds[t.name] = null);
-                $(`#autocomplete-input-${rank}`).autocomplete({
-                    data: tagsIds,
-                    limit: 20,
-                    onAutocomplete: function(val) {
-                        let slug = self.state.tagSlugToCreate;
-                        
-                        if (self.currentTagRank > rank ) {
-                            for(let i = +rank + 1; i <= self.currentTagRank; ++i) {
-                                delete self.tagsByRank[i];
-                                self.store.updateState({
-                                    tagSlugToCreate: slug.split('-').slice(0, -1).join('-')
-                                });
-                            }
-                            self.currentTagRank = rank;
-                            self.store.updateState({}, 'TAG_SELECTOR_UPDATE');
-                            return;
-                        }
-                        self.selectedTagByRank[rank] = val;
-
-                        // update path;
-                        self.store.updateState({
-                            tagSlugToCreate: slug += (slug ? '-' : '') + self.tagsByRank[rank].find(tag => tag.name === val).id
-                            
-                        });
-                        
-                        self.currentTagRank = +rank + 1;
-                        self.tagsByRank[self.currentTagRank] = undefined;
-                        self.store.updateState({}, 'TAG_SELECTOR_UPDATE');
-                    },
-                    minLength: 1
-                });
-                $(`#autocomplete-input-${rank}`).on('blur', function(event) {
-                    if (!self.selectedTagByRank[rank]) {
-                        self.selectedTagByRank[rank] = event.target.value;
-                        self.currentTagRank = +rank + 1;
-                        self.store.updateState({
-                            tagsToCreate: tagsToCreate.concat([{
-                                name: event.target.value,
-                                parentId: +(self.state.tagSlug.split('-').slice(-1)[0])
-                            }]),
-                            tagSlugToCreate: self.state.tagSlugToCreate += '-0'
-                        })
-                        self.tagsByRank[self.currentTagRank] = undefined;
-                        self.store.updateState({}, 'TAG_SELECTOR_UPDATE');
-                    }
-                });
-            });
-        })
-    }
-
     render() {
         return (
             <div class="row">
                 <div class="tag-selector">
-                <div class="input-field tag-selector-input">
-                    <i class="material-icons prefix">textsms</i>
-                    <input 
-                        type="text" 
-                        id={`autocomplete-input-${1}`} 
-                        class="autocomplete" 
-                        value={this.selectedTagByRank[1]}/>
-                        <label 
-                            class={this.selectedTagByRank[1] ? 'active' : undefined}
-                            for="autocomplete-input">{`Tag Rang ${1}`}
-                        </label>
+                    <div class="input-field tag-selector-input">
+                        <input type="text" 
+                            value="#" 
+                            onchange={e => {
+                                this.store.updateState({tagsToCreate: e.target.value})
+                            }}
+                        />
+                    </div>
                 </div>
-                {Object.keys(this.tagsByRank).filter(rank => rank > 1).map((rank, i) => {
-                    return (
-                        [   <span class="lnr lnr-chevron-right tag-selector-separator">
-                            </span>,
-                            <div class="input-field tag-selector-input">
-                            <input 
-                                type="text" 
-                                id={`autocomplete-input-${rank}`} 
-                                class="autocomplete" 
-                                value={this.selectedTagByRank[rank]}/>
-                            <label 
-                                class={this.selectedTagByRank[rank] ? 'active' : undefined}
-                                for="autocomplete-input">{`Tag Rang ${rank}`}
-                            </label>
-                        </div>
-                        ]
-                    );
-                })}
-                <span class="lnr lnr-plus-circle tag-selector-plus"
-                    onclick={event => {
-                         //this.selectedTagByRank[this.currentTagRank] = val;
-                         if (!this.selectedTagByRank[self.currentTagRank]) {
-                             return;
-                         }
-                         this.currentTagRank += 1;
-                         this.tagsByRank[self.currentTagRank] = undefined;
-                         this.store.updateState({}, 'TAG_SELECTOR_UPDATE');
-                    }}
-                >
-                </span>
-               </div>
             </div>
         );
     }
@@ -230,28 +121,62 @@ class CreateActionStep2 extends ComposedComponent {
         return ['STEP2_REFRESH'];
     }
 
-    handleActionTypeChange(event) {
-        this.updateCState({ actionType: event.target.value });
+    componentDidMount() {       
+        flatpickr('.flatpicker-starter');
     }
-    componentDidMount() {
-        $('.action-type').material_select();
-        $('.action-type').on('change', this.handleActionTypeChange);
+
+    updateSidebarTags() {
+        //if (!this.state.tagSlugToCreate) {
+        //    return;
+        //}
+        const newTags = this.state.tagsToCreate.slice(1).split('/');
+        console.log(this.state.tagsToCreate, newTags);
+        let existingTags = this.state.tags;
+        let currRank = 1;
+
+        let tagsSlug = '';
+        const tagsToCreate = [];
+        
+        for (const newTag of newTags) {
+            const tag = existingTags.find(existingTag => existingTag.name === newTag);
+
+            if (! tag) {
+                const obj = {
+                    name: newTag,
+                    parentId: +(tagsSlug.split('-').slice(-1)) || null,
+                    rank: currRank
+                };
+                tagsToCreate.push(obj);
+                existingTags.push(obj);
+                this.store.updateState({tags: existingTags}, 'SIDEBAR_TO_UPDATE');
+            }            
+            const newId = !tag ? 0 : tag.id
+            tagsSlug = tagsSlug ? (tagsSlug + '-' + newId) : tagsSlug + newId;
+            existingTags = tag ? (tag.sons || []) : []
+            currRank ++;
+        }
     }
 
     render() {
-        console.log(this.cstate)
         return (
             <div>
                 <h3>Dans le vif du sujet</h3>
                 <div class="row">
-                    <p style="font-size: 1.2em">Classifier votre action ?</p>
-                    <div class="col s12">
+                    <p class="prompt">Classifier votre action ? 
+                        <span style="padding-left: 10px"
+                            class="lnr lnr-question-circle tooltip tooltip-right"
+                            data-tooltip={'Séparer vos tags par des "/".' + 
+                            'Si vous créez un nouveau tag, il apparaitra ' + 
+                            'automatiquement dans vos filtres.'}>
+                        </span>
+                    </p>
+                    <div class="col s12" style="max-height: 72px">
                         {<TagSelector />}
                     </div>
                 </div>
                 <div class="row">
-                    <p style="font-size: 1.2em">Votre action est-publique ?</p>
-                    <div class="input-field col s12" style="margin-top: -10px">
+                    <p class="prompt">Votre action est-publique ?</p>
+                    <div class="input-field col s12" style="margin-top: -10px; margin-bottom: 40px;">
                         <div class="switch">
                             <label>
                                 Non
@@ -266,97 +191,68 @@ class CreateActionStep2 extends ComposedComponent {
                         </div>
                     </div>
                 </div>
-                <div class="row" style="padding-top: 50px;">
-                    <a class="left hbtn"
-                        onclick={e => {
-                            this.updateCState({ currStep: 1 }, 'CHANGE_STATE');
-                        }}>Retour en arrière</a>
-                    <a class="right hbtn"
-                        onclick={e => {
-                            this.updateCState({ currStep: 3 }, 'CHANGE_STATE');
-                        }}>Passer à la fin</a>
-                </div>
-            </div>
-        );
-    }
-}
-
-
-class CreateActionStep3 extends ComposedComponent {
-    eventsToSubscribe() {
-        return ['STEP3_REFRESH'];
-    }
-
-    componentDidMount() {
-        flatpickr('.flatpicker-starter');
-    }
-
-    render() {
-        return (
-            <div>
                 <div class="row">
-                    <p>Combien de temps durera votre action (récurrence quotidienne ?):
+                    <p class="prompt">Combien de temps durera votre action (récurrence quotidienne ?):
                         <span style="padding-left: 10px">
-                            <em>{`${this.cstate.actionDuration} jours`}</em>
+                            <em>{`${this.cstate.actionDuration || 21} jours`}</em>
                         </span>
                     </p>
                     <p class="range-field">
                         <input type="range"
                             value={this.cstate.actionDuration || 21}
-                            onchange={e => this.updateCState({ actionDuration: e.target.value }, 'STEP3_REFRESH')} min="0" max="30"
+                            onchange={e => this.updateCState({ actionDuration: e.target.value }, 'STEP2_REFRESH')} min="0" max="30"
                         />
                     </p>
                 </div>
                 <div class="row">
-                    <p> Quand souhaitez-vous commencer votre action ?</p>
-                    <input type="date" class="flatpicker-starter" onchange={e => this.updateCState({ startDate: e.target.value })} />
+                    <p class="prompt"> Quand souhaitez-vous commencer votre action ?
+                        <input type="date" style="display: inline !important" class="flatpicker-starter" onchange={e => this.updateCState({ startDate: e.target.value })} />
+                    </p>
                 </div>
-                <div class="row">
-                    <button class="left btn"
+                <div class="row"> 
+                    <a class="left hbtn hbtn-big"
                         onclick={e => {
-                            this.updateCState({ currStep: 2 }, 'CHANGE_STATE');
-                        }}>Retour en arrière</button>
-                    <button class="right btn"
+                            this.updateCState({ currStep: 1 }, 'CHANGE_STATE');
+                        }}>Retour en arrière</a>
+                    <a class="right hbtn hbtn-big"
                         onclick={e => {
-                            withVeilAndMessages(
-                                window.fetchJsonData('/users/actions/create',
-                                    {
-                                        method: 'POST',
-                                        body: JSON.stringify({
-                                            ...this.cstate, 
-                                            tagSlugToCreate: this.state.tagSlugToCreate,
-                                            tagsToCreate: this.state.tagsToCreate
-                                        })
-                                    }), true
-                            ).then(data => {
-                                console.log('action properly saved !')
-                                $('#createAction').modal('close');
-                            })
-                        }}>Créer la nouvelle action</button>
+                            e.preventDefault();
+                            this.updateSidebarTags();
+                            // withVeilAndMessages(
+                            //     window.fetchJsonData('/users/actions/create',
+                            //         {
+                            //             method: 'POST',
+                            //             body: JSON.stringify({
+                            //                 ...this.cstate, 
+                            //                 tagSlugToCreate: this.state.tagSlugToCreate,
+                            //                 tagsToCreate: this.state.tagsToCreate
+                            //             })
+                            //         }), true
+                            // ).then(data => {
+                            //     console.log('action properly saved !')
+                            //     $('#createAction').modal('close');
+                            //})
+                        }}>Créer l'action</a>
                 </div>
             </div>
         );
     }
 }
+
 
 class Step extends SimpleDom.Component {
     render() {
         return (
             <ul class="step">
                 <li class={`step-item ${this.props.currStep === 1 ? 'active' : undefined}`}>
-                    <a href="#" class="tooltip" data-tooltip="Description de votre nouvelle action"></a>
+                    <a href="#" class="tooltip tooltip-bottom" data-tooltip="Description de votre nouvelle action"></a>
                 </li>
                 <li class={`step-item ${this.props.currStep === 2 ? 'active' : undefined}`}>
-                    <a href="#" class="tooltip" data-tooltip="Step 2"></a>
-                </li>
-                <li class={`step-item ${this.props.currStep === 3 ? 'active' : undefined}`}>
-                    <a href="#" class="tooltip" data-tooltip="Step 3"></a>
+                    <a href="#" class="tooltip tooltip-bottom" data-tooltip="Paramètres de l'action"></a>
                 </li>
             </ul>
         );
     }
-
-
 }
 
 
@@ -379,9 +275,6 @@ export class CreateAction extends ParentComponent {
             case 2:
                 stepDiv = <CreateActionStep2 parent={this} />
                 break;
-            case 3:
-                stepDiv = <CreateActionStep3 parent={this} />
-                break;
         }
         return (
             <div id="top" class="action">
@@ -397,10 +290,3 @@ export class CreateAction extends ParentComponent {
         );
     }
 }
-
-
-$(document).ready(function () {
-    const store = new SimpleDom.Store();
-    SimpleDom.renderToDom('container', <CreateAction />, store);
-
-});

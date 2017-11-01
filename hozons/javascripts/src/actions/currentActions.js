@@ -225,7 +225,7 @@ class App extends SimpleDom.Component {
     render() {
         return (
             <div id="top" class="action">
-                <div id="createAction" class="modal">
+                <div id="createAction" class="modal" style="display: none">
                     <div class="modal-content">
                         {<CreateAction />}
                     </div>
