@@ -310,6 +310,9 @@ $(document).ready(function () {
 
         for (let action of actions) {
             const targetTag = action.tag;
+            if (!targetTag) {
+                return;
+            }
             plusOne(targetTag);
 
             let val = targetTag.split('-');
@@ -363,9 +366,17 @@ $(document).ready(function () {
                         withVeilAndMessages(
                             fetchJsonData(`/users/actions/get?date=${moment(date).format('YYYY-MM-DD')}`),
                             true
-                        ).then(actions =>
-                            store.updateState({ actions, selectedActions: actions, selectedDate: date }, 'ACTIONS_LIST_TO_UPDATE')
-                            )
+                        ).then(actions => {
+                            const countByTagSlug = {};
+                            getTagsNumber(actions, countByTagSlug);
+                
+                            //TODO not forget to update sidebar
+                            store.updateState({ 
+                                actions, 
+                                countByTagSlug,
+                                selectedActions: actions, 
+                                selectedDate: date }, 'ACTIONS_LIST_TO_UPDATE')
+                        })
                     }
                 }
             );
