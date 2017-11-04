@@ -23,6 +23,7 @@ user = Blueprint('user', __name__, url_prefix='/users', static_folder='../static
 
 PER_PAGE = 7
 
+
 def paginate(query, page_nb, total_count, clazz):
     """ utility query for pagination """
     logging.debug(page_nb, total_count, clazz.__tablename__, sep="; ")
@@ -83,8 +84,8 @@ def profile():
     return render_template('users/profile.html', user=user)
 
 
-### services
-#--------------------------------------------------------------------------
+# services
+# --------------------------------------------------------------------------
 @user.route('/actions/get')
 @login_required
 def get_user_actions():
@@ -124,20 +125,20 @@ def user_action_done(user_action_id):
 
 @user.route('/actions/participate/<int:action_id>')
 @login_required
-def participate_to_action(action_id):
+def participate_to_action(action_id, tag=None):
     action = Action.get_by_id(action_id)
     if action is None:
         return 'not found', 404
 
     start_date = request.args.get('start_date', dt.datetime.now())
     nb_days = request.args.get('nb_days', action.initial_nb_days)
-    user_action = UserAction(
-        current_user.id, 
-        action_id, 
-        start_date, 
-        start_date + dt.timedelta(days=nb_days)
+    user_action = UserAction.create(
+        user_id=current_user.id,
+        action_id=action_id,
+        start_date=start_date,
+        end_date=start_date + dt.timedelta(days=nb_days),
+        tag=tag
     )
-    user_action.save()
     return UserAction.to_json(user_action), 200
 
 
@@ -155,9 +156,9 @@ def get_participants_for_action(action_id):
         return '{\"message\": not found}', 404
 
     query = (User.query
-        .join(UserAction)
-        .join(Action)
-        .filter(UserAction.action_id == action_id))
+             .join(UserAction)
+             .join(Action)
+             .filter(UserAction.action_id == action_id))
 
     response = paginate(query, page, total_count, User)
     logging.info('participants for action send response: \n' + str(response))
@@ -223,8 +224,22 @@ def create_action():
     """create an base action"""
     data = request.get_json(force=True)
     start_date = data.get('startDate')
-    duration = int(data.get('actionDuration'))
+    duration = int(data.get('actionDuration', 21))
 
+    # first save new tags eventually
+    tags_to_create = data.get('tagsToCreate')
+
+    # all tags with fresh new ids
+    new_tags = Tags.create_all(tags_to_create, current_user.id)
+
+    # setup tag slug for action
+    final_slug = Tags.build_tags_slug(data.get('tagsSlug'), new_tags)
+
+    # setup dates
+    start_dt = dt.datetime.strptime(start_date, '%Y-%m-%d')
+    end_dt = dt.datetime.strptime(start_date, '%Y-%m-%d') + dt.timedelta(days=duration)
+
+    # finally create action and associated user action
     new_action = Action.create(
         title=data.get('actionTitle'), 
         description=data.get('actionDescription'),
@@ -233,11 +248,26 @@ def create_action():
         kind=data.get('actionType', 'PERS'),
         is_personal_action=(not data.get('isPublic')),
         public=data.get('isPublic'),
-        created_at = dt.datetime.utcnow(),
-        start_date=dt.datetime.strptime(start_date, '%Y-%m-%d'),
-        end_date = dt.datetime.strptime(start_date, '%Y-%m-%d') + dt.timedelta(days=duration), 
-        creator_user_id=current_user.id)
-    return Action.to_json(new_action), 200
+        created_at=dt.datetime.utcnow(),
+        start_date=start_dt,
+        end_date=end_dt,
+        creator_user_id=current_user.id,
+        default_tag=final_slug or None
+    )
+
+    new_user_action = UserAction.create(
+        user_id=current_user.id,
+        action_id=new_action.id,
+        start_date=start_dt,
+        end_date=end_dt,
+        tag=final_slug
+    )
+
+    return json.dumps({
+        'tags': [tag.to_dict() for tag in Tags.get_tree()],
+        'user_action': new_user_action.to_dict()
+    }), 200
+
 
 # --- commentaries
 @user.route('/actions/<int:action_id>/commentaries', methods=['GET'])
@@ -259,6 +289,7 @@ def save_commentary(action_id):
     )
     return Commentary.to_json(commentary), 200
 
+
 # ---tags
 @user.route('/tags/all', methods=['GET'])
 @login_required
@@ -270,6 +301,7 @@ def get_all_tags():
         Tags.query.filter(Tags.rank == rank).all()
     ), 200
 
+
 @user.route('/tags/update', methods=['PUT'])
 @login_required
 @csrf_protect.exempt
@@ -280,6 +312,7 @@ def update_tag():
     tag.name = data.get('name')
     tag.update()
     return Tags.to_json(tag)
+
 
 @user.route('/tags/create', methods=['POST'])
 @login_required

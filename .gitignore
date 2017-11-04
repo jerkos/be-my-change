@@ -45,5 +45,10 @@ docs/_build
 # Virtualenvs
 env/
 hozons/javascripts/node_modules
+hozons/javascripts/yarn.lock
+hozons/javascripts/yarn-error.log
 hozons/static/bundles
 .vscode/
+.idea/
+Pipfile
+Pipfile.lock

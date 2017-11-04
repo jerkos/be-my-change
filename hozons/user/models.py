@@ -115,6 +115,7 @@ class Action(JsonSerializerMixin, SurrogatePK, Model):
         return
         #return db.session.query(func.count(UserAction.id).label('count')).filter(UserAction.action_id == self.id).distinct().all()
 
+
 class UserAction(JsonSerializerMixin, SurrogatePK, Model):
     __tablename__ = 'user_actions'
     RELATIONSHIPS_TO_DICT = True
@@ -135,11 +136,12 @@ class UserAction(JsonSerializerMixin, SurrogatePK, Model):
     tag = Column(db.Text, nullable=True)
 
 
-    def __init__(self, user_id, action_id, start_date, end_date):
+    def __init__(self, user_id, action_id, start_date, end_date, tag=None):
         self.user_id = user_id
         self.action_id = action_id
         self.start_date = start_date
         self.end_date = end_date
+        self.tag = tag
 
     def has_been_realised_today(self):
         if self.last_succeed is None:
@@ -150,10 +152,10 @@ class UserAction(JsonSerializerMixin, SurrogatePK, Model):
     def have_to_do_it(self, date):
         if not isinstance(date, dt.datetime):
             raise ValueError('date not an instance of datetime')
-        return self.start_date.date() <= date.date() and self.end_date.date() >= date.date()
+        return self.start_date.date() <= date.date() <= self.end_date.date()
 
     def realised(self):
-        return self.update(last_succeed = dt.datetime.utcnow(), nb_succeed=self.nb_succeed + 1)
+        return self.update(last_succeed=dt.datetime.utcnow(), nb_succeed=self.nb_succeed + 1)
 
 
 class Tags(JsonSerializerMixin, SurrogatePK, Model):
@@ -178,6 +180,38 @@ class Tags(JsonSerializerMixin, SurrogatePK, Model):
     @classmethod
     def get_tree(cls):
         return Tags.query.filter(Tags.rank == 1).all()
+
+    @staticmethod
+    def build_tags_slug(tags_slug, new_tags):
+        # setup tags slug
+        tags_slug_splitted = tags_slug.split('-')
+        ith_zero = 0
+        good_slug = []
+        last_parent_id = None
+
+        for nb in tags_slug_splitted:
+            if nb == '0':
+                tag = new_tags[ith_zero]
+                if tag.parent_id is None:
+                    tag.update(parent_id=last_parent_id)
+                good_slug.append(str(tag.id))
+                ith_zero += 1
+                last_parent_id = tag.id
+            else:
+                good_slug.append(nb)
+                last_parent_id = int(nb)
+
+        return '-'.join(good_slug)
+
+    @staticmethod
+    def create_all(tags, user_id):
+        return [
+             Tags.create(name=tag['name'],
+                         parent_id=tag['parent_id'],
+                         user_id=user_id,
+                         rank=tag['rank'])
+             for tag in tags
+        ]
 
 
 class Followings(JsonSerializerMixin, SurrogatePK, Model):

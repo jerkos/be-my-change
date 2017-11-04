@@ -15,38 +15,50 @@ class Tag extends SimpleDom.Component {
     constructor(props, store) {
         super(props, store);
         this.tag = this.props.tag;
-        this.editMode = this.tag === null ? true : false;
+        this.editMode = this.tag === null;
         this.isActive = false;
+        this.isHighlighted = false;
     }
 
     eventsToSubscribe() {
         return [`REFRESH_TAG_${this.props.id}`];
     }
 
+    handleTagActivity(event) {
+        $('.sub-tag').removeClass('active');
+        event.stopPropagation();
+        this.isActive = !this.isActive;
+        this.store.updateState({}, `REFRESH_TAG_${this.props.id}`);
+    }
+
     render() {
         return (
-            <li class={`sub-tag ${this.isActive ? 'active' : ''}`} 
+            <li class={`sub-tag ${this.isActive ? 'active' : ''} ${this.isHighlighted ? 'highlighted': ''}`}
                 onclick={event => {
                     event.stopPropagation();
-                    $('.sub-tag').removeClass('active');
+                    $('.sub-tag').removeClass('highlighted');
                     if (this.editMode) {
                         return;
-                    }                
-                    this.isActive = !this.isActive;
+                    }
+                    this.isHighlighted = !this.isHighlighted;
                     if (this.props.onFilterClick) {
                         this.props.onFilterClick(this.tag);
                     }
                     this.store.updateState({
-                        selectedTagSlug: this.tag.tag_slug
-                    }, `REFRESH_TAG_${this.props.id}`, 'ACTION_VIEW_TO_UPDATE');
+                        selectedTagSlug: this.isHighlighted ? this.tag.tag_slug : null
+                    }, 'ACTION_VIEW_TO_UPDATE', `REFRESH_TAG_${this.props.id}`);
                 }}
             >
             {SimpleDom.predicate(!this.editMode,
                 () => {
                     const hasIcon = this.tag.sons && this.tag.sons.length;
                     let icon = !this.isActive ? 
-                        <span class="lnr lnr-chevron-right sub-tag-list-icon"></span>
-                        : <span class="lnr lnr-chevron-down sub-tag-list-icon"></span>;
+                        <span class="lnr lnr-chevron-right sub-tag-list-icon"
+                            onclick={event => this.handleTagActivity(event)}
+                        />
+                        : <span class="lnr lnr-chevron-down sub-tag-list-icon"
+                                onclick={event => this.handleTagActivity(event)}
+                        />;
                     return (
                         <div class="sub-tag-name">
                             <div class="sub-tag-name-item"> 
@@ -137,7 +149,7 @@ class TagList extends SimpleDom.Component {
     render() {
         return (
             <ul class="main-tag-list">
-                {this.props.tags.map(tag => {
+                {this.state.tags.map(tag => {
                     return <Tag tag={tag} id={technicalId++} />
                 })}
             </ul>
@@ -150,7 +162,6 @@ export class SidebarAction extends SimpleDom.Component {
         super(props, store);
         this.isLoading = true;
         this.hasImage = true;
-        this.tags = this.props.tags;
     }
 
     eventsToSubscribe() {
@@ -178,6 +189,7 @@ export class SidebarAction extends SimpleDom.Component {
         if (this.isLoading) {
             return undefined;
         }
+        console.log('rerendered with tags', this.state.tags);
         return (
             <div class="sidebar-action">
                 <div class="sidebar-action-header">
@@ -199,7 +211,7 @@ export class SidebarAction extends SimpleDom.Component {
                     {/* <h2>{currentUser.email}</h2> */}
                 </div>
                 <div class="sidebar-action-content">
-                    <TagList tags={this.props.tags} />
+                    <TagList/>
                 </div>
                 <div class="sidebar-action-spacer"></div>
                 <div class="sidebar-action-footer">

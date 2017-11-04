@@ -1,14 +1,16 @@
 import '../home';
-const moment = require('moment')
+const moment = require('moment');
 const flatpickr = require('flatpickr');
+
 require('moment/locale/fr');
-require('../css/steps.less');
-require('../css/tooltips.less');
-require('../css/popovers.less');
+import '../css/steps.less';
+import '../css/tooltips.less';
+import '../css/popovers.less';
 import * as SimpleDom from 'simpledom-component';
 import { withVeilAndMessages } from '../components/veil/veil';
 import { ComposedComponent, ParentComponent } from '../composedComponent'
 import './createAction.less'
+import {fillUptag, getTagsNumber} from "./utils";
 
 class CreateActionStep1 extends ComposedComponent {
     eventsToSubscribe() {
@@ -130,7 +132,6 @@ class CreateActionStep2 extends ComposedComponent {
         //    return;
         //}
         const newTags = this.state.tagsToCreate.slice(1).split('/');
-        console.log(this.state.tagsToCreate, newTags);
         let existingTags = this.state.tags;
         let currRank = 1;
 
@@ -143,18 +144,21 @@ class CreateActionStep2 extends ComposedComponent {
             if (! tag) {
                 const obj = {
                     name: newTag,
-                    parentId: +(tagsSlug.split('-').slice(-1)) || null,
-                    rank: currRank
+                    parent_id: +(tagsSlug.split('-').slice(-1)) || null,
+                    rank: currRank,
                 };
                 tagsToCreate.push(obj);
-                existingTags.push(obj);
-                this.store.updateState({tags: existingTags}, 'SIDEBAR_TO_UPDATE');
+                // existingTags.push(obj);
+
+                // updated later to test ?
+                //this.store.updateState({tags: existingTags}, 'SIDEBAR_TO_UPDATE');
             }            
-            const newId = !tag ? 0 : tag.id
+            const newId = !tag ? 0 : tag.id;
             tagsSlug = tagsSlug ? (tagsSlug + '-' + newId) : tagsSlug + newId;
-            existingTags = tag ? (tag.sons || []) : []
+            existingTags = tag ? (tag.sons || []) : [];
             currRank ++;
         }
+        return {tagsSlug, tagsToCreate, actualizedTags: existingTags};
     }
 
     render() {
@@ -185,7 +189,7 @@ class CreateActionStep2 extends ComposedComponent {
                                     onchange={e => {
                                         this.updateCState({ isPublic: !(this.cstate.isPublic || false) })
                                     }} />
-                                <span class="lever"></span>
+                                <span class="lever" />
                                 Oui
                             </label>
                         </div>
@@ -217,21 +221,34 @@ class CreateActionStep2 extends ComposedComponent {
                     <a class="right hbtn hbtn-big"
                         onclick={e => {
                             e.preventDefault();
-                            this.updateSidebarTags();
-                            // withVeilAndMessages(
-                            //     window.fetchJsonData('/users/actions/create',
-                            //         {
-                            //             method: 'POST',
-                            //             body: JSON.stringify({
-                            //                 ...this.cstate, 
-                            //                 tagSlugToCreate: this.state.tagSlugToCreate,
-                            //                 tagsToCreate: this.state.tagsToCreate
-                            //             })
-                            //         }), true
-                            // ).then(data => {
-                            //     console.log('action properly saved !')
-                            //     $('#createAction').modal('close');
-                            //})
+                            $('#createAction').modal('close');
+                            const result = this.updateSidebarTags();
+                            withVeilAndMessages(
+                                window.fetchJsonData('/users/actions/create',
+                                    {
+                                        method: 'POST',
+                                        body: JSON.stringify({
+                                            ...this.cstate,
+                                            tagsToCreate: result.tagsToCreate,
+                                            tagsSlug: result.tagsSlug
+                                        })
+                                    }), true
+                            ).then(({tags, user_action}) => {
+                                fillUptag(tags);
+                                const countByTagSlug = {};
+                                this.state.actions.push(user_action);
+                                //test if the user has participated into the action
+                                // add maybe user action ?
+                                this.state.selectedActions.push(user_action);
+
+                                getTagsNumber(this.state.actions, countByTagSlug);
+
+                                this.store.updateState({
+                                        tags,
+                                        countByTagSlug
+                                    },
+                                    'SIDEBAR_TO_UPDATE', 'ACTIONS_LIST_TO_UPDATE', 'TITLE_TO_REFRESH');
+                            })
                         }}>Créer l'action</a>
                 </div>
             </div>
@@ -245,10 +262,10 @@ class Step extends SimpleDom.Component {
         return (
             <ul class="step">
                 <li class={`step-item ${this.props.currStep === 1 ? 'active' : undefined}`}>
-                    <a href="#" class="tooltip tooltip-bottom" data-tooltip="Description de votre nouvelle action"></a>
+                    <a href="#" class="tooltip tooltip-bottom" data-tooltip="Description de votre nouvelle action"/>
                 </li>
                 <li class={`step-item ${this.props.currStep === 2 ? 'active' : undefined}`}>
-                    <a href="#" class="tooltip tooltip-bottom" data-tooltip="Paramètres de l'action"></a>
+                    <a href="#" class="tooltip tooltip-bottom" data-tooltip="Paramètres de l'action"/>
                 </li>
             </ul>
         );

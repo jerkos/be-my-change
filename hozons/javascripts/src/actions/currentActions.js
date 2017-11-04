@@ -1,3 +1,5 @@
+import {fillUptag, getTagsNumber} from "./utils";
+
 require('../home')
 const moment = require('moment')
 require('moment/locale/fr');
@@ -15,9 +17,8 @@ import {CreateAction} from './step1';
 import anime from 'animejs'
 
 
-require('../css/popovers.less')
-require('../css/avatar.less');
-
+import '../css/popovers.less';
+import '../css/avatar.less';
 import './currentActions.less';
 
 class ActionCard extends SimpleDom.Component {
@@ -207,6 +208,17 @@ class ActionsList extends SimpleDom.Component {
     render() {
         const nbActions = this.state.minisidebar ? 4 : 3;
         const colSize = this.state.minisidebar ?  'm3' : 'm4';
+        if (!this.state.selectedActions.length) {
+            return (
+                <section class="empty">
+                    <div class="empty-icon">
+                        <i class="lnr lnr-user fa-3x"></i>
+                    </div>
+                    <h4 class="empty-title">Vous n'avez pas encore d'action en cours !</h4>
+                    <p class="empty-subtitle">Rechercher une action qui vous correspond !</p>
+                </section>
+            );
+        }
         return <div id="actions-card">
             {this.partitionList(this.state.selectedActions || [], nbActions).map(subactions =>
                 <div class="row">
@@ -221,33 +233,45 @@ class ActionsList extends SimpleDom.Component {
     }
 }
 
+
+class MainTitle extends SimpleDom.Component {
+    eventsToSubscribe() {
+        return ['TITLE_TO_REFRESH'];
+    }
+
+    render() {
+        return (
+            <h1 class="main-title">
+                Mes actions en cours ({this.state.selectedActions.length})
+                <a href="#createAction" class="right hbtn-action hbtn-main-color add-action"
+                   onclick={() => {
+                       $('#createAction').modal({
+                           startingTop: '2%'
+                       });
+                   }}
+                >
+                    <i class="material-icons white-text">add</i>
+                </a>
+            </h1>
+        );
+    }
+}
+
+
 class App extends SimpleDom.Component {
     render() {
         return (
             <div id="top" class="action">
                 <div id="createAction" class="modal" style="display: none">
                     <div class="modal-content">
-                        {<CreateAction />}
+                        <CreateAction />
                     </div>
                 </div>
                 <div class="boxed-layout">
-                    <SidebarAction 
-                        tags={this.state.tags}
-                    />
+                    <SidebarAction />
                     <div class="row">
                         <div id="actions" class="col s12">
-                            <h1 class="main-title">
-                                Mes actions en cours ({this.state.selectedActions.length})
-                                <a href="#createAction" class="right hbtn-action hbtn-main-color add-action"
-                                    onclick={event => {
-                                        $('#createAction').modal({
-                                            startingTop: '2%'
-                                        });
-                                    }}
-                                >
-                                    <i class="material-icons white-text">add</i>
-                                </a>
-                            </h1>
+                            <MainTitle/>
                             <hr/>
                             <div class="row action-filter">
                                 <div class="action-date-picker input-field">
@@ -258,25 +282,22 @@ class App extends SimpleDom.Component {
                                 <div class="action-search input-field">
                                     <i class="lnr lnr-magnifier prefix">
                                     </i>
-                                    <input type="search"/>
+                                    <input type="search" onchange={event => {
+                                        const name = event.target.value.toLowerCase();
+                                        // update sidebar
+                                        this.store.updateState({
+                                            selectedActions: this.selectedActions.filter(userAction => {
+                                                const parentAction = userAction.action;
+                                                parentAction.name.toLowerCase().includes(name) ||
+                                                parentAction.description.toLowerCase().includes(name)
+                                            })
+                                        }, 'ACTIONS_LIST_TO_UPDATE')
+                                    }}/>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col s12">
-                                    {SimpleDom.predicate(!this.state.selectedActions.length,
-                                        () => {
-                                            return (
-                                                <section class="empty">
-                                                    <div class="empty-icon">
-                                                        <i class="lnr lnr-user fa-3x"></i>
-                                                    </div>
-                                                    <h4 class="empty-title">Vous n'avez pas encore d'action en cours !</h4>
-                                                    <p class="empty-subtitle">Rechercher une action qui vous correspond !</p>
-                                                </section>
-                                            );
-                                        },
-                                        () => <ActionsList />
-                                    )}
+                                    <ActionsList />
                                 </div>
                             </div>
                         </div>
@@ -289,50 +310,17 @@ class App extends SimpleDom.Component {
 
 $(document).ready(function () {
 
-    function fillUptag(tags, val='') {
-        for (let tag of tags) {
-            let value = val ? val + '-' + tag.id : tag.id + '';
-            tag.tag_slug = value; 
-
-            if (tag.sons && tag.sons.length) {
-                fillUptag(tag.sons, value);
-            }
-        }
-    }
-
-    function getTagsNumber(actions, result) {
-        function plusOne(key) {
-            if (!Object.keys(result).includes(key)) {
-                result[key] = 0;
-            }
-            result[key] += 1;
-        }
-
-        for (let action of actions) {
-            const targetTag = action.tag;
-            if (!targetTag) {
-                return;
-            }
-            plusOne(targetTag);
-
-            let val = targetTag.split('-');
-            val.pop();
-            while (val.length !== 0) {
-                plusOne(val.join('-'));
-                val.pop();
-            }
-        }   
-    }
-
     const store = new SimpleDom.Store();
 
     store.subscribe('ACTION_VIEW_TO_UPDATE', (state, oldState) => {
+        const newSelectedActions = !store.state.selectedTagSlug ? store.actions
+            : store.state.actions.filter(action =>
+                action.tag.startsWith(store.state.selectedTagSlug));
+
         store.updateState({
-            selectedActions: store.state.actions.filter(action => 
-                action.tag.startsWith(store.state.selectedTagSlug)
-            )
-        }, 'ACTIONS_LIST_TO_UPDATE');
-    })
+            selectedActions: newSelectedActions
+        }, 'ACTIONS_LIST_TO_UPDATE', 'MAIN_TITLE_TO_UPDATE');
+    });
 
     withVeilAndMessages(
         Promise.all([
@@ -349,7 +337,7 @@ $(document).ready(function () {
             store.updateState({ 
                 actions,
                 countByTagSlug,
-                selectedActions: actions, 
+                selectedActions: actions.slice(),
                 selectedDate: moment(new Date()).format('YYYY-MM-DD'),
                 tags
             });
@@ -362,20 +350,20 @@ $(document).ready(function () {
                     altInput: true,
                     defaultDate: new Date(),
                     onChange: (_, date, inst) => {
-                        console.log(date);
                         withVeilAndMessages(
                             fetchJsonData(`/users/actions/get?date=${moment(date).format('YYYY-MM-DD')}`),
                             true
                         ).then(actions => {
+                            console.log(actions);
+                            //fillUptag(tags);
                             const countByTagSlug = {};
                             getTagsNumber(actions, countByTagSlug);
-                
-                            //TODO not forget to update sidebar
-                            store.updateState({ 
-                                actions, 
+
+                            store.updateState({
+                                actions,
                                 countByTagSlug,
-                                selectedActions: actions, 
-                                selectedDate: date }, 'ACTIONS_LIST_TO_UPDATE')
+                                selectedActions: actions.slice(),
+                                selectedDate: date }, 'ACTIONS_LIST_TO_UPDATE', 'SIDEBAR_TO_UPDATE')
                         })
                     }
                 }
