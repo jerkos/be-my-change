@@ -212,9 +212,9 @@ class ActionsList extends SimpleDom.Component {
             return (
                 <section class="empty">
                     <div class="empty-icon">
-                        <i class="lnr lnr-user fa-3x"></i>
+                        <i class="lnr lnr-rocket fa-3x"/>
                     </div>
-                    <h4 class="empty-title">Vous n'avez pas encore d'action en cours !</h4>
+                    <h4 class="empty-title">Pas d'action ici...</h4>
                     <p class="empty-subtitle">Rechercher une action qui vous correspond !</p>
                 </section>
             );
@@ -282,16 +282,22 @@ class App extends SimpleDom.Component {
                                 <div class="action-search input-field">
                                     <i class="lnr lnr-magnifier prefix">
                                     </i>
-                                    <input type="search" onchange={event => {
+                                    <input type="search" onkeyup={event => {
                                         const name = event.target.value.toLowerCase();
+                                        let newSelectedActions = [];
+                                        if (!name) {
+                                            newSelectedActions = this.state.actions;
+                                        } else {
+                                            newSelectedActions = this.state.selectedActions.filter(userAction => {
+                                                const parentAction = userAction.action;
+                                                return parentAction.title.toLowerCase().includes(name) ||
+                                                parentAction.description.toLowerCase().includes(name)
+                                            });
+                                        }
                                         // update sidebar
                                         this.store.updateState({
-                                            selectedActions: this.selectedActions.filter(userAction => {
-                                                const parentAction = userAction.action;
-                                                parentAction.name.toLowerCase().includes(name) ||
-                                                parentAction.description.toLowerCase().includes(name)
-                                            })
-                                        }, 'ACTIONS_LIST_TO_UPDATE')
+                                            selectedActions: newSelectedActions
+                                        }, 'ACTIONS_LIST_TO_UPDATE', 'MAIN_TITLE_TO_UPDATE')
                                     }}/>
                                 </div>
                             </div>
