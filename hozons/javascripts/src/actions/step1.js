@@ -19,7 +19,7 @@ class CreateActionStep1 extends ComposedComponent {
     render() {
         return (
             <div>
-                <h3>Première étape <small>ça ne sera pas long...</small></h3>
+                <h3><span style="color: lightgrey; margin-right: 10px;">#1.</span>Première étape <small>ça ne sera pas long...</small></h3>
                 <div class="row">
                     <p style="font-size: 1.2em;">Quel est le titre de votre nouvelle action ?</p>
                     <div class="input-field col s12" style="margin-top: -10px">
@@ -104,7 +104,7 @@ class TagSelector extends SimpleDom.Component {
                 <div class="tag-selector">
                     <div class="input-field tag-selector-input">
                         <input type="text" 
-                            value="#" 
+                            value={this.state.tagsToCreate || ''}
                             onchange={e => {
                                 this.store.updateState({tagsToCreate: e.target.value})
                             }}
@@ -164,7 +164,7 @@ class CreateActionStep2 extends ComposedComponent {
     render() {
         return (
             <div>
-                <h3>Dans le vif du sujet</h3>
+                <h3>2.Dans le vif du sujet</h3>
                 <div class="row">
                     <p class="prompt">Classifier votre action ? 
                         <span style="padding-left: 10px"
@@ -175,7 +175,7 @@ class CreateActionStep2 extends ComposedComponent {
                         </span>
                     </p>
                     <div class="col s12" style="max-height: 72px">
-                        {<TagSelector />}
+                        <TagSelector />
                     </div>
                 </div>
                 <div class="row">
@@ -276,6 +276,7 @@ class Step extends SimpleDom.Component {
 export class CreateAction extends ParentComponent {
     constructor(props, store) {
         super(props, store);
+        this.cstate.actionDuration = 21;
     }
 
     eventsToSubscribe() {
@@ -295,7 +296,7 @@ export class CreateAction extends ParentComponent {
         }
         return (
             <div id="top" class="action">
-                <div class="row">
+                <div class="row" style="display: none">
                     <Step currStep={this.cstate.currStep || 1} />
                 </div>
                 <div class="row">
