@@ -89,9 +89,7 @@ export class ActionCard extends SimpleDom.Component {
                                        ));
                                }}
                             >
-                                <div class="action-indicator">
-                                    28
-                                </div>
+                                <div class="action-indicator">28</div>
                                 <span class="lnr lnr-bubble fa-2x"/>
                             </a>
                             <a class="hbtn-action"
@@ -113,6 +111,7 @@ export class ActionCard extends SimpleDom.Component {
                                    })
                                }}
                             >
+                                <div class="action-indicator">28</div>
                                 <span class="lnr lnr-users fa-2x"/>
                             </a>
 
@@ -120,6 +119,7 @@ export class ActionCard extends SimpleDom.Component {
                                onclick={e => {
                                    console.log('plus clicked');
                                }}>
+                                <div class="action-indicator">28</div>
                                 <span class="lnr lnr-layers fa-2x"/>
                             </a>
                         </p>
