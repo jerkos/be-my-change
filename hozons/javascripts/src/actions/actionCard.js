@@ -1,5 +1,3 @@
-import {fillUptag, getTagsNumber} from "./utils";
-
 require('../home');
 const moment = require('moment');
 require('moment/locale/fr');
@@ -12,9 +10,6 @@ import { withVeilAndMessages } from '../components/veil/veil';
 import { createSlider } from '../components/slider/slider';
 import { CommentariesTab } from './commentaries';
 import { ParticipantTab } from './participants';
-import {SidebarAction} from './sidebarActions';
-import {CreateAction} from './step1';
-import anime from 'animejs'
 
 
 import '../css/popovers.less';
@@ -68,94 +63,77 @@ export class ActionCard extends SimpleDom.Component {
                     </span>
                 </div>
                 <div class="card-content" data-tooltip={this.userAction.action.title}>
-                    <span class="card-title activator grey-text text-darken-4"
-                          style="font-size: 1.4em;"
-                    >
+                    <span class="card-title grey-text text-darken-4" style="font-size: 1.4em;">
                         {ActionCard.cropTitle(this.userAction.action.title, 20)}
-                        <i class="material-icons right">more_vert</i>
                     </span>
-                    <div>
-                        <div>
-                            <div class="chip" style="font-size: 10px">
-                                <i class="material-icons tiny">alarm</i>
-                                {ActionCard.formatHours(moment(this.userAction.start_date).fromNow(true))}
-                            </div>
-                            <div class="chip" style="font-size: 10px">
-                                <i class="tiny material-icons">alarm_off</i>
-                                {ActionCard.formatHours(moment(this.userAction.start_date).from(moment(this.userAction.end_date), true))}
-                            </div>
-                            <div class="chip" style="font-size: 10px">
-                                <i class="tiny material-icons">check</i>
-                                {this.userAction.nb_succeed || 0}
-                            </div>
+                    <div class="card-content-action-info">
+                        <div class="progress">
+                            <div class="determinate" style="width: 70%"/>
                         </div>
-                    </div>
-                </div>
-                <div class="card-reveal">
-                    <span class="card-title button-collapse">
-                        {this.userAction.action.title}
-                        <i class="material-icons right">close</i>
-                    </span>
-                    <p>{this.userAction.action.description}</p>
-                    <p style="display: flex;align-items: center;justify-content: space-around;">
-                        <a class="btn-floating waves-effect waves-light cyan lighten-2 tooltip"
-                           data-position="bottom"
-                           data-tooltip="Voir les commentaires à propros de cette action"
-                           onclick={event => {
-                               withVeilAndMessages(
-                                   fetchJsonData(`/users/actions/${this.userAction.action.id}/commentaries`),
-                                   true
-                               ).then(commentaries =>
-                                   createSlider(
-                                       `Commentaires associées à cette action`,
-                                       <CommentariesTab
-                                           action={this.userAction.action}
-                                           commentaries={commentaries || []}
-                                       />,
-                                       event
-                                   ));
-                           }}
-                        >
-                            <i class="material-icons">question_answer</i>Hello
-                        </a>
-                        <a class="btn-floating waves-effect waves-light cyan lighten-2"
-                           onclick={event => {
-                               withVeilAndMessages(
-                                   fetchJsonData(`/users/actions/${this.userAction.action.id}/participants`),
-                                   true
-                               ).then(({ users, total_pages, current_page }) => {
-                                   createSlider(
-                                       `Participants`,
-                                       <ParticipantTab
-                                           users={users || []}
-                                           action={this.userAction.action}
-                                           total_pages={total_pages}
-                                           current_page={current_page}
-                                       />,
-                                       event
-                                   )
-                               })
-                           }}
-                        >
-                            <i class="material-icons">people</i>
-                        </a>
+                        <p>
+                            <a class="hbtn-action tooltip"
+                               data-position="bottom"
+                               data-tooltip="Voir les commentaires à propros de cette action"
+                               onclick={event => {
+                                   withVeilAndMessages(
+                                       fetchJsonData(`/users/actions/${this.userAction.action.id}/commentaries`),
+                                       true
+                                   ).then(commentaries =>
+                                       createSlider(
+                                           `Commentaires associées à cette action`,
+                                           <CommentariesTab
+                                               action={this.userAction.action}
+                                               commentaries={commentaries || []}
+                                           />,
+                                           event
+                                       ));
+                               }}
+                            >
+                                <div class="action-indicator">
+                                    28
+                                </div>
+                                <span class="lnr lnr-bubble fa-2x"/>
+                            </a>
+                            <a class="hbtn-action"
+                               onclick={event => {
+                                   withVeilAndMessages(
+                                       fetchJsonData(`/users/actions/${this.userAction.action.id}/participants`),
+                                       true
+                                   ).then(({ users, total_pages, current_page }) => {
+                                       createSlider(
+                                           `Participants`,
+                                           <ParticipantTab
+                                               users={users || []}
+                                               action={this.userAction.action}
+                                               total_pages={total_pages}
+                                               current_page={current_page}
+                                           />,
+                                           event
+                                       )
+                                   })
+                               }}
+                            >
+                                <span class="lnr lnr-users fa-2x"/>
+                            </a>
 
-                        <a class="btn-floating waves-effect waves-light cyan lighten-2"
-                           onclick={e => {
-                               console.log('plus clicked');
-                           }}>
-                            <i class="material-icons">add</i>
-                        </a>
-                    </p>
+                            <a class="hbtn-action"
+                               onclick={e => {
+                                   console.log('plus clicked');
+                               }}>
+                                <span class="lnr lnr-layers fa-2x"/>
+                            </a>
+                        </p>
+                    </div>
                 </div>
                 <div class="card-action">
                     {SimpleDom.predicate(this.state.selectedDate === moment(new Date()).format('YYYY-MM-DD'),
                         () => <p>
                             {SimpleDom.predicate(
                                 moment(this.userAction.last_succeed).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD'),
-                                () => <p>Déjà fait !</p>,
-                                () => <a class="purple-text lighten-2-text" href="#" style="color: black, margin-right: 0"
+                                () => <p><span class="lnr lnr-thumbs-up fa-2x"/>Fait !</p>,
+                                () => <a href="#"
                                          onclick={ e => {
+                                             e.preventDefault();
                                              withVeilAndMessages(
                                                  fetchJsonData(`/users/actions/user-action/done/${this.userAction.id}`),
                                                  true
@@ -166,10 +144,9 @@ export class ActionCard extends SimpleDom.Component {
                                          }}
 
                                 >
-                                    J'ai effectué cette action !
+                                    <span class="lnr lnr-rocket fa-2x"/>Action réalisée ?
                                 </a>
                             )}
-                            <a class="right grey-text" style="font-size: 8px">Abandon</a>
                         </p>
                     )}
                 </div>
