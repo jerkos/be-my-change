@@ -3,6 +3,19 @@
   box-shadow: none;
   background: white;
   border-radius: 10px !important;
+  position: relative;
+
+  .my-card-delete {
+    position: absolute;
+    background-color: black;
+    border-radius: 100%;
+    right: -20px;
+    top: -20px;
+    z-index: 20;
+    color: white;
+    font-size: 2.2em;
+    cursor: pointer;
+  }
 
   &:hover {
     transform: translateY(-10px);
@@ -10,6 +23,30 @@
   }
 
   .card-content-action-info {
+    position: relative;
+
+    .progress {
+      margin: 20px 0;
+      color: black;
+      overflow: visible;
+
+      .card-content-action-info-start-date {
+        position: absolute;
+        left: 0;
+        top: -20px;
+        font-weight: bolder;
+        color: lightgrey;
+      }
+
+      .card-content-action-info-end-date {
+        position: absolute;
+        right: 0;
+        top: -20px;
+        font-weight: bolder;
+        color: lightgrey;
+      }
+    }
+
     p {
       display: flex;
       align-items: center;
@@ -36,6 +73,14 @@
       }
     }
 
+  }
+
+  .card-content {
+    padding: 12px;
+
+    .card-title {
+      margin-bottom: 32px;
+    }
   }
 
   .card-action {

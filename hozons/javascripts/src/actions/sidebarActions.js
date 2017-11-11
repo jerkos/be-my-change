@@ -198,8 +198,9 @@ export class SidebarAction extends SimpleDom.Component {
                         elem.classList.toggle('sidebar-minified');
                         const main = document.getElementsByClassName('boxed-layout')[0];
                         main.classList.toggle('boxed-layout-maximized');
+                        this.store.updateState({minisidebar: !this.state.minisidebar}, 'ACTIONS_LIST_TO_UPDATE');
                     }}>
-                        <i class="lnr lnr-arrow-left"></i>
+                        <i class="lnr lnr-arrow-left"/>
                     </div>
                     <div class="sidebar-action-header-img">
                         <div class="avatar-spec avatar-spec-lg"
@@ -213,7 +214,7 @@ export class SidebarAction extends SimpleDom.Component {
                 <div class="sidebar-action-content">
                     <TagList/>
                 </div>
-                <div class="sidebar-action-spacer"></div>
+                <div class="sidebar-action-spacer"/>
                 <div class="sidebar-action-footer">
                     <p class="sidebar-action-copyright">&copy; bemychange-2017</p>
                 </div>

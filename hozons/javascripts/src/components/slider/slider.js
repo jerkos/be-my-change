@@ -37,11 +37,11 @@ class SlideActionInfo extends SimpleDom.Component {
 	}
 
 	render() {
-		return <div class="boxed-layout slider">
+		return <div class="slider">
 			<div class="row">
 				<span class="lnr lnr-cross fa-3x slider-cross"
-					onclick={this.props.close}
-				></span>
+                    onclick={this.props.close}
+                />
 			</div>
 			<div class="row">
 				<p style="text-align: center; font-weight: bold; font-size: 20px">{this.props.title}</p>

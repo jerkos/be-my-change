@@ -52,15 +52,13 @@ export class ActionCard extends SimpleDom.Component {
         let self = this;
         return (
             <div class="card my-card" style="opacity: 0">
+                <div class="hbtn-action my-card-delete">&#43;</div>
                 <div class="card-image waves-block waves-light">
                     <a data-fancybox
                        data-caption={this.userAction.action.title}
                        href={this.userAction.action.image_url}>
                         <img class="lozad" src={this.userAction.action.image_url} />
                     </a>
-                    <span class={`badge ${this.getBadgeColour()} white-text my-card-indicator`}>
-                            {this.userAction.action.kind}
-                    </span>
                 </div>
                 <div class="card-content" data-tooltip={this.userAction.action.title}>
                     <span class="card-title grey-text text-darken-4" style="font-size: 1.4em;">
@@ -68,6 +66,8 @@ export class ActionCard extends SimpleDom.Component {
                     </span>
                     <div class="card-content-action-info">
                         <div class="progress">
+                            <div class="card-content-action-info-start-date">12/10</div>
+                            <div class="card-content-action-info-end-date">14/11</div>
                             <div class="determinate" style="width: 70%"/>
                         </div>
                         <p>
@@ -86,7 +86,7 @@ export class ActionCard extends SimpleDom.Component {
                                                commentaries={commentaries || []}
                                            />,
                                            event
-                                       ));
+                                       ))
                                }}
                             >
                                 <div class="action-indicator">28</div>
