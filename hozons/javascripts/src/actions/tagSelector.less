@@ -1,0 +1,26 @@
+@import '../css/variables';
+
+.tag-selector {
+  display: flex;
+  flex-wrap: wrap;
+
+  .tag-selector-input {
+    //margin: 0 10px;
+    flex-basis: 100%;
+    flex-grow: 0;
+    flex-shrink: 0;
+
+    & > input {
+      color: white;
+      background-color: @main-blue;
+      border-radius: 5px;
+      border: none !important;
+      box-shadow: none !important;
+
+      &:focus {
+        border: none !important;
+        box-shadow: none !important;
+      }
+    }
+  }
+}

@@ -2,7 +2,7 @@ import '../../home';
 import * as SimpleDom from 'simpledom-component';
 import './slider.less';
 
-export function createSlider(title, node, e) {
+export function createSlider(title, node, e, iconsClass=null) {
     if (!document.getElementById('slide-out-actions')) {
         let slideContainer = document.createElement('div');
         slideContainer.id = "slide-out-actions";
@@ -23,6 +23,7 @@ export function createSlider(title, node, e) {
                     title={title}
                     close={() => $(e.target).sideNav('destroy')}
                     node={node}
+                    titleIconClass={iconsClass}
                 />,
                 slideStore
             );
@@ -44,7 +45,12 @@ class SlideActionInfo extends SimpleDom.Component {
                 />
 			</div>
 			<div class="row">
-				<p style="text-align: center; font-weight: bold; font-size: 20px">{this.props.title}</p>
+				<p style="text-align: center; font-weight: bold; font-size: 20px; text-transform: uppercase;">
+                    {SimpleDom.predicate(this.props.titleIconClass,
+                        () => <span class={this.props.titleIconClass}/>
+                    )}
+                    {this.props.title}
+                </p>
 			</div>
 			<div class="row">
 				<div class="col s12">

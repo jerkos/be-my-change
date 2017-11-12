@@ -10,7 +10,7 @@ import { withVeilAndMessages } from '../components/veil/veil';
 import { createSlider } from '../components/slider/slider';
 import { CommentariesTab } from './commentaries';
 import { ParticipantTab } from './participants';
-
+import { TagSelector } from "./tagSelector";
 
 import '../css/popovers.less';
 import '../css/avatar.less';
@@ -38,27 +38,67 @@ export class ActionCard extends SimpleDom.Component {
         return time.replace('une', '1').replace('un', '1').replace('heure', 'h');
     }
 
-    getBadgeColour() {
-        const kind = this.userAction.action.kind;
-        if (kind === 'PERS') {
-            return 'yellow';
-        } else if (kind === 'ENV') {
-            return 'green';
+    getFullTag() {
+        debugger;
+        const userActionTags = this.userAction.tag.split('-');
+        let tags = this.state.tags.slice();
+        console.log(tags);
+        let result = [];
+
+        while (userActionTags.length) {
+            const currTag = userActionTags.shift();
+            const targetTag = tags.find(tag => '' + tag.id === currTag);
+            result.push(targetTag.name);
+            if (targetTag && targetTag.sons) {
+                tags = targetTag.sons;
+                continue;
+            }
+            break;
         }
-        return 'blue';
+        return '#' + result.join('/') + '#';
     }
 
     render() {
         let self = this;
         return (
+            <div>
+            <div id={`card-edit-tag-${this.userAction.id}`} class="modal">
+                <div class="modal-content">
+                    <h4>Changer de tag</h4>
+                    <TagSelector tags={this.getFullTag()}/>
+                </div>
+                <div class="modal-footer">
+                    <div class="right">
+                        <a href="#" class="hbtn" style="margin-right: 10px; margin-top: -10px;">
+                            Valider
+                        </a>
+                    </div>
+                </div>
+            </div>
             <div class="card my-card" style="opacity: 0">
-                <div class="hbtn-action my-card-delete">&#43;</div>
+                <div class="hbtn-action my-card-delete">&#10005;</div>
                 <div class="card-image waves-block waves-light">
-                    <a data-fancybox
-                       data-caption={this.userAction.action.title}
-                       href={this.userAction.action.image_url}>
-                        <img class="lozad" src={this.userAction.action.image_url} />
-                    </a>
+                    {SimpleDom.predicate(this.userAction.action.image_url,
+                        () => {
+                            return (
+                                <a data-fancybox
+                                   data-caption={this.userAction.action.title}
+                                   href={this.userAction.action.image_url}>
+                                    <img class="lozad" src={this.userAction.action.image_url} />
+                                    <div class="card-image-tag"
+                                        onclick={e => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            $(`#card-edit-tag-${this.userAction.id}`).modal('open');
+
+                                            console.log("tag clicked");
+                                        }}>
+                                        {this.getFullTag()}
+                                    </div>
+                                </a>
+                            );
+                        }
+                    )}
                 </div>
                 <div class="card-content" data-tooltip={this.userAction.action.title}>
                     <span class="card-title grey-text text-darken-4" style="font-size: 1.4em;">
@@ -80,12 +120,13 @@ export class ActionCard extends SimpleDom.Component {
                                        true
                                    ).then(commentaries =>
                                        createSlider(
-                                           `Commentaires associées à cette action`,
+                                           `Commentaires`,
                                            <CommentariesTab
                                                action={this.userAction.action}
                                                commentaries={commentaries || []}
                                            />,
-                                           event
+                                           event,
+                                           'lnr lnr-bubble'
                                        ))
                                }}
                             >
@@ -150,6 +191,7 @@ export class ActionCard extends SimpleDom.Component {
                         </p>
                     )}
                 </div>
+            </div>
             </div>
         );
     }

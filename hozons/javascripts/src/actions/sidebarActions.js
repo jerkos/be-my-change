@@ -40,12 +40,15 @@ class Tag extends SimpleDom.Component {
                     if (this.editMode) {
                         return;
                     }
-                    this.isHighlighted = !this.isHighlighted;
+                    if (! this.isHighlighted) {
+                        this.isHighlighted = true;
+                    }
+                    //this.isHighlighted = !this.isHighlighted;
                     if (this.props.onFilterClick) {
                         this.props.onFilterClick(this.tag);
                     }
                     this.store.updateState({
-                        selectedTagSlug: this.isHighlighted ? this.tag.tag_slug : null
+                        selectedTagSlug: this.tag.tag_slug
                     }, 'ACTION_VIEW_TO_UPDATE', `REFRESH_TAG_${this.props.id}`);
                 }}
             >
@@ -112,7 +115,6 @@ class Tag extends SimpleDom.Component {
                                     })
                                     return;
                                 }
-                                console.log('updating...');
                                 withVeilAndMessages(
                                     fetchJsonData('/users/tags/update', {
                                         method: 'PUT',
@@ -189,7 +191,6 @@ export class SidebarAction extends SimpleDom.Component {
         if (this.isLoading) {
             return undefined;
         }
-        console.log('rerendered with tags', this.state.tags);
         return (
             <div class="sidebar-action">
                 <div class="sidebar-action-header">

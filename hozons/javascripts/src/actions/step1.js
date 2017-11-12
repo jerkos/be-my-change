@@ -11,6 +11,9 @@ import { withVeilAndMessages } from '../components/veil/veil';
 import { ComposedComponent, ParentComponent } from '../composedComponent'
 import './createAction.less'
 import {fillUptag, getTagsNumber} from "./utils";
+import { TagSelector } from "./tagSelector";
+import './tagSelector.less';
+
 
 class CreateActionStep1 extends ComposedComponent {
     eventsToSubscribe() {
@@ -86,29 +89,6 @@ class CreateActionStep1 extends ComposedComponent {
                                     this.updateCState({ currStep: 2 }, 'CHANGE_STATE');
                                 }
                             }}>Passer à la suite</a>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-}
-
-class TagSelector extends SimpleDom.Component {
-    eventsToSubscribe() {
-        return ['TAG_SELECTOR_UPDATE'];
-    }
-
-    render() {
-        return (
-            <div class="row">
-                <div class="tag-selector">
-                    <div class="input-field tag-selector-input">
-                        <input type="text" 
-                            value={this.state.tagsToCreate || ''}
-                            onchange={e => {
-                                this.store.updateState({tagsToCreate: e.target.value})
-                            }}
-                        />
                     </div>
                 </div>
             </div>

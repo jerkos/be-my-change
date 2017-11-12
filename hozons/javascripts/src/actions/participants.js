@@ -2,6 +2,7 @@ import * as SimpleDom from 'simpledom-component';
 import { ComposedComponent, ParentComponent } from '../composedComponent'
 import { withVeilAndMessages } from '../components/veil/veil';
 require('../css/empty.less');
+import '../css/common.less';
 const gravatar = require('gravatar');
 
 
@@ -175,6 +176,7 @@ export class ParticipantTab extends ParentComponent {
     render() {
         return (
             <div>
+                <h2 class="inspire en-tete"></h2>
                 <div class="row">
                     <div class='col s8 offset-s2'>
                         <nav class="search-nav">
@@ -193,9 +195,7 @@ export class ParticipantTab extends ParentComponent {
                 <div class="row">
                     <ParticipantList
                         parent={this}
-                    />
-                    <InformationPane
-                        parent={this}
+                        col={12}
                     />
                 </div>
             </div>

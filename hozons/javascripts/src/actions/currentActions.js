@@ -49,7 +49,7 @@ class ActionsList extends SimpleDom.Component {
     render() {
         const nbActions = this.state.minisidebar ? 4 : 3;
         const colSize = this.state.minisidebar ?  'm3' : 'm4';
-        if (!this.state.selectedActions.length) {
+        if (!(this.state.selectedActions || []).length) {
             return (
                 <section class="empty">
                     <div class="empty-icon">
@@ -92,7 +92,7 @@ class MainTitle extends SimpleDom.Component {
     render() {
         return (
             <h1 class="main-title">
-                Mes actions en cours ({this.state.selectedActions.length})
+                Mes actions en cours ({(this.state.selectedActions || []).length})
                 <a href="#createAction" class="right hbtn-action hbtn-main-color add-action"
                    onclick={() => {
                        $('#createAction').modal({
@@ -169,9 +169,20 @@ $(document).ready(function () {
     const store = new SimpleDom.Store();
 
     store.subscribe('ACTION_VIEW_TO_UPDATE', (state, oldState) => {
+        // TODO refactor a bit this shit
         const newSelectedActions = !store.state.selectedTagSlug ? store.actions
-            : store.state.actions.filter(action =>
-                action.tag.startsWith(store.state.selectedTagSlug));
+            : store.state.actions.filter(action => {
+                const splitted = store.state.selectedTagSlug.split('-');
+                const splittedTag = action.tag.split('-');
+                let i = 0;
+                while (i < splitted.length && i < splittedTag.length) {
+                    if (splitted[i] !== splittedTag[i]) {
+                        return false;
+                    }
+                    ++i;
+                }
+                return true;
+            });
 
         store.updateState({
             selectedActions: newSelectedActions
@@ -180,12 +191,11 @@ $(document).ready(function () {
 
     withVeilAndMessages(
         Promise.all([
-            fetchJsonData(`/users/actions/get`), 
+            fetchJsonData('/users/actions/get'),
             fetchJsonData('/users/tags/all')
         ]),
         true)
         .then(([actions, tags]) => {
-
             fillUptag(tags);
             const countByTagSlug = {};
             getTagsNumber(actions, countByTagSlug);
@@ -205,12 +215,11 @@ $(document).ready(function () {
                 {
                     altInput: true,
                     defaultDate: new Date(),
-                    onChange: (_, date, inst) => {
+                    onChange: (_, date) => {
                         withVeilAndMessages(
                             fetchJsonData(`/users/actions/get?date=${moment(date).format('YYYY-MM-DD')}`),
                             true
                         ).then(actions => {
-                            console.log(actions);
                             //fillUptag(tags);
                             const countByTagSlug = {};
                             getTagsNumber(actions, countByTagSlug);
