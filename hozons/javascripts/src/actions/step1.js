@@ -1,8 +1,6 @@
 import '../home';
-const moment = require('moment');
 const flatpickr = require('flatpickr');
 
-require('moment/locale/fr');
 import '../css/steps.less';
 import '../css/tooltips.less';
 import '../css/popovers.less';
@@ -10,7 +8,7 @@ import * as SimpleDom from 'simpledom-component';
 import { withVeilAndMessages } from '../components/veil/veil';
 import { ComposedComponent, ParentComponent } from '../composedComponent'
 import './createAction.less'
-import {fillUptag, getTagsNumber} from "./utils";
+import {fillUptag, getTagsNumber, updateSidebarTags} from "./utils";
 import { TagSelector } from "./tagSelector";
 import './tagSelector.less';
 
@@ -107,6 +105,7 @@ class CreateActionStep2 extends ComposedComponent {
         flatpickr('.flatpicker-starter');
     }
 
+    /*
     updateSidebarTags() {
         //if (!this.state.tagSlugToCreate) {
         //    return;
@@ -139,7 +138,7 @@ class CreateActionStep2 extends ComposedComponent {
             currRank ++;
         }
         return {tagsSlug, tagsToCreate, actualizedTags: existingTags};
-    }
+    }*/
 
     render() {
         return (
@@ -202,7 +201,7 @@ class CreateActionStep2 extends ComposedComponent {
                         onclick={e => {
                             e.preventDefault();
                             $('#createAction').modal('close');
-                            const result = this.updateSidebarTags();
+                            const result = updateSidebarTags(this.state);
                             withVeilAndMessages(
                                 window.fetchJsonData('/users/actions/create',
                                     {

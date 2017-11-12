@@ -34,3 +34,37 @@ export function getTagsNumber(actions, result) {
         }
     }
 }
+
+export function updateSidebarTags(state) {
+    //if (!this.state.tagSlugToCreate) {
+    //    return;
+    //}
+    const newTags = state.tagsToCreate.slice(1).split('/');
+    let existingTags = state.tags;
+    let currRank = 1;
+
+    let tagsSlug = '';
+    const tagsToCreate = [];
+
+    for (const newTag of newTags) {
+        const tag = existingTags.find(existingTag => existingTag.name === newTag);
+
+        if (! tag) {
+            const obj = {
+                name: newTag,
+                parent_id: +(tagsSlug.split('-').slice(-1)) || null,
+                rank: currRank,
+            };
+            tagsToCreate.push(obj);
+            // existingTags.push(obj);
+
+            // updated later to test ?
+            //this.store.updateState({tags: existingTags}, 'SIDEBAR_TO_UPDATE');
+        }
+        const newId = !tag ? 0 : tag.id;
+        tagsSlug = tagsSlug ? (tagsSlug + '-' + newId) : tagsSlug + newId;
+        existingTags = tag ? (tag.sons || []) : [];
+        currRank ++;
+    }
+    return {tagsSlug, tagsToCreate, actualizedTags: existingTags};
+}

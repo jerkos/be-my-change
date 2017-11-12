@@ -326,3 +326,28 @@ def save_tag():
         rank=data.get('rank')
     )
     return Tags.to_json(tag)
+
+
+@user.route('/tags/change-tag/<int:user_action_id>', methods=['POST'])
+@login_required
+@csrf_protect.exempt
+def change_tag_of_user_action(user_action_id):
+    data = request.get_json(force=True)
+
+    # first save new tags eventually
+    tags_to_create = data.get('tagsToCreate')
+
+    # all tags with fresh new ids
+    new_tags = Tags.create_all(tags_to_create, current_user.id)
+
+    # setup tag slug for action
+    final_slug = Tags.build_tags_slug(data.get('tagsSlug'), new_tags)
+
+    user_action = UserAction.query(UserAction.id == user_action_id).first_or_404()
+    user_action.update(tag=final_slug)
+
+    return json.dumps({
+        'tags': [tag.to_dict() for tag in Tags.get_tree()],
+        'user_action': user_action.to_dict()
+    }), 200
+

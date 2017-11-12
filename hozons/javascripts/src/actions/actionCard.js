@@ -1,3 +1,5 @@
+import {fillUptag, getTagsNumber, updateSidebarTags} from "./utils";
+
 require('../home');
 const moment = require('moment');
 require('moment/locale/fr');
@@ -69,7 +71,36 @@ export class ActionCard extends SimpleDom.Component {
                 </div>
                 <div class="modal-footer">
                     <div class="right">
-                        <a href="#" class="hbtn" style="margin-right: 10px; margin-top: -10px;">
+                        <a href="#" class="hbtn" style="margin-right: 10px; margin-top: -10px;"
+                           onclick={e => {
+                               e.preventDefault();
+                               $('#createAction').modal('close');
+                               const result = updateSidebarTags(this.state);
+                               withVeilAndMessages(
+                                   window.fetchJsonData(`/users/tags/change-tag/${this.userAction.id}`,
+                                       {
+                                           method: 'POST',
+                                           body: JSON.stringify({
+                                               tagsToCreate: result.tagsToCreate,
+                                               tagsSlug: result.tagsSlug
+                                           })
+                                       }), true
+                               ).then(({tags, user_action}) => {
+                                   this.userAction.tag = user_action.tag;
+                                   fillUptag(tags);
+                                   const countByTagSlug = {};
+                                   //test if the user has participated into the action
+                                   // add maybe user action ?
+                                   getTagsNumber(this.state.actions, countByTagSlug);
+
+                                   this.store.updateState({
+                                           tags,
+                                           countByTagSlug
+                                       },
+                                       'SIDEBAR_TO_UPDATE', 'ACTIONS_LIST_TO_UPDATE', 'TITLE_TO_REFRESH');
+                               })
+                           }}
+                        >
                             Valider
                         </a>
                     </div>
