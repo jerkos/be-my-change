@@ -343,7 +343,7 @@ def change_tag_of_user_action(user_action_id):
     # setup tag slug for action
     final_slug = Tags.build_tags_slug(data.get('tagsSlug'), new_tags)
 
-    user_action = UserAction.query(UserAction.id == user_action_id).first_or_404()
+    user_action = UserAction.query.filter(UserAction.id == user_action_id).first_or_404()
     user_action.update(tag=final_slug)
 
     return json.dumps({

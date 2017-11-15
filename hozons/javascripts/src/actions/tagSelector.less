@@ -9,17 +9,34 @@
     flex-basis: 100%;
     flex-grow: 0;
     flex-shrink: 0;
+    background-color: @main-blue;
+    border-radius: 5px;
+    padding: 0 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
     & > input {
       color: white;
-      background-color: @main-blue;
       border-radius: 5px;
       border: none !important;
       box-shadow: none !important;
+      margin: 0 !important;
+      background-color: @main-blue;
 
       &:focus {
         border: none !important;
         box-shadow: none !important;
+      }
+
+      &:before {
+        content: '#';
+        color: white;
+        font-size: 2em;
+        position: absolute;
+        left: -10px;
+        height: 20px;
+        width: 20px;
       }
     }
   }

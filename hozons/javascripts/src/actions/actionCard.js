@@ -41,7 +41,6 @@ export class ActionCard extends SimpleDom.Component {
     }
 
     getFullTag() {
-        debugger;
         const userActionTags = this.userAction.tag.split('-');
         let tags = this.state.tags.slice();
         console.log(tags);
@@ -57,7 +56,7 @@ export class ActionCard extends SimpleDom.Component {
             }
             break;
         }
-        return '#' + result.join('/') + '#';
+        return result.join('/');
     }
 
     render() {
@@ -73,8 +72,8 @@ export class ActionCard extends SimpleDom.Component {
                     <div class="right">
                         <a href="#" class="hbtn" style="margin-right: 10px; margin-top: -10px;"
                            onclick={e => {
-                               e.preventDefault();
-                               $('#createAction').modal('close');
+                               //e.preventDefault();
+                               $(`#card-edit-tag-${this.userAction.id}`).modal('close');
                                const result = updateSidebarTags(this.state);
                                withVeilAndMessages(
                                    window.fetchJsonData(`/users/tags/change-tag/${this.userAction.id}`,
@@ -86,6 +85,8 @@ export class ActionCard extends SimpleDom.Component {
                                            })
                                        }), true
                                ).then(({tags, user_action}) => {
+                                   console.log(tags);
+                                   console.log(user_action);
                                    this.userAction.tag = user_action.tag;
                                    fillUptag(tags);
                                    const countByTagSlug = {};
