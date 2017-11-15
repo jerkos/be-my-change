@@ -39,7 +39,7 @@ export function updateSidebarTags(state) {
     //if (!this.state.tagSlugToCreate) {
     //    return;
     //}
-    const newTags = state.tagsToCreate.slice(1).split('/');
+    const newTags = state.tagsToCreate.split('/');
     let existingTags = state.tags;
     let currRank = 1;
 

@@ -12,7 +12,7 @@ export class TagSelector extends SimpleDom.Component {
         return (
             <div class="row">
                 <div class="tag-selector">
-                    <div class="input-field tag-selector-input">
+                    <div class="tag-selector-input">
                         <input type="text"
                                value={this.props.tags || this.state.tagsToCreate || ''}
                                onchange={e => {
