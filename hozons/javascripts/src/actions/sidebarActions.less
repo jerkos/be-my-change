@@ -10,22 +10,24 @@
   flex-direction: column;
   flex-grow: 1;
   align-items: center;
-  background: #333;
+  background: white;
   position: fixed;
   width: 335px;
   left: 0;
   top: 0;
   z-index: 999;
   padding: 1% 0;
-  /*box-shadow: -18px 0 119px rgba(0, 0, 0, .2);*/
+  box-shadow: inset 0px -1px 6px rgba(0, 0, 0, 0.2);
   transition: all 0.2s;
   margin-top: 78px;
 
   &.sidebar-minified {
     max-width: 80px;
-    background-color: #f9fafb;
+    background: none;
+    box-shadow:none;
     border: none;
     min-width: 80px;
+    position:fixed !important;
 
     & .sidebar-action-content, & .sidebar-action-footer {
       display: none;
@@ -43,17 +45,16 @@
 
     .sidebar-action-header {
       bottom: 2% !important;
+      position:fixed;
       width: 80px;
       left: 1%;
       text-align: left;
-      position: fixed;
     }
   }
 
   .sidebar-action-header {
-    position: fixed;
     bottom: 2%;
-    left: 300px;
+    position: fixed;
 
     h2 {
       font-size: 2em;
@@ -74,7 +75,7 @@
       position: relative;
 
       .avatar-spec {
-        border-radius: 5px;
+        border-radius: 100%;
       }
 
       .sidebar-action-header-img-conf {
@@ -117,18 +118,22 @@
     .main-tag-list, .sub-tag-list {
 
       li.sub-tag {
-        font-size: 1rem;
+        font-size: 0.9rem;
         cursor: pointer;
-        color: white !important;
-        font-weight: 200;
-        padding: 5px 20px;
+        color: #333 !important;
+        text-transform: none;
+        font-weight: 300;
         position: relative;
+        padding-left: 22px !important;
 
         &.active {
+            transition: all 0.2s;
           //font-weight: 800;
+          //padding: 10px 10px;
         }
 
         &.highlighted {
+          color: #62dbb2 !important;
           font-weight: 800;
         }
 
@@ -145,10 +150,11 @@
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
+            padding: 3px 20px;
 
             .sub-tag-list-icon {
-              font-size: 0.6em;
-              padding-right: 20px;
+              font-size: 0.8em;
+              padding-right: 10px;
             }
           }
 
@@ -197,7 +203,6 @@
     }
 
     .main-tag-list {
-      padding: 0 5%;
       transition: all 0.2s;
 
       .sub-tag-list {
@@ -206,13 +211,17 @@
         &.active {
           opacity: 1;
           display: block;
+          transition: all 1s;
         }
       }
 
       & > li.sub-tag {
-        font-size: 1.4em;
-        font-weight: 600;
-        color: @main-blue;
+        font-size: 1.1em;
+        font-weight: 700;
+        padding: 10px 0px;
+        text-transform: uppercase;
+        /*border-bottom: 1px solid #f4f4f4;*/
+        color: #333;
       }
     }
 

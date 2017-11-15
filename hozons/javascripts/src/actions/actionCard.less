@@ -31,6 +31,7 @@
       margin: 20px 0;
       color: black;
       overflow: visible;
+      background-color: #F4F4F4;
 
       .card-content-action-info-start-date {
         position: absolute;
@@ -47,6 +48,10 @@
         font-weight: bolder;
         color: lightgrey;
       }
+
+      .determinate {
+      background-color:#62dbb3 !important;
+      }
     }
 
     p {
@@ -58,19 +63,19 @@
         position: relative;
 
         .action-indicator {
-          border-radius: 100%;
+          /*border-radius: 100%;
           height: 20px;
           width: 20px;
           background-color: black;
           position: absolute;
           left: 19px;
           bottom: 18px;
-          color: white;
+          color: white;*/
           font-size: 0.8em;
-          display: flex;
+          /*display: flex;
           flex-direction: column;
-          justify-content: center;
-          font-weight: bolder;
+          justify-content: center;*/
+          font-weight: 800;
         }
       }
     }
@@ -82,13 +87,15 @@
 
     .card-title {
       margin-bottom: 32px;
+      font-weight:700;
     }
   }
 
   .card-action {
-    background-color: #31c7d5;
+    background-color: #62dbb3 !important;
     border-bottom-left-radius: 10px !important;
     border-bottom-right-radius: 10px !important;
+    padding: 1px 24px;
 
     p {
       text-align: center;
