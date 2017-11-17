@@ -135,7 +135,6 @@ class UserAction(JsonSerializerMixin, SurrogatePK, Model):
 
     tag = Column(db.Text, nullable=True)
 
-
     def __init__(self, user_id, action_id, start_date, end_date, tag=None):
         self.user_id = user_id
         self.action_id = action_id
@@ -159,6 +158,7 @@ class UserAction(JsonSerializerMixin, SurrogatePK, Model):
 
 
 class Tags(JsonSerializerMixin, SurrogatePK, Model):
+
     __tablename__ = 'tags'
     RELATIONSHIPS_TO_DICT = True
 
@@ -212,6 +212,11 @@ class Tags(JsonSerializerMixin, SurrogatePK, Model):
                          rank=tag['rank'])
              for tag in tags
         ]
+
+    @staticmethod
+    def delete_sons(tag):
+        for t in tag.sons:
+            t.delete()
 
 
 class Followings(JsonSerializerMixin, SurrogatePK, Model):

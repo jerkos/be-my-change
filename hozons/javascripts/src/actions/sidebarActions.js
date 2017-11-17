@@ -1,3 +1,5 @@
+import {fillUptag, getTagsNumber} from "./utils";
+
 require('../home');
 import * as SimpleDom from 'simpledom-component';
 import { withVeilAndMessages } from '../components/veil/veil';
@@ -86,6 +88,29 @@ class Tag extends SimpleDom.Component {
                                     }}  
                                     class="hbtn-action sub-tag-edit">&#43;
                                 </span>
+                                {SimpleDom.predicate(true,
+                                    () => < span
+                                        onclick={event => {
+                                            event.stopPropagation();
+                                            withVeilAndMessages(
+                                                fetchJsonData(`/users/tags/delete/${this.tag.id}`,
+                                                    {method: 'DELETE'}),
+                                                true
+                                            ).then(()=> {
+                                                if (this.props.parentTag) {
+                                                    const sons = this.props.parentTag.sons.filter(son => son.id !== this.tag.id);
+                                                    this.props.parentTag.sons = sons;
+                                                    this.isActive = true;
+                                                    this.store.updateState({}, [`REFRESH_TAG_${this.props.parentId}`]);
+                                                } else {
+                                                    const tags = this.state.tags.filter(tag => tag.id !== this.tag.id);
+                                                    this.store.updateState({tags}, ["SIDEBAR_TO_UPDATE"]);
+                                                }
+                                            });
+                                    }}
+                                    class="hbtn-action lnr lnr-trash sub-tag-edit">
+                                    </span>
+                                )}
                             </div>
                         </div>
                     )
@@ -101,7 +126,7 @@ class Tag extends SimpleDom.Component {
                                         parent_id: this.props.parentTag.id,
                                         rank: this.props.parentTag.rank + 1,
                                         user_id: currentUser.id
-                                    }
+                                    };
                                     withVeilAndMessages(
                                         fetchJsonData('/users/tags/create', {
                                             method: 'POST',
@@ -110,9 +135,11 @@ class Tag extends SimpleDom.Component {
                                         true
                                     ).then((tag) => {
                                         this.tag = tag;
+                                        this.props.parentTag.sons.pop();
+                                        this.props.parentTag.sons.push(tag);
                                         this.editMode = false;
                                         this.store.updateState({}, [`REFRESH_TAG_${this.props.id}`]);
-                                    })
+                                    });
                                     return;
                                 }
                                 withVeilAndMessages(
@@ -135,7 +162,7 @@ class Tag extends SimpleDom.Component {
                     return (
                         <ul class={`sub-tag-list sub-${this.tag.id} ${this.isActive ? 'active' : ''}`}>
                             {this.tag.sons.map((son,i) => {       
-                                return <Tag tag={son} id={technicalId++} parentTag={this.tag}/>
+                                return <Tag tag={son} id={technicalId++} parentTag={this.tag} parentId={this.props.id}/>
                             })}
                         </ul>
                     );
@@ -162,7 +189,7 @@ class TagList extends SimpleDom.Component {
 export class SidebarAction extends SimpleDom.Component {
     constructor(props, store) {
         super(props, store);
-        this.isLoading = true;
+        this.isLoading = false;
         this.hasImage = true;
     }
 
@@ -171,6 +198,7 @@ export class SidebarAction extends SimpleDom.Component {
     }
 
     componentDidMount() {
+        /*
         if (this.isLoading) {
             this.profilImgUrl = gravatar.url(currentUser.email, { s: '50', d: '404' });
             fetch(this.profilImgUrl, {
@@ -185,6 +213,7 @@ export class SidebarAction extends SimpleDom.Component {
                 this.store.updateState({}, 'SIDEBAR_TO_UPDATE');
             })
         }
+        */
     }
 
     render() {

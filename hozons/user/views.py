@@ -1,23 +1,20 @@
 # -*- coding: utf-8 -*-
 """User views."""
 import datetime as dt
-import logging
-from collections import defaultdict
 import json
-import time
+import logging
 
-from flask import Blueprint, jsonify, render_template, request, url_for, redirect
+from flask import Blueprint, render_template, request, url_for, redirect, abort
 from flask_login import current_user, login_required
-from sqlalchemy import desc, func, or_, and_
+from sqlalchemy import desc, func, or_
 
 from hozons.extensions import csrf_protect
 from hozons.extensions import db
-
 from .models import Action
-from .models import User
-from .models import UserAction
 from .models import Commentary
 from .models import Tags
+from .models import User
+from .models import UserAction
 
 user = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
 
@@ -99,6 +96,17 @@ def get_user_actions():
     return UserAction.arr_to_json(
                 current_user.user_actions(requested_date)
             ), 200
+
+
+@user.route('/actions/user-action/delete/<int:user_action_id>', methods=['DELETE'])
+@csrf_protect.exempt
+@login_required
+def remove_user_action(user_action_id):
+    user_action = UserAction.get_by_id(user_action_id)
+    if user_action is None:
+        abort(404)
+    user_action.delete()
+    return '{}', 200
 
 
 @user.route('/actions/get/<int:user_id>/<int:action_id>')
@@ -326,6 +334,25 @@ def save_tag():
         rank=data.get('rank')
     )
     return Tags.to_json(tag)
+
+
+@user.route('/tags/delete/<int:tag_id>', methods=['DELETE'])
+@login_required
+@csrf_protect.exempt
+def delete_tag(tag_id):
+    tag = Tags.get_by_id(tag_id)
+    # recursive delete ?
+
+    def delete_t(t):
+        if t is None:
+            return
+        for tt in (t.sons or []):
+            delete_t(tt)
+            tt.delete()
+        t.delete()
+
+    delete_t(tag)
+    return '{}', 200
 
 
 @user.route('/tags/change-tag/<int:user_action_id>', methods=['POST'])

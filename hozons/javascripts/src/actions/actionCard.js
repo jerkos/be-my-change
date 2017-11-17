@@ -27,6 +27,7 @@ export class ActionCard extends SimpleDom.Component {
     constructor(props, store) {
         super(props, store);
         this.userAction = this.props.userAction;
+        this.card = undefined;
     }
 
     static cropTitle(title, maxLength = 20) {
@@ -43,7 +44,6 @@ export class ActionCard extends SimpleDom.Component {
     getFullTag() {
         const userActionTags = this.userAction.tag.split('-');
         let tags = this.state.tags.slice();
-        console.log(tags);
         let result = [];
 
         while (userActionTags.length) {
@@ -60,7 +60,6 @@ export class ActionCard extends SimpleDom.Component {
     }
 
     render() {
-        let self = this;
         return (
             <div>
             <div id={`card-edit-tag-${this.userAction.id}`} class="modal">
@@ -107,8 +106,36 @@ export class ActionCard extends SimpleDom.Component {
                     </div>
                 </div>
             </div>
-            <div class="card my-card" style="opacity: 0">
-                <div class="hbtn-action my-card-delete">&#10005;</div>
+            <div class="card my-card" style="opacity: 0" ref={ref => this.card = ref}>
+                <div class="hbtn-action my-card-delete"
+                     onclick={() => {
+                         withVeilAndMessages(
+                             window.fetchJsonData(
+                                 `/users/actions/user-action/delete/${this.userAction.id}`,
+                                 {method: 'DELETE'}
+                             ), true
+                         ).then(() => {
+                             console.log(this.card);
+                             this.card.classList.toggle('to-be-deleted');
+                             setTimeout(() => {
+                                 const selectedActions = this.state.selectedActions
+                                     .filter(action => action.id !== this.userAction.id);
+                                 const actions = this.state.selectedActions
+                                     .filter(action => action.id !== this.userAction.id);
+                                 const countByTagSlug = {};
+                                 getTagsNumber(actions, countByTagSlug);
+
+                                 this.store.updateState({
+                                     actions,
+                                     selectedActions,
+                                     countByTagSlug
+                                 }, 'SIDEBAR_TO_UPDATE', 'ACTIONS_LIST_TO_UPDATE', 'TITLE_TO_REFRESH')
+                             }, 600);
+                         })
+                     }}
+                >
+                    &#10005;
+                </div>
                 <div class="card-image waves-block waves-light">
                     {SimpleDom.predicate(this.userAction.action.image_url,
                         () => {
