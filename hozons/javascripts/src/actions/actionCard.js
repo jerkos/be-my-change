@@ -220,7 +220,7 @@ export class ActionCard extends SimpleDom.Component {
                                    console.log('plus clicked');
                                }}>
                                 <div class="action-indicator">28</div>
-                                <span class="lnr lnr-layers fa-2x"/>
+                                <span class="lnr lnr-book fa-2x"/>
                             </a>
                         </p>
                     </div>
@@ -230,7 +230,7 @@ export class ActionCard extends SimpleDom.Component {
                         () => <p>
                             {SimpleDom.predicate(
                                 moment(this.userAction.last_succeed).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD'),
-                                () => <p><span class="lnr lnr-thumbs-up fa-2x"/>Fait !</p>,
+                                () => <p><span class="fa fa-check-square-o"/> 1 point gagné !</p>,
                                 () => <a href="#"
                                          onclick={ e => {
                                              e.preventDefault();
@@ -244,7 +244,7 @@ export class ActionCard extends SimpleDom.Component {
                                          }}
 
                                 >
-                                    <span class="lnr lnr-rocket fa-2x"/>Action réalisée ?
+                                    <span class="fa fa-check"/> Réalisé !
                                 </a>
                             )}
                         </p>

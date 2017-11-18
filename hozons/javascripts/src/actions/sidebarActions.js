@@ -58,10 +58,10 @@ class Tag extends SimpleDom.Component {
                 () => {
                     const hasIcon = this.tag.sons && this.tag.sons.length;
                     let icon = !this.isActive ? 
-                        <span class="lnr lnr-chevron-right sub-tag-list-icon"
+                        <span class="lnr lnr-plus-circle sub-tag-list-icon"
                             onclick={event => this.handleTagActivity(event)}
                         />
-                        : <span class="lnr lnr-chevron-down sub-tag-list-icon"
+                        : <span class="lnr lnr-circle-minus sub-tag-list-icon"
                                 onclick={event => this.handleTagActivity(event)}
                         />;
                     return (

@@ -17,7 +17,7 @@
   top: 0;
   z-index: 999;
   padding: 1% 0;
-  box-shadow: inset 0px -1px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.2);
   transition: all 0.2s;
   margin-top: 78px;
 
@@ -118,13 +118,12 @@
     .main-tag-list, .sub-tag-list {
 
       li.sub-tag {
-        font-size: 0.9rem;
+        font-size: 1rem;
         cursor: pointer;
         color: #333 !important;
         text-transform: none;
-        font-weight: 300;
-        position: relative;
-        padding-left: 22px !important;
+        font-weight: 100;
+        position: relative; 
 
         &.active {
             transition: all 0.2s;
@@ -153,8 +152,10 @@
             padding: 3px 20px;
 
             .sub-tag-list-icon {
-              font-size: 0.8em;
+              font-size: 1.1em;
+              font-weight:800;
               padding-right: 10px;
+              color: @main-blue;
             }
           }
 
@@ -186,8 +187,8 @@
           background-color: @main-blue;
           //right: -10px;
           color: white;
-          max-height: 20px !important;
-          max-width: 20px !important;
+          max-height: 25px !important;
+          max-width: 25px !important;
 
           &:last-child {
             margin-left: 35px;
@@ -209,19 +210,21 @@
         display: none;
 
         &.active {
-          opacity: 1;
-          display: block;
-          transition: all 1s;
+            opacity: 1;
+            padding-left: 30px !important;
+            display: block;
+            transition: all 1s;
         }
       }
 
       & > li.sub-tag {
-        font-size: 1.1em;
-        font-weight: 700;
-        padding: 10px 0px;
-        text-transform: uppercase;
-        /*border-bottom: 1px solid #f4f4f4;*/
+        font-size: 1.2em;
+        font-weight: 500;
         color: #333;
+        padding: 10px 0px;
+        /*text-transform: uppercase;*/
+        border-bottom: 1px solid #f4f4f4;
+        color: #333 !important;
       }
     }
 
