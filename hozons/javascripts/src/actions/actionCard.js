@@ -45,7 +45,6 @@ export class ActionCard extends SimpleDom.Component {
         const userActionTags = this.userAction.tag.split('-');
         let tags = this.state.tags.slice();
         let result = [];
-
         while (userActionTags.length) {
             const currTag = userActionTags.shift();
             const targetTag = tags.find(tag => '' + tag.id === currTag);
@@ -57,6 +56,14 @@ export class ActionCard extends SimpleDom.Component {
             break;
         }
         return result.join('/');
+    }
+
+    getUserActionProgress() {
+        const allDays = moment(this.userAction.start_date).diff(this.userAction.end_date, 'days');
+        const days = moment(this.userAction.start_date).diff(moment.now(), 'days');
+        const percent = Math.trunc((days / allDays) * 100);
+        console.log(percent);
+        return Math.min(100, percent);
     }
 
     render() {
@@ -84,8 +91,6 @@ export class ActionCard extends SimpleDom.Component {
                                            })
                                        }), true
                                ).then(({tags, user_action}) => {
-                                   console.log(tags);
-                                   console.log(user_action);
                                    this.userAction.tag = user_action.tag;
                                    fillUptag(tags);
                                    const countByTagSlug = {};
@@ -149,8 +154,6 @@ export class ActionCard extends SimpleDom.Component {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             $(`#card-edit-tag-${this.userAction.id}`).modal('open');
-
-                                            console.log("tag clicked");
                                         }}>
                                         {this.getFullTag()}
                                     </div>
@@ -165,9 +168,13 @@ export class ActionCard extends SimpleDom.Component {
                     </span>
                     <div class="card-content-action-info">
                         <div class="progress">
-                            <div class="card-content-action-info-start-date">12/10</div>
-                            <div class="card-content-action-info-end-date">14/11</div>
-                            <div class="determinate" style="width: 70%"/>
+                            <div class="card-content-action-info-start-date">
+                                {moment(this.userAction.start_date).format('DD/MM')}
+                            </div>
+                            <div class="card-content-action-info-end-date">
+                                {moment(this.userAction.end_date).format('DD/MM')}
+                            </div>
+                            <div class="determinate" style={`width: ${this.getUserActionProgress()}%`}/>
                         </div>
                         <p>
                             <a class="hbtn-action tooltip"

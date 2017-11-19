@@ -200,12 +200,14 @@ $(document).ready(function () {
             const countByTagSlug = {};
             getTagsNumber(actions, countByTagSlug);
 
+            console.log(tags);
             store.updateState({ 
                 actions,
                 countByTagSlug,
                 selectedActions: actions.slice(),
                 selectedDate: moment(new Date()).format('YYYY-MM-DD'),
-                tags
+                tags,
+                activeTags: new Set()
             });
             
             SimpleDom.renderToDom('container', <App />, store);

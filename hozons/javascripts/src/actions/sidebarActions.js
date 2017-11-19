@@ -1,5 +1,3 @@
-import {fillUptag, getTagsNumber} from "./utils";
-
 require('../home');
 import * as SimpleDom from 'simpledom-component';
 import { withVeilAndMessages } from '../components/veil/veil';
@@ -7,7 +5,6 @@ import { withVeilAndMessages } from '../components/veil/veil';
 import './sidebarActions.less';
 import '../css/avatar.less';
 import '../css/tooltips.less';
-const gravatar = require('gravatar');
 
 
 let technicalId = 1;
@@ -18,7 +15,7 @@ class Tag extends SimpleDom.Component {
         super(props, store);
         this.tag = this.props.tag;
         this.editMode = this.tag === null;
-        this.isActive = false;
+        this.isActive = this.state.activeTags.has((this.tag || {}).tag_slug) || false;
         this.isHighlighted = false;
     }
 
@@ -30,12 +27,19 @@ class Tag extends SimpleDom.Component {
         $('.sub-tag').removeClass('active');
         event.stopPropagation();
         this.isActive = !this.isActive;
-        this.store.updateState({}, `REFRESH_TAG_${this.props.id}`);
+        let newActiveTags = this.state.activeTags;
+
+        if (this.isActive) {
+            newActiveTags.add(this.tag.tag_slug)
+        } else {
+            newActiveTags.delete(this.tag.tag_slug);
+        }
+        this.store.updateState({activeTags: newActiveTags}, `REFRESH_TAG_${this.props.id}`);
     }
 
     render() {
         return (
-            <li class={`sub-tag ${this.isActive ? 'active' : ''} ${this.isHighlighted ? 'highlighted': ''}`}
+            <li class={`sub-tag ${this.state.activeTags.has((this.tag || {}).tag_slug) ? 'active' : ''} ${this.isHighlighted ? 'highlighted': ''}`}
                 onclick={event => {
                     event.stopPropagation();
                     $('.sub-tag').removeClass('highlighted');
@@ -88,7 +92,7 @@ class Tag extends SimpleDom.Component {
                                     }}  
                                     class="hbtn-action sub-tag-edit">&#43;
                                 </span>
-                                {SimpleDom.predicate(true,
+                                {SimpleDom.predicate(!this.state.countByTagSlug[this.tag.tag_slug],
                                     () => < span
                                         onclick={event => {
                                             event.stopPropagation();
@@ -197,25 +201,6 @@ export class SidebarAction extends SimpleDom.Component {
         return ['SIDEBAR_TO_UPDATE'];
     }
 
-    componentDidMount() {
-        /*
-        if (this.isLoading) {
-            this.profilImgUrl = gravatar.url(currentUser.email, { s: '50', d: '404' });
-            fetch(this.profilImgUrl, {
-                method: 'HEAD',
-                mode: 'cors'
-            })
-            .then(response => {
-                if (response.status === 404) {
-                    this.hasImage = false;
-                }
-                this.isLoading = false;
-                this.store.updateState({}, 'SIDEBAR_TO_UPDATE');
-            })
-        }
-        */
-    }
-
     render() {
         if (this.isLoading) {
             return undefined;
@@ -223,7 +208,7 @@ export class SidebarAction extends SimpleDom.Component {
         return (
             <div class="sidebar-action">
                 <div class="sidebar-action-header">
-                    <div class="toggler-arrow" onclick={e => {
+                    <div class="toggler-arrow" onclick={() => {
                         const elem = document.getElementsByClassName('sidebar-action')[0];
                         elem.classList.toggle('sidebar-minified');
                         const main = document.getElementsByClassName('boxed-layout')[0];
@@ -250,6 +235,5 @@ export class SidebarAction extends SimpleDom.Component {
                 </div>
             </div>
         );
-
     }
 }
