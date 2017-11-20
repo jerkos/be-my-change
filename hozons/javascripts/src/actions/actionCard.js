@@ -237,8 +237,9 @@ export class ActionCard extends SimpleDom.Component {
                         () => <p>
                             {SimpleDom.predicate(
                                 moment(this.userAction.last_succeed).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD'),
-                                () => <p><span class="fa fa-check-square-o"/> 1 point gagné !</p>,
-                                () => <a href="#"
+                                () => <div class="action-checked"><p><span class="fa fa-check-square-o"/> 1 point gagné !</p></div>,
+                                () => <div class="action-to-check">
+                                        <a href="#"
                                          onclick={ e => {
                                              e.preventDefault();
                                              withVeilAndMessages(
@@ -253,6 +254,7 @@ export class ActionCard extends SimpleDom.Component {
                                 >
                                     <span class="fa fa-check"/> Réalisé !
                                 </a>
+                                </div>
                             )}
                         </p>
                     )}

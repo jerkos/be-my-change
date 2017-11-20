@@ -89,6 +89,7 @@ h3 {
 .main-nav {
   background-color: white;
   min-height: 78px;
+  color:#333;
   z-index: 30;
   top: 0px;
   box-shadow: 0px -1px 6px rgba(0, 0, 0, 0.2);
@@ -110,13 +111,52 @@ h3 {
       height: 100%;
       max-height: 78px;
 
-      a.hbtn {
-        width: 110px;
-        height: 40px;
+      .input-field {
+        margin-top:12px;
+        margin-left:10%;
+      }
+      
+      .prefix {
+        margin-top:20px;
+        font-size:1.7em;
+      }
+
+      input[type=search]:not(.browser-default) {
+        background:#F9FAFB;
+        border: 1px solid rgb(239, 239, 239) !important;
+        box-shadow:none;
+        border-radius:50px;
+        width:300px;
+        height:2em;
+        margin-top:15px;
+        margin-right:50px;
+      }
+
+      input[type=search]:not(.browser-default):focus:not([readonly]) {
+       border:none;
+       box-shadow:none;
+      }
+
+      label {
+        font-size:0.9em;
+      }
+
+      a {
         font-weight: 600;
         text-transform: uppercase;
-        color: white !important;
         font-size: 1em;
+        color:#333;
+        margin-right:40px;
+
+        &:hover {
+        color: #62dbb3 !important;
+        }
+
+        span {
+        font-size:1.6em !important;
+        margin-right:15px;
+        color: @main-blue;
+        }
       }
 
       div {
@@ -127,7 +167,7 @@ h3 {
         cursor: pointer;
 
         &.spacer {
-          flex-basis: 50%;
+          flex-basis: 10%;
           flex-grow: 1;
           flex-shrink: 1;
         }

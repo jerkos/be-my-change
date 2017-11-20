@@ -41,18 +41,14 @@
         <a href="/" class="brand-logo"><img src="{{url_for('static', filename='img/logo-be-my-change-3.jpg')}}" alt="Be my Change"></a>
         <div class="hide-on-med-and-down">
           <div class="spacer"></div>
-          <div>
-            <a href="#">Accueil</a>
-          </div>
-          <div>
-            <a href="#">A propos</a>
-          </div>
-          <div>
-            <a href="#">Blog</a>
+          <div class="action-search input-field"><i class="lnr lnr-magnifier prefix"></i>
+            <input id="nav-search" type="search">
+            <label class="active" for="nav-search">Rechercher...</label>
           </div>
           {%if current_user and current_user.is_authenticated %}
-            <a class="waves-effect waves-light hbtn hbtn-main-color" href="{{url_for('user.inspire')}}">Je m'inspire</a>
-            <a class="waves-effect waves-light hbtn hbtn-main-color" href="{{url_for('user.current_actions_view')}}">J'agis</a>
+          
+            <a href="{{url_for('user.inspire')}}"><span class="lnr lnr-earth"></span>Fil d'actualités</a>
+            <a href="{{url_for('user.current_actions_view')}}"><span class="lnr lnr-rocket"></span>J'agis</a>
             <div>
                 <a class='dropdown-button' href='#' data-activates='dropdown1'>
                     <div class="nav-header-img">
