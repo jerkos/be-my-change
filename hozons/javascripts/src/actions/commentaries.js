@@ -13,6 +13,7 @@ class Commentary extends SimpleDom.Component {
         document.getElementById(`node-${this.props.index}`).innerHTML = this.props.commentary.content
     }
 
+
     mustRefresh() {
         if (this.props.index === this.props.newIndex) {
             return true;

@@ -54,11 +54,12 @@ class CreateActionStep1 extends ComposedComponent {
                         {SimpleDom.predicate(!!this.cstate.actionImageUrl,
                             () => <img src={this.cstate.actionImageUrl} class="responsive-img" />
                         )}
+                    Chercher <a style="color: #62dbb1 !important" href="https://unsplash.com" target="_blank"> ici</a> ou <a style="color: #62dbb1 !important" href="https://pexels.com" target="_blank"> ici</a>
                     </p>
                     <div class="input-field col s12" style="margin-top: -10px">
                         <input
                             type="url"
-                            placeholder="l'image de votre action !"
+                            placeholder="l'adresse de l'image !"
                             value={this.cstate.actionImageUrl || ''}
                             onchange={e => this.updateCState({ actionImageUrl: e.target.value })}
                         />
