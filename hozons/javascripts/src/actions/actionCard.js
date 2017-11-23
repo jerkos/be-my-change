@@ -28,6 +28,7 @@ export class ActionCard extends SimpleDom.Component {
         super(props, store);
         this.userAction = this.props.userAction;
         this.card = undefined;
+        this.hasBeenRealised = undefined;
     }
 
     static cropTitle(title, maxLength = 20) {
@@ -67,6 +68,7 @@ export class ActionCard extends SimpleDom.Component {
     }
 
     render() {
+        const style= this.hasBeenRealised ? {'opacity': '0'} : undefined;
         return (
             <div>
             <div id={`card-edit-tag-${this.userAction.id}`} class="modal">
@@ -111,7 +113,7 @@ export class ActionCard extends SimpleDom.Component {
                     </div>
                 </div>
             </div>
-            <div class="card my-card" style="opacity: 0" ref={ref => this.card = ref}>
+            <div class="card my-card" style={{'opacity' : this.hasBeenRealised ? '1' : '0'}} ref={ref => this.card = ref}>
                 <div class="hbtn-action my-card-delete"
                      onclick={() => {
                          withVeilAndMessages(
@@ -247,6 +249,8 @@ export class ActionCard extends SimpleDom.Component {
                                                  true
                                              ).then(userAction => {
                                                  this.userAction = userAction;
+                                                 console.log(this.userAction);
+                                                 this.hasBeenRealised = true;
                                                  this.store.updateState({}, 'ACTION_CARD_RELOAD');
                                              })
                                          }}
