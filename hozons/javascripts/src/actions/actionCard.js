@@ -21,7 +21,7 @@ import './actionCard.less';
 export class ActionCard extends SimpleDom.Component {
 
     eventsToSubscribe() {
-        return ['ACTION_CARD_RELOAD'];
+        return [`ACTION_CARD_RELOAD_${this.props.userAction.id}`];
     }
 
     constructor(props, store) {
@@ -198,7 +198,9 @@ export class ActionCard extends SimpleDom.Component {
                                        ))
                                }}
                             >
-                                <div class="action-indicator">28</div>
+                                <div class="action-indicator">
+                                    {this.state.actionsDataCount.commentaries[this.userAction.action_id] || 0}
+                                </div>
                                 <span class="lnr lnr-bubble fa-2x"/>
                             </a>
                             <a class="hbtn-action"
@@ -220,7 +222,9 @@ export class ActionCard extends SimpleDom.Component {
                                    })
                                }}
                             >
-                                <div class="action-indicator">28</div>
+                                <div class="action-indicator">
+                                    {this.state.actionsDataCount.participants[this.userAction.action_id] || 0}
+                                </div>
                                 <span class="lnr lnr-users fa-2x"/>
                             </a>
 
@@ -228,7 +232,9 @@ export class ActionCard extends SimpleDom.Component {
                                onclick={e => {
                                    console.log('plus clicked');
                                }}>
-                                <div class="action-indicator">28</div>
+                                <div class="action-indicator">
+                                    {this.state.actionsDataCount.ressources[this.userAction.action_id] || 0}
+                                </div>
                                 <span class="lnr lnr-book fa-2x"/>
                             </a>
                         </p>
@@ -249,9 +255,15 @@ export class ActionCard extends SimpleDom.Component {
                                                  true
                                              ).then(userAction => {
                                                  this.userAction = userAction;
-                                                 console.log(this.userAction);
                                                  this.hasBeenRealised = true;
-                                                 this.store.updateState({}, 'ACTION_CARD_RELOAD');
+                                                 let action = this.state.actions.find(action => action.id === userAction.id);
+                                                 action.last_succeed = userAction.last_succeed;
+                                                 this.store.updateState({}, `ACTION_CARD_RELOAD_${this.props.userAction.id}`);
+                                                 const pointCounter = document.getElementsByClassName('point-counter')[0];
+                                                 if (pointCounter) {
+                                                     const str = +pointCounter.innerHTML.split(' ')[0] + 1;
+                                                     pointCounter.innerHTML = str + ' pts';
+                                                 }
                                              })
                                          }}
 

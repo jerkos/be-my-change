@@ -92,10 +92,29 @@ def get_user_actions():
         requested_date = dt.datetime.utcnow()
     else:
         requested_date = dt.datetime.strptime(requested_date, '%Y-%m-%d')
-    
-    return UserAction.arr_to_json(
-                current_user.user_actions(requested_date)
-            ), 200
+
+    user_actions = current_user.user_actions(requested_date)
+    actions_ids = [ua.action_id for ua in user_actions]
+    counting = {'commentaries': {}, 'participants': {}, 'ressources': []}
+    if actions_ids:
+        commentaries = db.session.query(Commentary.action_id, func.count(Commentary.action_id)) \
+            .filter(Commentary.action_id.in_(actions_ids)) \
+            .group_by(Commentary.action_id) \
+            .all()
+        commentaries = {k: v for (k, v) in commentaries}
+        counting['commentaries'] = commentaries
+
+        participants = db.session.query(UserAction.action_id, func.count(UserAction.action_id)) \
+            .filter(UserAction.action_id.in_(actions_ids)) \
+            .group_by(UserAction.action_id) \
+            .all()
+        participants = {k: v for (k, v) in participants}
+        counting['participants'] = participants
+
+    return json.dumps({
+        'actions': [ua.to_dict() for ua in user_actions],
+        'counting': counting
+    }), 200
 
 
 @user.route('/actions/user-action/delete/<int:user_action_id>', methods=['DELETE'])

@@ -15,7 +15,7 @@ export function createSlider(title, node, e, iconsClass=null) {
         menuWidth: 700, // Default is 300
         edge: 'right', // Choose the horizontal origin
         closeOnClick: false, // Closes side-nav on <a> clicks, useful for Angular/Meteor
-        draggable: true, // Choose whether you can drag to open on touch screens
+        draggable: false, // Choose whether you can drag to open on touch screens
         onOpen: el => {
             SimpleDom.renderToDom(
                 'slide-out-actions',

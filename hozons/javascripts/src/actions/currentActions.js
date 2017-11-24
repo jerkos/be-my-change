@@ -47,6 +47,7 @@ class ActionsList extends SimpleDom.Component {
     }
 
     render() {
+        console.log(this.state.selectedActions);
         const nbActions = this.state.minisidebar ? 4 : 3;
         const colSize = this.state.minisidebar ?  'm3' : 'm4';
         if (!(this.state.selectedActions || []).length) {
@@ -195,11 +196,11 @@ $(document).ready(function () {
             fetchJsonData('/users/tags/all')
         ]),
         true)
-        .then(([actions, tags]) => {
+        .then(([{actions, counting}, tags]) => {
             fillUptag(tags);
             const countByTagSlug = {};
             getTagsNumber(actions, countByTagSlug);
-
+            console.log(counting);
             console.log(tags);
             store.updateState({ 
                 actions,
@@ -207,7 +208,8 @@ $(document).ready(function () {
                 selectedActions: actions.slice(),
                 selectedDate: moment(new Date()).format('YYYY-MM-DD'),
                 tags,
-                activeTags: new Set()
+                activeTags: new Set(),
+                actionsDataCount: counting
             });
             
             SimpleDom.renderToDom('container', <App />, store);
@@ -221,8 +223,7 @@ $(document).ready(function () {
                         withVeilAndMessages(
                             fetchJsonData(`/users/actions/get?date=${moment(date).format('YYYY-MM-DD')}`),
                             true
-                        ).then(actions => {
-                            //fillUptag(tags);
+                        ).then(({actions, counting}) => {
                             const countByTagSlug = {};
                             getTagsNumber(actions, countByTagSlug);
 
@@ -230,6 +231,7 @@ $(document).ready(function () {
                                 actions,
                                 countByTagSlug,
                                 selectedActions: actions.slice(),
+                                actionsDataCount: counting,
                                 selectedDate: date }, 'ACTIONS_LIST_TO_UPDATE', 'SIDEBAR_TO_UPDATE')
                         })
                     }
