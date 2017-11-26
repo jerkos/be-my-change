@@ -9,7 +9,7 @@ import lassie
 from hozons.extensions import login_manager
 from hozons.public.forms import LoginForm
 from hozons.user.forms import RegisterForm
-from hozons.user.models import User
+from hozons.user.models import User, Tags
 from hozons.utils import flash_errors
 from hozons.settings import DevConfig, ProdConfig
 
@@ -56,7 +56,11 @@ def register():
     """Register new user."""
     form = RegisterForm(request.form)
     if form.validate_on_submit():
-        User.create(username=form.username.data, email=form.email.data, password=form.password.data, active=True)
+        user = User.create(username=form.username.data, email=form.email.data, password=form.password.data, active=True)
+        pers_tag = Tags.create(name='Personnel', parent_id=None, user_id=user.id, rank=1)
+        Tags.create(name='Environnement', parent_id=None, user_id=user.id, rank=1)
+        for cat in ['Vie sociale', 'Vie familiale', 'Vie professionnelle', 'Santé', 'Développement personnel', 'Vie sentimentale', 'Loisirs', 'Argent']:
+            Tags.create(name=cat, parent_id=pers_tag.id, user_id=user.id, rank=2)
         flash('Thank you for registering. You can now log in.', 'success')
         return redirect(url_for('public.home'))
     else:

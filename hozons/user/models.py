@@ -178,8 +178,10 @@ class Tags(JsonSerializerMixin, SurrogatePK, Model):
         self.rank = rank
 
     @classmethod
-    def get_tree(cls):
-        return Tags.query.filter(Tags.rank == 1).all()
+    def get_tree(cls, user_id):
+        subquery = Tags.query.filter(or_(Tags.user_id == user_id, Tags.user_id is None))
+        print(subquery.all())
+        return subquery.filter(Tags.rank == 1).all()
 
     @staticmethod
     def build_tags_slug(tags_slug, new_tags):

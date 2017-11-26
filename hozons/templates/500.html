@@ -1,14 +1,34 @@
+<html>
+<head>
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
 
-{% extends "layout.html" %}
+        body {
+            font-family: "Roboto", sans-serif;
+            background-image: url('/static/img/meschers-1.jpg');
+            background-size: cover;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
-{% block page_title %}Server error{% endblock %}
+        h1 {
+            text-align: center;
+        }
 
-{% block content %}
-<div class="jumbotron">
-    <div class="text-center">
-        <h1>500</h1>
-        <p>Sorry, something went wrong on our system. Don't panic, we are fixing it! Please try again later.</p>
-    </div>
-</div>
-{% endblock %}
-
+        a {
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<h1>500, Une erreur est survenue, nous travaillons à sa résolution ! Désolé... <br/>
+    <a href="/">Retourner à l'accueil</a>
+</h1>
+</body>
+</html>

@@ -14,7 +14,6 @@ import {CreateAction} from './step1';
 import {ActionCard} from "./actionCard";
 import anime from 'animejs'
 
-
 import '../css/popovers.less';
 import '../css/avatar.less';
 import './currentActions.less';
@@ -90,11 +89,18 @@ class MainTitle extends SimpleDom.Component {
         return ['TITLE_TO_REFRESH'];
     }
 
+    componentDidMount() {
+        let tooltip = new Drooltip({"element" : "mytooltip", 'trigger': 'hover'});
+        console.log('hey ho');
+    }
+
     render() {
         return (
             <h1 class="main-title">
                 Mes actions en cours ({(this.state.selectedActions || []).length})
-                <a href="#createAction" class="right hbtn-action hbtn-main-color add-action"
+                <span class="mytooltip" title="hello there" data-options="position: bottom">tooltip</span>
+                <a href="#createAction" class="right hbtn-action hbtn-main-color add-action mytooltip"
+                   title="Hello world"
                    onclick={() => {
                        $('#createAction').modal({
                            startingTop: '2%'

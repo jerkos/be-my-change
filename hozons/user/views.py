@@ -147,6 +147,13 @@ def user_action_done(user_action_id):
     if user_action is None:
         return '{}', 404
     user_action = user_action.realised()
+
+    user_inst = User.get_by_id(user_action.user_id)
+    if user is None:
+        return '{}', 404
+    user_inst.points_rel += 1
+    user_inst.save()
+
     return UserAction.to_json(user_action)
 
 
@@ -321,9 +328,9 @@ def save_commentary(action_id):
 @user.route('/tags/all', methods=['GET'])
 @login_required
 def get_all_tags():
-    rank = request.args.get('rank');
+    rank = request.args.get('rank')
     if rank is None:
-        return Tags.arr_to_json(Tags.get_tree()), 200
+        return Tags.arr_to_json(Tags.get_tree(current_user.id)), 200
     return Tags.arr_to_json(
         Tags.query.filter(Tags.rank == rank).all()
     ), 200
@@ -393,7 +400,7 @@ def change_tag_of_user_action(user_action_id):
     user_action.update(tag=final_slug)
 
     return json.dumps({
-        'tags': [tag.to_dict() for tag in Tags.get_tree()],
+        'tags': [tag.to_dict() for tag in Tags.get_tree(current_user.id)],
         'user_action': user_action.to_dict()
     }), 200
 
