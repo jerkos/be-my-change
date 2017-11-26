@@ -165,8 +165,8 @@ export class ActionCard extends SimpleDom.Component {
                     )}
                 </div>
                 <div class="card-content" data-tooltip={this.userAction.action.title}>
-                    <span class="card-title grey-text text-darken-4" style="font-size: 1.4em;">
-                        {ActionCard.cropTitle(this.userAction.action.title, 20)}
+                    <span class="card-title grey-text text-darken-4" style="font-size: 1.3em;">
+                        {ActionCard.cropTitle(this.userAction.action.title, 40)}
                     </span>
                     <div class="card-content-action-info">
                         <div class="progress">
