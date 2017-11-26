@@ -49,7 +49,7 @@
           
             <a href="{{url_for('user.inspire')}}"><span class="lnr lnr-earth"></span>Fil d'actualités</a>
             <a href="{{url_for('user.current_actions_view')}}"><span class="lnr lnr-rocket"></span>J'agis</a>
-            <a class="point-counter">{{current_user.point_pers + current_user.point_env + current_user.point_rel}} pts</a>
+            <a class="point-counter">{{current_user.points_pers + current_user.points_env + current_user.points_rel}} pts</a>
             <div>
                 <a class='dropdown-button' href='#' data-activates='dropdown1'>
                     <div class="nav-header-img">
