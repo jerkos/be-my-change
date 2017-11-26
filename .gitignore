@@ -54,6 +54,6 @@ Pipfile
 Pipfile.lock
 
 hozons/.DS_Store
-*.DS_Store
+*DS_Store
 
 dev.db

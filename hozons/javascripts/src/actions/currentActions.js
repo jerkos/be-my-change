@@ -200,8 +200,6 @@ $(document).ready(function () {
             fillUptag(tags);
             const countByTagSlug = {};
             getTagsNumber(actions, countByTagSlug);
-            console.log(counting);
-            console.log(tags);
             store.updateState({ 
                 actions,
                 countByTagSlug,
