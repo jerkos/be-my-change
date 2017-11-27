@@ -182,6 +182,7 @@ class TagList extends SimpleDom.Component {
     render() {
         return (
             <ul class="main-tag-list">
+                <li class="sub-tag"><div class="sub-tag-name"><div class="sub-tag-name-item"><span class="lnr lnr-layers" style="font-size:1.5em;margin-right:5px"></span> Tout sélectionner</div></div></li>
                 {this.state.tags.map(tag => {
                     return <Tag tag={tag} id={technicalId++} />
                 })}

@@ -13,6 +13,7 @@ import { TagSelector } from "./tagSelector";
 import './tagSelector.less';
 
 
+
 class CreateActionStep1 extends ComposedComponent {
     eventsToSubscribe() {
         return ['STEP1_REFRESH'];
@@ -20,7 +21,7 @@ class CreateActionStep1 extends ComposedComponent {
     render() {
         return (
             <div>
-                <h3><span style="color: lightgrey; margin-right: 10px;">#1.</span>Première étape <small>ça ne sera pas long...</small></h3>
+                <h3><span style="margin-right: 10px;">1.</span>Première étape (1/2)</h3>
                 <div class="row">
                     <p style="font-size: 1.2em;">Quel est le titre de votre nouvelle action ?</p>
                     <div class="input-field col s12" style="margin-top: -10px">
@@ -144,7 +145,7 @@ class CreateActionStep2 extends ComposedComponent {
     render() {
         return (
             <div>
-                <h3>2.Dans le vif du sujet</h3>
+                <h3>2.Suite et fin (2/2)</h3>
                 <div class="row">
                     <p class="prompt">Classifier votre action ? 
                         <span style="padding-left: 10px"
@@ -182,7 +183,7 @@ class CreateActionStep2 extends ComposedComponent {
                         </span>
                     </p>
                     <p class="range-field">
-                        <input type="range"
+                        <input style="border-bottom:none !important;" type="range"
                             value={this.cstate.actionDuration || 21}
                             onchange={e => this.updateCState({ actionDuration: e.target.value }, 'STEP2_REFRESH')} min="0" max="30"
                         />

@@ -3,29 +3,26 @@
 .tag-selector {
   display: flex;
   flex-wrap: wrap;
+  border-radius: 5px;
 
   .tag-selector-input {
     //margin: 0 10px;
     flex-basis: 100%;
     flex-grow: 0;
     flex-shrink: 0;
-    background-color: @main-blue;
     border-radius: 5px;
-    padding: 0 10%;
+    /*padding: 0 10%;*/
     display: flex;
     flex-direction: column;
     justify-content: center;
 
     & > input {
-      color: white;
-      border-radius: 5px;
+      color: #333;
       border: none !important;
       box-shadow: none !important;
       margin: 0 !important;
-      background-color: @main-blue;
 
       &:focus {
-        border: none !important;
         box-shadow: none !important;
       }
 
@@ -38,6 +35,45 @@
         height: 20px;
         width: 20px;
       }
+    }
+  }
+}
+
+.modal {
+  background:#333;
+  border-radius:15px;
+
+  .modal-content {
+    background:#333;
+
+    h4, h3 {
+    color:#62dbb2;
+    font-weight:700;
+    font-size:1.2em;
+    text-transform: uppercase;
+    }
+
+    p {
+    color:#FFF;
+    font-weight:700;
+    }
+
+    input, textarea {
+    color:#FFF !important;
+    border-top:none;
+    border-left:none;
+    border-right:none;
+    border-bottom: 1px solid #62dbb2 !important;
+    border-radius:none;
+    }
+  }
+
+  .modal-footer {
+    background:#333 !important;
+
+    .hbtn {
+      width: 120px;
+      text-transform: uppercase;
     }
   }
 }
