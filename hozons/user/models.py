@@ -267,8 +267,11 @@ class Commentary(JsonSerializerMixin, SurrogatePK, Model):
     action_id = reference_col('actions', nullable=False)
     action = relationship('Action')
 
-    def __init__(self, content, user_id, action_id):
+    is_journal = Column(db.Boolean, nullable=False, default=False)
+
+    def __init__(self, content, user_id, action_id, is_journal):
         """Create instance."""
         self.content = content
         self.user_id = user_id
         self.action_id = action_id
+        self.is_journal = is_journal
