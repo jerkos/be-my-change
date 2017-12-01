@@ -10,7 +10,7 @@ html {
 
 body {
   min-height: 100%;;
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: 'Lato', sans-serif;
   font-size: 13px;
   font-weight: lighter;
   background-color: #F9FAFB;
@@ -145,7 +145,7 @@ h3 {
       }
 
       a {
-        font-weight: 600;
+        font-weight: 500;
         text-transform: uppercase;
         font-size: 1em;
         color:#333;
@@ -408,6 +408,44 @@ h3 {
     }
 }
 
-.blockquote {
-    border-left: 5px solid #62dbb1 !important;
+.flatpickr-calendar {
+    background: #414141;
+    box-shadow:none;
+
+    .flatpickr-month {
+      color: #62dbb2;
+      fill: #62dbb2;
+      margin-bottom:20px;
+    }
+    .flatpickr-day {
+      color: #FFF;
+      font-weight: 100;
+
+      &:hover {
+        background: #797979;
+        border-color: #797979;
+      }
+    }
+
+    span.flatpickr-weekday  {
+      color: #FFF !important;
+      font-weight: 700 !important;
+    }
+
+    .flatpickr-day.selected {
+      background: #62dbb2;
+      border-color: #62dbb2;
+    }
+
+    .flatpickr-day.nextMonthDay {
+      color:rgba(255,255,255,0.4) !important;
+    }
+
+    .flatpickr-day.prevMonthDay {
+      color:rgba(255,255,255,0.4) !important;
+    }
+
+    .flatpickr-prev-month:hover svg, .flatpickr-next-month:hover svg {
+        fill:#FFF;
+    }
 }
