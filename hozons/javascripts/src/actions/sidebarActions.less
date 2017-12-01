@@ -150,7 +150,7 @@
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
-            padding: 3px 20px;
+            padding: 3px 0px;
 
             .sub-tag-list-icon {
               font-size: 0.9em;
@@ -210,6 +210,7 @@
 
     .main-tag-list {
       transition: all 0.2s;
+      padding-left: 25px;
 
       .sub-tag-list {
         display: none;
@@ -224,12 +225,11 @@
 
       & > li.sub-tag {
         font-size: 1.1em;
-        font-weight: 300;
-        color: #333;
+        font-weight: 500;
+        color: #707070 !important;
         padding: 10px 0px;
         /*text-transform: uppercase;*/
         border-bottom: 1px solid #f4f4f4;
-        color: #333 !important;
       }
     }
 
