@@ -65,6 +65,39 @@ blockquote {
   width:550px;
 }
 
+.CodeMirror ul:not(.browser-default) {
+  padding: 0 2em !important;
+}
+
+.CodeMirror ul:not(.browser-default) li {
+  
+  line-height:1.5em;
+
+  &::before {
+    content: "•";
+    padding-right:5px;
+    color: #62dbb2;
+  }
+}
+
+.CodeMirror a {
+    text-decoration: none;
+    border-bottom: 1px solid #62dbb2;
+
+    &::before {
+    font-family: FontAwesome;
+    content: "[ \f016";
+    color:#333;
+    font-weight:100;
+    padding-right:5px;
+    }
+
+    &::after {
+    content: " ]";
+    font-weight: 500;
+    }
+}
+
 
 
 
