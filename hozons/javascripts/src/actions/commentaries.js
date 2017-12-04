@@ -70,6 +70,7 @@ export class CommentariesTab extends SimpleDom.Component {
     render() {
         return (
             <div style="padding: 0 15%">
+                <h4><span class="lnr lnr-bubble"></span>Commentaires</h4>
                 <div class="row">
                     {SimpleDom.predicate(this.commentaries.length,
                         () => <CommentariesList commentaries={this.commentaries} />,
@@ -102,7 +103,7 @@ export class CommentariesTab extends SimpleDom.Component {
                                 { method: 'POST', body: JSON.stringify(comm) }
                             ), true)
                             .then(comm => {
-                                this.commentaries.push(comm)
+                                this.commentaries.push(comm);
                                 this.store.updateState(
                                     { newIndex: this.commentaries.length - 1 },
                                     'COMMENTS_TO_UPDATE'

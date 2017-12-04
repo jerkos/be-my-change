@@ -6,7 +6,7 @@ import logging
 
 from flask import Blueprint, render_template, request, url_for, redirect, abort
 from flask_login import current_user, login_required
-from sqlalchemy import desc, func, or_
+from sqlalchemy import desc, func, or_, and_
 
 from hozons.extensions import csrf_protect
 from hozons.extensions import db
@@ -83,6 +83,7 @@ def profile():
 
 # services
 # --------------------------------------------------------------------------
+
 @user.route('/actions/get')
 @login_required
 def get_user_actions():
@@ -251,12 +252,20 @@ def get_last_actions():
         actions * 2), 200
 
 
-@user.route('/actions/create', methods=['POST'])
+@user.route('/actions/create', methods=['POST', 'PUT'])
 @login_required
 @csrf_protect.exempt
 def create_action():
     """create an base action"""
     data = request.get_json(force=True)
+
+    if request.method == 'PUT':
+        action_id_to_update =  data.get('actionId')
+        description=data.get('actionDescription')
+        action_to_update = Action.query.filter(Action.id == action_id_to_update).first_or_404()
+        action_to_update.update(description=description)
+        return json.dumps(action_to_update.to_dict()), 200
+
     start_date = data.get('startDate')
     duration = int(data.get('actionDuration', 21))
 
@@ -307,7 +316,17 @@ def create_action():
 @user.route('/actions/<int:action_id>/commentaries', methods=['GET'])
 @login_required
 def get_commentaries(action_id):
-    commentaries = Commentary.query.filter(Commentary.action_id == action_id).all()
+    is_journal = request.args.get('is_journal')
+    if is_journal == 'True':
+        # todo put in a function in commentary class
+        commentaries = Commentary.query.filter(
+            and_(
+                Commentary.action_id == action_id,
+                Commentary.user_id == current_user.id,
+                Commentary.is_journal == True  # does not worl with is
+            )).all()
+    else:
+        commentaries = Commentary.query.filter(Commentary.action_id == action_id).all()
     return Commentary.arr_to_json(commentaries), 200
 
 
@@ -319,7 +338,8 @@ def save_commentary(action_id):
     commentary = Commentary.create(
         content=data.get('content'), 
         user_id=current_user.id,
-        action_id=data.get('action_id')
+        action_id=data.get('action_id'),
+        is_journal=data.get('is_journal', False)
     )
     return Commentary.to_json(commentary), 200
 

@@ -20,10 +20,10 @@ export function createSlider(title, node, e, iconsClass=null) {
             SimpleDom.renderToDom(
                 'slide-out-actions',
                 <SlideActionInfo
-                    title={title}
+                    //title={title}
                     close={() => $(e.target).sideNav('destroy')}
                     node={node}
-                    titleIconClass={iconsClass}
+                    //titleIconClass={iconsClass}
                 />,
                 slideStore
             );
@@ -39,20 +39,12 @@ class SlideActionInfo extends SimpleDom.Component {
 
 	render() {
 		return <div class="slider">
-			<div class="row">
+			<div class="row" style="margin: 0;">
 				<span class="lnr lnr-cross fa-3x slider-cross"
                     onclick={this.props.close}
                 />
 			</div>
-			<div class="row">
-				<p style="text-align: center; font-weight: bold; font-size: 20px; text-transform: uppercase;">
-                    {SimpleDom.predicate(this.props.titleIconClass,
-                        () => <span class={this.props.titleIconClass}/>
-                    )}
-                    {this.props.title}
-                </p>
-			</div>
-			<div class="row">
+			<div class="row" style="margin: 0;">
 				<div class="col s12">
 					{this.props.node}
 				</div>

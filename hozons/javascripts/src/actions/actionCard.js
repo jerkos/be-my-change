@@ -123,7 +123,6 @@ export class ActionCard extends SimpleDom.Component {
                                  {method: 'DELETE'}
                              ), true
                          ).then(() => {
-                             console.log(this.card);
                              this.card.classList.toggle('to-be-deleted');
                              setTimeout(() => {
                                  const selectedActions = this.state.selectedActions
@@ -168,15 +167,20 @@ export class ActionCard extends SimpleDom.Component {
                 <div class="card-content" data-tooltip={this.userAction.action.title}>
                     <span class="card-title grey-text text-darken-4" style="font-size: 1.3em;"
                         onclick={event => {
-                            createSlider(
-                                ``,
-                                <ActionInfo
-                                    userAction={this.userAction}
-                                    journalEntries={[]}
-                                />,
-                                event,
-                                ''
-                            )
+                            withVeilAndMessages(
+                                fetchJsonData(`/users/actions/${this.userAction.action_id}/commentaries?is_journal=True`),
+                                true
+                            ).then(commentaries => {
+                                createSlider(
+                                    '',
+                                    <ActionInfo
+                                        userAction={this.userAction}
+                                        journalEntries={commentaries}
+                                    />,
+                                    event,
+                                    ''
+                                )
+                            })
                         }}
                     >
                         {ActionCard.cropTitle(this.userAction.action.title, 40)}
