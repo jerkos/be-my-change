@@ -68,3 +68,20 @@ export function updateSidebarTags(state) {
     }
     return {tagsSlug, tagsToCreate, actualizedTags: existingTags};
 }
+
+export function getFullTag(userAction, tagsInput) {
+    const userActionTags = userAction.tag.split('-');
+    let tags = tagsInput.slice();
+    let result = [];
+    while (userActionTags.length) {
+        const currTag = userActionTags.shift();
+        const targetTag = tags.find(tag => '' + tag.id === currTag);
+        result.push(targetTag.name);
+        if (targetTag && targetTag.sons) {
+            tags = targetTag.sons;
+            continue;
+        }
+        break;
+    }
+    return result.join('/');
+}

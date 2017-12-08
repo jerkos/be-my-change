@@ -1,11 +1,14 @@
+import '../../home';
 import * as SimpleDom from 'simpledom-component';
 
 const moment = require('moment');
 require('moment/locale/fr');
+const SimpleMDE = require('simplemde');
 
 import './actionInfoSlider.less';
 import '../../css/empty.less';
 import {withVeilAndMessages} from "../../components/veil/veil";
+import {getFullTag} from "../utils";
 
 
 class JournalEntries extends SimpleDom.Component {
@@ -88,6 +91,10 @@ class JournalEntries extends SimpleDom.Component {
     }
 }
 
+class TagsList extends SimpleDom.Component {
+
+}
+
 export class ActionInfo extends SimpleDom.Component {
     eventsToSubscribe() {
         return ['ACTION_INFO_TO_REFRESH'];
@@ -99,8 +106,24 @@ export class ActionInfo extends SimpleDom.Component {
         this.action = this.userAction.action;
         this.journalEntries = this.props.journalEntries;
         this.editDescription = false;
-        this.descriptionContent = this.action.description || '';
+        this.descriptionContentAsText = this.action.description || '';
+        this.mdeDescriptionEditor = undefined;
     }
+
+    componentDidMount() {
+        if (this.editDescription) {
+            this.mdeDescriptionEditor = new SimpleMDE({
+                element: document.getElementsByClassName('action-info-editor')[0]
+            });
+        } else {
+            const element = document.getElementById('descriptionTarget');
+            if (this.mdeDescriptionEditor) {
+                this.descriptionContentAsText = this.mdeDescriptionEditor.value();
+            }
+            element.innerHTML = SimpleMDE.prototype.markdown(this.descriptionContentAsText);
+        }
+    }
+
     render() {
         return (
             <div class="action-info">
@@ -109,27 +132,30 @@ export class ActionInfo extends SimpleDom.Component {
                 {SimpleDom.predicate(this.editDescription,
                     () => {
                         return (
-                            <textarea class="action-info-editor materialize-textarea"
-                                      onblur={event => {
-                                          console.log(event.target.value);
-                                          this.editDescription = false;
-                                          this.descriptionContent = event.target.value;
-                                          withVeilAndMessages(
-                                              fetchJsonData('/users/actions/create', {
-                                                  method: 'PUT',
-                                                  body: JSON.stringify({
-                                                      actionDescription: this.descriptionContent,
-                                                      actionId: this.action.id
-                                                  })
-                                              })
-                                          ).then(() => {
-                                              this.userAction.action.description = this.descriptionContent;
-                                              this.store.updateState({}, 'ACTION_INFO_TO_REFRESH')
-                                          })
-                                      }}
-                            >
-                                {this.descriptionContent}
-                            </textarea>
+                            <div>
+                                <textarea class="action-info-editor materialize-textarea">
+                                    {this.descriptionContentAsText}
+                                </textarea>
+                                <button class="btn right"
+                                        onclick={() => {
+                                            this.editDescription = false;
+                                            this.descriptionContentAsText = this.mdeDescriptionEditor.value();
+                                            withVeilAndMessages(
+                                                fetchJsonData('/users/actions/create', {
+                                                    method: 'PUT',
+                                                    body: JSON.stringify({
+                                                        actionDescription: this.descriptionContentAsText,
+                                                        actionId: this.action.id
+                                                    })
+                                                })
+                                            ).then(() => {
+                                                this.userAction.action.description = this.descriptionContentAsText;
+                                                this.store.updateState({}, 'ACTION_INFO_TO_REFRESH')
+                                            })
+
+                                        }}>Valider
+                                </button>
+                            </div>
                         )
                     },
                     () => {
@@ -141,7 +167,7 @@ export class ActionInfo extends SimpleDom.Component {
                                           this.store.updateState({}, 'ACTION_INFO_TO_REFRESH');
                                       }}
                                 />
-                                {this.descriptionContent.split('\n').map(line => <div>{line}<br/></div>)}
+                                <p id="descriptionTarget"/>
                             </p>
                         );
                     }
@@ -151,6 +177,18 @@ export class ActionInfo extends SimpleDom.Component {
                     entries={this.journalEntries}
                     userAction={this.userAction}
                 />
+                <h6 class="action-info-subtitle">Tags</h6>
+                <div style="position: relative; min-height: 50px;">
+                    <div class="card-image-tag"
+                         onclick={e => {
+                             e.preventDefault();
+                             e.stopPropagation();
+                             //$(`#card-edit-tag-${this.userAction.id}`).modal('open');
+                         }}>
+                        {getFullTag(this.userAction, this.props.tags)}
+                    </div>
+                    <a href="#" class="hbtn hbtn-action">+</a>
+                </div>
             </div>
         );
     }

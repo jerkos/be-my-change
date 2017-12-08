@@ -175,6 +175,7 @@ export class ActionCard extends SimpleDom.Component {
                                     '',
                                     <ActionInfo
                                         userAction={this.userAction}
+                                        tags={this.state.tags}
                                         journalEntries={commentaries}
                                     />,
                                     event,
