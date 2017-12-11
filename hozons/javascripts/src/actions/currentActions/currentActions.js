@@ -1,6 +1,6 @@
-import {fillUptag, getTagsNumber} from "./utils";
+import {fillUptag, getTagsNumber} from "../utils";
 
-require('../home');
+require('../../home');
 const moment = require('moment');
 require('moment/locale/fr');
 const flatpickr = require("flatpickr");
@@ -8,15 +8,16 @@ import { French } from "flatpickr/dist/l10n/fr.js"
 flatpickr.localize(French);
 
 import * as SimpleDom from 'simpledom-component';
-import { withVeilAndMessages } from '../components/veil/veil';
-import {SidebarAction} from './sidebarActions';
-import {CreateAction} from './step1';
-import {ActionCard} from "./actionCard";
+import { withVeilAndMessages } from '../../components/veil/veil';
+import {SidebarAction} from '../sidebarActions/sidebarActions';
+import {CreateAction} from '../createAction/step1';
+import {ActionCard} from "../actionCard/actionCard";
 import anime from 'animejs'
 
-import '../css/popovers.less';
-import '../css/avatar.less';
+import '../../css/popovers.less';
+import '../../css/avatar.less';
 import './currentActions.less';
+import {CreateEvent} from "../createEvent/createEvent";
 
 
 class ActionsList extends SimpleDom.Component {
@@ -89,25 +90,55 @@ class MainTitle extends SimpleDom.Component {
     }
 
     componentDidMount() {
-        let tooltip = new Drooltip({"element" : "mytooltip", 'trigger': 'hover'});
-        console.log('hey ho');
+        tippy('.add-action', {
+            html: document.querySelector('#eventOrNot'),
+            arrow: true,
+            distance: 15,
+            placement: 'left',
+            trigger: 'click',
+            interactive: true
+        });
     }
 
     render() {
         return (
             <h1 class="main-title">
                 Mes actions en cours ({(this.state.selectedActions || []).length})
-                <span class="mytooltip" title="hello there" data-options="position: bottom">tooltip</span>
-                <a href="#createAction" class="right hbtn-action hbtn-main-color add-action mytooltip"
+
+                <div id="eventOrNot">
+                    <ul class="collection">
+                        <li>
+                            <a href="#createAction"
+                               onclick={() => {
+                                   $('#createAction').modal({
+                                       startingTop: '2%'
+                                   });
+                               }}
+                            >
+                                <i class="lnr lnr-plus-circle" style="color:#62dbb3; min-height: 15px; min-width: 15px"/>
+                                Action
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#createEvent"
+                               onclick={() => {
+                                   $('#createEvent').modal({
+                                       startingTop: '4%', // Starting top style attribute
+                                       endingTop: '1%'
+                                   });
+                               }}
+                            >
+                                <i class="lnr lnr-plus-circle" style="color:#62dbb3; min-height: 15px; min-width: 15px"/>
+                                Evènement
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <span href="#" class="right hbtn-action hbtn-main-color add-action"
                    title="Hello world"
-                   onclick={() => {
-                       $('#createAction').modal({
-                           startingTop: '2%'
-                       });
-                   }}
                 >
                     <i class="material-icons white-text">add</i>
-                </a>
+                </span>
             </h1>
         );
     }
@@ -121,6 +152,11 @@ class App extends SimpleDom.Component {
                 <div id="createAction" class="modal" style="display: none">
                     <div class="modal-content">
                         <CreateAction />
+                    </div>
+                </div>
+                <div id="createEvent" class="modal" style="display: none">
+                    <div class="modal-content">
+                        <CreateEvent />
                     </div>
                 </div>
                 <div class="boxed-layout">
@@ -139,21 +175,23 @@ class App extends SimpleDom.Component {
                                     <i class="lnr lnr-magnifier prefix">
                                     </i>
                                     <input type="search" onkeyup={event => {
-                                        const name = event.target.value.toLowerCase();
-                                        let newSelectedActions = [];
-                                        if (!name) {
-                                            newSelectedActions = this.state.actions;
-                                        } else {
-                                            newSelectedActions = this.state.selectedActions.filter(userAction => {
-                                                const parentAction = userAction.action;
-                                                return parentAction.title.toLowerCase().includes(name) ||
-                                                parentAction.description.toLowerCase().includes(name)
-                                            });
-                                        }
-                                        // update sidebar
-                                        this.store.updateState({
-                                            selectedActions: newSelectedActions
-                                        }, 'ACTIONS_LIST_TO_UPDATE', 'MAIN_TITLE_TO_UPDATE')
+                                        setTimeout(() => {
+                                            const name = event.target.value.toLowerCase();
+                                            let newSelectedActions = [];
+                                            if (!name) {
+                                                newSelectedActions = this.state.selectedActions;
+                                            } else {
+                                                newSelectedActions = this.state.selectedActions.filter(userAction => {
+                                                    const parentAction = userAction.action;
+                                                    return parentAction.title.toLowerCase().includes(name) ||
+                                                        parentAction.description.toLowerCase().includes(name)
+                                                });
+                                            }
+                                            // update sidebar
+                                            this.store.updateState({
+                                                selectedActions: newSelectedActions
+                                            }, 'ACTIONS_LIST_TO_UPDATE', 'MAIN_TITLE_TO_UPDATE');
+                                        }, 300);
                                     }}/>
                                 </div>
                             </div>

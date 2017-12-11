@@ -1,4 +1,4 @@
-import '../home';
+import '../../home';
 
 import * as SimpleDom from 'simpledom-component';
 import './tagSelector.less';

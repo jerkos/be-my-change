@@ -1,16 +1,15 @@
-import '../home';
+import '../../home';
 const flatpickr = require('flatpickr');
 
-import '../css/steps.less';
-import '../css/tooltips.less';
-import '../css/popovers.less';
+import '../../css/steps.less';
+import '../../css/tooltips.less';
+import '../../css/popovers.less';
 import * as SimpleDom from 'simpledom-component';
-import { withVeilAndMessages } from '../components/veil/veil';
-import { ComposedComponent, ParentComponent } from '../composedComponent'
+import { withVeilAndMessages } from '../../components/veil/veil';
+import { ComposedComponent, ParentComponent } from '../../composedComponent'
 import './createAction.less'
-import {fillUptag, getTagsNumber, updateSidebarTags} from "./utils";
-import { TagSelector } from "./tagSelector";
-import './tagSelector.less';
+import {fillUptag, getTagsNumber, updateSidebarTags} from "../utils";
+import { TagSelector } from "../tagSelector/tagSelector";
 
 
 

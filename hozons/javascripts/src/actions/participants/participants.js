@@ -1,8 +1,8 @@
 import * as SimpleDom from 'simpledom-component';
-import { ComposedComponent, ParentComponent } from '../composedComponent'
-import { withVeilAndMessages } from '../components/veil/veil';
-require('../css/empty.less');
-import '../css/common.less';
+import { ComposedComponent, ParentComponent } from '../../composedComponent'
+import { withVeilAndMessages } from '../../components/veil/veil';
+require('../../css/empty.less');
+import '../../css/common.less';
 const gravatar = require('gravatar');
 
 

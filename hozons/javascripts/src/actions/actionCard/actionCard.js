@@ -1,6 +1,6 @@
-import {fillUptag, getTagsNumber, updateSidebarTags} from "./utils";
+import {fillUptag, getTagsNumber, updateSidebarTags} from "../utils";
 
-require('../home');
+require('../../home');
 const moment = require('moment');
 require('moment/locale/fr');
 const flatpickr = require("flatpickr");
@@ -8,15 +8,15 @@ const francese = require("flatpickr/dist/l10n/fr.js").fr;
 flatpickr.localize(francese);
 
 import * as SimpleDom from 'simpledom-component';
-import { withVeilAndMessages } from '../components/veil/veil';
-import { createSlider } from '../components/slider/slider';
-import { CommentariesTab } from './commentaries';
-import { ParticipantTab } from './participants';
-import { TagSelector } from "./tagSelector";
-import {ActionInfo} from "./actionInfoSlider/actionInfoSlider";
+import { withVeilAndMessages } from '../../components/veil/veil';
+import { createSlider } from '../../components/slider/slider';
+import { CommentariesTab } from '../commentaries/commentaries';
+import { ParticipantTab } from '../participants/participants';
+import { TagSelector } from "../tagSelector/tagSelector";
+import {ActionInfo} from "../actionInfoSlider/actionInfoSlider";
 
-import '../css/popovers.less';
-import '../css/avatar.less';
+import '../../css/popovers.less';
+import '../../css/avatar.less';
 import './actionCard.less';
 
 export class ActionCard extends SimpleDom.Component {

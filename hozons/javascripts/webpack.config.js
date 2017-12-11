@@ -13,13 +13,13 @@ module.exports = {
             './src/home.js'
         ],
         currentActions: [
-            './src/actions/currentActions.js'
+            './src/actions/currentActions/currentActions.js'
         ],
         lookForActions: [
-            './src/actions/lookForActions.js'
+            './src/actions/lookForActions/lookForActions.js'
         ],
         createAction: [
-            './src/actions/step1.js'
+            './src/actions/createAction/step1.js'
         ]
         //,campagne: ['./src/campagne/less/main.less', './src/campagne/routes.es6']
     },

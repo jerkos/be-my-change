@@ -1,10 +1,10 @@
-require('../home');
+require('../../home');
 import * as SimpleDom from 'simpledom-component';
-import { withVeilAndMessages } from '../components/veil/veil';
+import { withVeilAndMessages } from '../../components/veil/veil';
 
 import './sidebarActions.less';
-import '../css/avatar.less';
-import '../css/tooltips.less';
+import '../../css/avatar.less';
+import '../../css/tooltips.less';
 
 
 let technicalId = 1;
@@ -182,7 +182,21 @@ class TagList extends SimpleDom.Component {
     render() {
         return (
             <ul class="main-tag-list">
-                <li class="sub-tag"><div class="sub-tag-name"><div class="sub-tag-name-item" style="flex-basis:100% !important;text-transform:uppercase;text-align:center;padding-right:20px;color:#333 !important;font-weight:500 !important;"><span class="lnr lnr-layers" style="font-size:1.7em;margin-right:10px"></span> Tout sélectionner</div></div></li>
+                <li class="sub-tag highlighted">
+                    <div class="sub-tag-name">
+                        <div class="sub-tag-name-item" style="flex-basis:100% !important;text-transform:uppercase;text-align:center;padding-right:20px;font-weight:500 !important;"
+                            onclick={() => {
+                                $('.sub-tag').removeClass('highlighted');
+                                document.querySelector('.main-tag-list > .sub-tag').classList.add('highlighted');
+                                this.state.selectedActions = this.state.actions;
+                                this.store.updateState({}, 'ACTIONS_LIST_TO_UPDATE', 'MAIN_TITLE_TO_UPDATE');
+                            }}
+                        >
+                            <span class="lnr lnr-layers" style="font-size:1.7em;margin-right:10px"/>
+                             Tout sélectionner
+                        </div>
+                    </div>
+                </li>
                 {this.state.tags.map(tag => {
                     return <Tag tag={tag} id={technicalId++} />
                 })}
@@ -225,7 +239,6 @@ export class SidebarAction extends SimpleDom.Component {
                             </span>
                          </div>
                     </div>
-                    {/* <h2>{currentUser.email}</h2> */}
                 </div>
                 <div class="sidebar-action-content">
                     <TagList/>

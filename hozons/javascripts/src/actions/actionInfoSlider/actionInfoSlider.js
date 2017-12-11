@@ -11,7 +11,130 @@ import {withVeilAndMessages} from "../../components/veil/veil";
 import {getFullTag} from "../utils";
 
 
+class ModifiableTextArea extends SimpleDom.Component {
+
+    eventsToSubscribe() {
+        return [`ENTRY_TO_REFRESH_${this.props.id}`];
+    }
+
+    constructor(props,store) {
+        super(props, store);
+        this.editMode = this.props.editMode || false;
+        this.mdeEditor = undefined;
+        this.markdownContent = this.props.content || '';
+        this.validateButtonText = this.props.buttonText || 'Valider';
+    }
+
+    componentDidMount() {
+        if (this.editMode) {
+            this.mdeEditor = new SimpleMDE({
+                element: document.getElementById(`entryEditor${this.props.id}`)
+            });
+        } else {
+            const element = document.getElementById(`entryTarget${this.props.id}`);
+            if (this.mdeEditor) {
+                this.markdownContent = this.mdeEditor.value();
+            }
+            element.innerHTML = SimpleMDE.prototype.markdown(this.markdownContent);
+        }
+    }
+
+    render() {
+        if (this.editMode) {
+            return (
+                <div style="overflow: scroll">
+                    <textarea id={`entryEditor${this.props.id}`}>
+                        {this.markdownContent}
+                    </textarea>
+                    <button class="btn right"
+                            onclick={() => {
+                                this.editMode = false;
+                                this.markdownContent = this.mdeEditor.value();
+                                this.props.onValidate(this.markdownContent)
+                                    .then(() => this.store.updateState({}, `ENTRY_TO_REFRESH_${this.props.id}`))
+                            }}
+                    >
+                        {this.validateButtonText}
+                    </button>
+                </div>
+            );
+        }
+        return (
+            <div class="mde-container">
+                <div class="mde-container-action">
+                    <a href="#" class="hbtn hbtn-action edit-button edit-button-pencil"
+                          onClick={() => {
+                              this.editMode = true;
+                              this.store.updateState({}, `ENTRY_TO_REFRESH_${this.props.id}`)
+                          }}
+                    >
+                        <i class="lnr lnr-pencil"/>
+                    </a>
+                    <a href="#" class="hbtn hbtn-action edit-button edit-button-trash"
+                       onClick={() => {
+                           const journalEntries = this.state.journalEntries.filter(
+                               entry => entry.id !== this.props.entryId
+                           );
+                           this.store.updateState({journalEntries}, 'JOURNAL_ENTRIES_TO_REFRESH');
+                       }}
+                    >
+                        <i class="lnr lnr-trash"/>
+                    </a>
+                </div>
+                <p id={`entryTarget${this.props.id}`}>
+                </p>
+            </div>
+        );
+    }
+}
+
+
+class JournalEntry extends SimpleDom.Component {
+
+    constructor(props,store) {
+        super(props, store);
+        this.entry = this.props.entry;
+        this.markdownContent = (this.props.entry || {}).content || '';
+    }
+
+    render() {
+        technicalId++;
+        return (
+            <li class="collection-item" style="position: relative">
+                <span class="title">
+                    {moment(this.entry.created_at).format('dddd DD MMMM YYYY') ||
+                        moment().format('dddd DD MMMM YYYY')}
+                </span>
+                <ModifiableTextArea
+                    id={technicalId}
+                    entryId={this.entry.id}
+                    content={this.markdownContent}
+                    onValidate={markdownContent => {
+                        return withVeilAndMessages(
+                            fetchJsonData(`/users/actions/0/commentaries`, {
+                                method: 'PUT',
+                                body: JSON.stringify({
+                                    content: markdownContent,
+                                    commentaryId: this.entry.id
+                                })
+                            }),
+                            true
+                        ).then(commentary => {
+                            let entry = this.state.journalEntries.find(comm => comm.id === commentary.id);
+                            entry.content = commentary.content;
+                            this.store.updateState({journalEntries: this.state.journalEntries});
+                        });
+                    }}
+                />
+            </li>
+        );
+    }
+}
+
+
+let technicalId = 0;
 class JournalEntries extends SimpleDom.Component {
+
     eventsToSubscribe() {
         return ['JOURNAL_ENTRIES_TO_REFRESH'];
     }
@@ -19,25 +142,14 @@ class JournalEntries extends SimpleDom.Component {
     constructor(props, store) {
         super(props, store);
         this.editMode = false;
-        this.currentText = undefined;
-        this.entries = this.props.entries;
     }
 
     render() {
         return (
             <div class="action-info-journal">
-                {SimpleDom.predicate(this.entries.length,
+                {SimpleDom.predicate(this.state.journalEntries.length,
                     () => <ul class="collection action-info-journal-list">
-                        {this.entries.map(entry => {
-                            return (
-                                <li class="collection-item">
-                                    <span class="title">
-                                        {moment().format('dddd DD MMMM YYYY')}
-                                    </span>
-                                    <p>{entry.content}</p>
-                                </li>
-                            );
-                        })}
+                        {this.state.journalEntries.map(entry => <JournalEntry entry={entry}/>)}
                     </ul>,
                     () => {
                         return (
@@ -56,29 +168,28 @@ class JournalEntries extends SimpleDom.Component {
                 {SimpleDom.predicate(this.editMode,
                     () => {
                         return (
-                            <div>
-                                <textarea class="materialize-textarea"
-                                          onchange={event => this.currentText = event.target.value}
-                                />
-                                <button class="btn right" onclick={ () => {
+                            <ModifiableTextArea
+                                id={technicalId++}
+                                content={''}
+                                editMode={true}
+                                onValidate={markdownContent => {
+                                    this.editMode = false;
                                     const journal = {
-                                        content: this.currentText,
+                                        content: markdownContent,
                                         action_id: this.props.userAction.action_id,
                                         is_journal: true
                                     };
-                                    this.entries.push(journal);
-                                    this.editMode = false;
-                                    withVeilAndMessages(
+                                    return withVeilAndMessages(
                                         fetchJsonData(`/users/actions/${this.props.userAction.action_id}/commentaries`, {
                                             method: 'POST',
                                             body: JSON.stringify(journal)
                                         }),
                                         true
-                                    ).then(() => {
+                                    ).then(commentary => {
+                                        this.state.journalEntries.push(commentary);
                                         this.store.updateState({}, 'JOURNAL_ENTRIES_TO_REFRESH');
                                     })
-                                }}>Publier</button>
-                            </div>
+                                }}/>
                         );
                     },
                     () => <a class="hbtn hbtn-action" onclick={() => {
@@ -91,10 +202,6 @@ class JournalEntries extends SimpleDom.Component {
     }
 }
 
-class TagsList extends SimpleDom.Component {
-
-}
-
 export class ActionInfo extends SimpleDom.Component {
     eventsToSubscribe() {
         return ['ACTION_INFO_TO_REFRESH'];
@@ -104,79 +211,39 @@ export class ActionInfo extends SimpleDom.Component {
         super(props, store);
         this.userAction = this.props.userAction;
         this.action = this.userAction.action;
-        this.journalEntries = this.props.journalEntries;
-        this.editDescription = false;
+        store.updateState({journalEntries: this.props.journalEntries});
         this.descriptionContentAsText = this.action.description || '';
         this.mdeDescriptionEditor = undefined;
-    }
-
-    componentDidMount() {
-        if (this.editDescription) {
-            this.mdeDescriptionEditor = new SimpleMDE({
-                element: document.getElementsByClassName('action-info-editor')[0]
-            });
-        } else {
-            const element = document.getElementById('descriptionTarget');
-            if (this.mdeDescriptionEditor) {
-                this.descriptionContentAsText = this.mdeDescriptionEditor.value();
-            }
-            element.innerHTML = SimpleMDE.prototype.markdown(this.descriptionContentAsText);
-        }
     }
 
     render() {
         return (
             <div class="action-info">
                 <h4 class="action-info-title">{this.action.title}</h4>
-                <h6 class="action-info-subtitle">Description</h6>
-                {SimpleDom.predicate(this.editDescription,
-                    () => {
-                        return (
-                            <div>
-                                <textarea class="action-info-editor materialize-textarea">
-                                    {this.descriptionContentAsText}
-                                </textarea>
-                                <button class="btn right"
-                                        onclick={() => {
-                                            this.editDescription = false;
-                                            this.descriptionContentAsText = this.mdeDescriptionEditor.value();
-                                            withVeilAndMessages(
-                                                fetchJsonData('/users/actions/create', {
-                                                    method: 'PUT',
-                                                    body: JSON.stringify({
-                                                        actionDescription: this.descriptionContentAsText,
-                                                        actionId: this.action.id
-                                                    })
-                                                })
-                                            ).then(() => {
-                                                this.userAction.action.description = this.descriptionContentAsText;
-                                                this.store.updateState({}, 'ACTION_INFO_TO_REFRESH')
-                                            })
-
-                                        }}>Valider
-                                </button>
-                            </div>
-                        )
-                    },
-                    () => {
-                        return (
-                            <p class={`action-info-description ${this.action.creator_user_id === currentUser.id ? 'active' : undefined}`}>
-                                <span class="action-info-description-edit lnr lnr-pencil"
-                                      onclick={() => {
-                                          this.editDescription = true;
-                                          this.store.updateState({}, 'ACTION_INFO_TO_REFRESH');
-                                      }}
-                                />
-                                <p id="descriptionTarget"/>
-                            </p>
-                        );
-                    }
-                )}
+                <div class="action-info-description-container">
+                    <h6 class="action-info-subtitle">Description</h6>
+                    <ModifiableTextArea
+                        id={technicalId++}
+                        content={this.descriptionContentAsText}
+                        onValidate={markdownContent => {
+                            return withVeilAndMessages(
+                                fetchJsonData('/users/actions/create', {
+                                    method: 'PUT',
+                                    body: JSON.stringify({
+                                        actionDescription: markdownContent,
+                                        actionId: this.action.id
+                                    })
+                                })
+                            );
+                                /*.then(() => {
+                                this.userAction.action.description = markdownContent;
+                                this.store.updateState({}, 'ACTION_INFO_TO_REFRESH')
+                            })*/
+                        }}
+                    />
+                </div>
                 <h6 class="action-info-subtitle">Journal</h6>
-                <JournalEntries
-                    entries={this.journalEntries}
-                    userAction={this.userAction}
-                />
+                <JournalEntries userAction={this.userAction}/>
                 <h6 class="action-info-subtitle">Tags</h6>
                 <div style="position: relative; min-height: 50px;">
                     <div class="card-image-tag"

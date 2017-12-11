@@ -98,3 +98,41 @@
     margin-left: 20px;
   }
 }
+
+.edit-pencil {
+  position: absolute;
+  left: -10px;
+}
+
+.action-info-description-container {
+  position: relative;
+}
+
+
+.collection-item, .action-info-description-container {
+  &:hover {
+    .edit-button, .edit-button-trash {
+      display: flex;
+    }
+  }
+}
+
+.mde-container {
+  .edit-button {
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+    display: none;
+  }
+
+  .edit-button.edit-button-pencil {
+    right: 5px;
+    top: 5px;
+  }
+
+  .edit-button.edit-button-trash {
+    right: 30px;
+    top: 5px;
+  }
+}

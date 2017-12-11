@@ -99,7 +99,9 @@ def get_user_actions():
     counting = {'commentaries': {}, 'participants': {}, 'ressources': []}
     if actions_ids:
         commentaries = db.session.query(Commentary.action_id, func.count(Commentary.action_id)) \
-            .filter(Commentary.action_id.in_(actions_ids)) \
+            .filter(
+                and_(Commentary.action_id.in_(actions_ids), Commentary.is_journal == None)
+            ) \
             .group_by(Commentary.action_id) \
             .all()
         commentaries = {k: v for (k, v) in commentaries}
@@ -279,6 +281,7 @@ def create_action():
     final_slug = Tags.build_tags_slug(data.get('tagsSlug'), new_tags)
 
     # setup dates
+    print("START DATE:" + start_date)
     start_dt = dt.datetime.strptime(start_date, '%Y-%m-%d')
     end_dt = dt.datetime.strptime(start_date, '%Y-%m-%d') + dt.timedelta(days=duration)
 
@@ -319,6 +322,7 @@ def get_commentaries(action_id):
     is_journal = request.args.get('is_journal')
     if is_journal == 'True':
         # todo put in a function in commentary class
+        print("is journal is true")
         commentaries = Commentary.query.filter(
             and_(
                 Commentary.action_id == action_id,
@@ -326,15 +330,28 @@ def get_commentaries(action_id):
                 Commentary.is_journal == True  # does not worl with is
             )).all()
     else:
-        commentaries = Commentary.query.filter(Commentary.action_id == action_id).all()
+        commentaries = Commentary.query.filter(
+            and_(
+                Commentary.action_id == action_id,
+                or_(
+                    Commentary.is_journal == False,
+                    Commentary.is_journal == None
+                )
+            )).all()
     return Commentary.arr_to_json(commentaries), 200
 
 
-@user.route('/actions/<int:action_id>/commentaries', methods=['POST'])
+@user.route('/actions/<int:action_id>/commentaries', methods=['POST', 'PUT'])
 @login_required
 @csrf_protect.exempt
 def save_commentary(action_id):
     data = request.get_json(force=True)
+
+    if request.method == 'PUT':
+        comm = Commentary.query.filter(Commentary.id == data.get('commentaryId', -1)).first_or_404()
+        comm.update(content=data.get('content'))
+        return Commentary.to_json(comm), 200
+
     commentary = Commentary.create(
         content=data.get('content'), 
         user_id=current_user.id,

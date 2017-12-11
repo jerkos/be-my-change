@@ -1,19 +1,19 @@
-require('../home');
+require('../../home');
 import * as SimpleDom from 'simpledom-component';
-require('../css/layout.less');
-require('../css/tooltips.less');
-require('../css/avatar.less');
-require('../css/popovers.less');
+require('../../css/layout.less');
+require('../../css/tooltips.less');
+require('../../css/avatar.less');
+require('../../css/popovers.less');
 import './lookForActions.less';
 const moment = require('moment');
 require('moment/locale/fr');
 const gravatar = require('gravatar');
 
-import { withVeilAndMessages } from '../components/veil/veil';
-import { createSlider } from '../components/slider/slider';
-import { CommentariesTab } from './commentaries';
-import { ParticipantTab } from './participants';
-import {SidebarAction} from './sidebarActions';
+import { withVeilAndMessages } from '../../components/veil/veil';
+import { createSlider } from '../../components/slider/slider';
+import { CommentariesTab } from '../commentaries/commentaries';
+import { ParticipantTab } from '../participants/participants';
+import {SidebarAction} from '../sidebarActions/sidebarActions';
 
 
 class InviteModalContent extends SimpleDom.Component {
