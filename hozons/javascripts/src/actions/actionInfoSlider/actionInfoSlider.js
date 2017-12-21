@@ -219,7 +219,7 @@ export class ActionInfo extends SimpleDom.Component {
     render() {
         return (
             <div class="action-info">
-                <h4 class="action-info-title">{this.action.title}</h4>
+                <h4 class="action-info-title"><img class="action-info-image" src={this.userAction.action.image_url} />{this.action.title}</h4>
                 <div class="action-info-description-container">
                     <h6 class="action-info-subtitle">Description</h6>
                     <ModifiableTextArea
