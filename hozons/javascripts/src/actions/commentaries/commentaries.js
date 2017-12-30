@@ -1,5 +1,4 @@
 import * as SimpleDom from 'simpledom-component';
-import { ComposedComponent, ParentComponent } from '../../composedComponent'
 import { withVeilAndMessages } from '../../components/veil/veil';
 import './commentaries.less';
 const SimpleMDE = require('simplemde');
@@ -14,12 +13,8 @@ class Commentary extends SimpleDom.Component {
         document.getElementById(`node-${this.props.index}`).innerHTML = this.props.commentary.content
     }
 
-
     mustRefresh() {
-        if (this.props.index === this.props.newIndex) {
-            return true;
-        }
-        return false;
+        return this.props.index === this.props.newIndex;
     }
 
     render() {
@@ -69,10 +64,15 @@ export class CommentariesTab extends SimpleDom.Component {
     }
 
     render() {
+        console.log(this.props.action);
         return (
-            <div style="padding: 0 15%">
-                <h4><span class="lnr lnr-bubble"></span>Commentaires</h4>
-                <div class="row">
+            <div class="action-info">
+                <h4 class="action-info-title">
+                    <img class="action-info-image" src={this.props.action.image_url} />
+                    <span>{this.props.action.title}</span>
+                </h4>
+                <div class="action-info-author">Créé par <span>{this.props.action.creator.username}</span></div>
+                <div class="row" style="padding: 5% 15%">
                     {SimpleDom.predicate(this.commentaries.length,
                         () => <CommentariesList commentaries={this.commentaries} />,
                         () => {
@@ -88,11 +88,11 @@ export class CommentariesTab extends SimpleDom.Component {
                         }
                     )}
                 </div>
-                <div class="row">
-                    <textarea id="editor"></textarea>
+                <div class="row" style="padding: 0 15%">
+                    <textarea id="editor"/>
                 </div>
-                <div class="row">
-                    <button onclick={e => {
+                <div class="row" style="padding: 0 15%">
+                    <button onclick={() => {
                         const content = SimpleMDE.prototype.markdown(this.editor.value());
                         const comm = {
                             content,
