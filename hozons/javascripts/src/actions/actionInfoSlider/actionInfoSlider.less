@@ -36,24 +36,33 @@
 
   .action-info-title {
     text-transform:uppercase;
-    padding-top:20px;
-    font-weight:300;
+    text-align: left;
+    font-weight:800;
+    color:#FFF;
     font-size:2.5em;
+    //margin-bottom: 60px;
 
     img {
-      width: 100px;
-      height: 100px;
+      width: 114%;
+      height: 250px;
       object-fit: cover;
-      border-radius: 100%;
       object-position: center center;
-      top: 30px;
-      margin-right: 20px;
-      margin-top: -50px;
+      margin-left: -7%;
+      margin-top: -18px;
+      margin-bottom: -140px;
       position: relative;
-      box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2);
+      z-index: -1;
+      filter:contrast(70%);
     }
   }
   
+  .action-info-author {
+    font-style: italic;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    color: #FFF;
+    margin-bottom:50px;
+  }
 
   .action-info-subtitle {
     padding-top: 50px;
@@ -67,21 +76,32 @@
     img {
     width:100%;
     }
+
+    table, td, th {
+      border: 1px solid lightgray;
+      line-height: 0.6em;
+    }
+
+    thead {
+      background:#fafafa;
+    }
     
-      background-color: #fff;
-      line-height: 1.5rem;
-      padding: 10px 20px;
-      margin: 0;
-      border-bottom: 1px solid #e0e0e0;
-      box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2);
-      margin-top: 20px !important;
-      border-radius: 10px;
-      border: none !important;
+    /*background-color: #fff;
+    line-height: 1.5rem;
+    padding: 10px 20px;
+    margin: 0;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2);*/
+    margin-top: 20px !important;
+    border-radius: 10px;
+    border: none !important;
       
   }
 }
 
+
 .action-info-journal-list {
+  padding:1% 1% !important;
   .collection-item {
     .title {
       font-weight: 500;
@@ -155,6 +175,13 @@
 }
 
 .mde-container {
+  margin:1em !important;
+
+  img {
+    width:40% !important;
+    float:left;
+    margin-right:15px;
+  }
   .edit-button {
     position: absolute;
     height: 33px;
@@ -165,12 +192,14 @@
 
   .edit-button.edit-button-pencil {
     right: 5px;
-    top: 50px;
+    top: 40px;
+    background:#333 !important;
   }
 
   .edit-button.edit-button-trash {
     right: 30px;
-    top: 50px;
+    top: 40px;
+    background:#333 !important;
   }
 
   p ul:not(.browser-default) {
@@ -189,19 +218,35 @@
 
   p a {
     text-decoration: none;
-    border-bottom: 1px solid #62dbb2;
+    //border-bottom: 1px solid #62dbb2;
 
     &::before {
     font-family: FontAwesome;
-    content: "[ \f016";
+    content: "\f0c1 [";
     color:#333;
-    font-weight:100;
+    font-weight:800;
     padding-right:5px;
     }
 
     &::after {
     content: " ]";
-    font-weight: 500;
+    font-weight:800;
     }
   }
+}
+
+.collection-item {
+  margin-bottom:10px !important;
+}
+
+.slider .slider-cross {
+  color:#FFF;
+}
+
+.action-info-menu {
+  position:fixed;
+  border-right:3px solid #333;
+  overflow:hidden !important;
+  left:0px;
+  top:275px;
 }

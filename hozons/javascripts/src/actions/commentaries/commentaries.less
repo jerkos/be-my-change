@@ -1,8 +1,9 @@
 
 .CodeMirror,
 .CodeMirror-scroll {
-    max-height: 150px;
+    max-height: 250px;
     min-height: 150px;
+    padding:0px !important;
 }
 
 .CodeMirror-fullscreen.CodeMirror {
@@ -14,14 +15,52 @@
 }
 
 ul:not(.browser-default) {
-	padding: 1em !important;
+	padding: 0 1em !important;
 }
 
-ul:not(.browser-default) li {
+/*ul:not(.browser-default) li {
 	list-tyle:disc !important;
-}
+}*/
 
 div > h4 {
   font-weight: 700;
   text-align: center;
 }
+
+.collection {
+	padding-left: 1% 1% !important;
+
+
+	p ul:not(.browser-default) {
+	  padding: 0 2em !important;
+	  }
+
+	p ul:not(.browser-default) li {
+	line-height:1.5em;
+
+	&::before {
+	  content: "•";
+	  padding-right:5px;
+	  color: #62dbb2;
+	}
+	}
+
+	p a {
+	text-decoration: none;
+	border-bottom: 1px solid #62dbb2;
+
+	&::before {
+	font-family: FontAwesome;
+	content: "[ \f016";
+	color:#333;
+	font-weight:100;
+	padding-right:5px;
+	}
+
+	&::after {
+	content: " ]";
+	font-weight: 500;
+	}
+	}
+}
+

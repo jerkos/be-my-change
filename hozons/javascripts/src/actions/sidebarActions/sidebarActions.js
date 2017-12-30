@@ -184,7 +184,7 @@ class TagList extends SimpleDom.Component {
             <ul class="main-tag-list">
                 <li class="sub-tag highlighted">
                     <div class="sub-tag-name">
-                        <div class="sub-tag-name-item" style="flex-basis:100% !important;text-transform:uppercase;text-align:center;padding-right:20px;font-weight:500 !important;"
+                        <div class="sub-tag-name-item" style="flex-basis:100% !important;text-transform:uppercase;text-align:center;padding-right:20px;"
                             onclick={() => {
                                 $('.sub-tag').removeClass('highlighted');
                                 document.querySelector('.main-tag-list > .sub-tag').classList.add('highlighted');

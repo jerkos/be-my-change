@@ -165,7 +165,7 @@ export class ActionCard extends SimpleDom.Component {
                     )}
                 </div>
                 <div class="card-content" data-tooltip={this.userAction.action.title}>
-                    <span class="card-title grey-text text-darken-4" style="font-size: 1.3em;"
+                    <span class="card-title" style="font-size: 1.3em;"
                         onclick={event => {
                             withVeilAndMessages(
                                 fetchJsonData(`/users/actions/${this.userAction.action_id}/commentaries?is_journal=True`),

@@ -1,6 +1,7 @@
 import * as SimpleDom from 'simpledom-component';
 import { ComposedComponent, ParentComponent } from '../../composedComponent'
 import { withVeilAndMessages } from '../../components/veil/veil';
+import './commentaries.less';
 const SimpleMDE = require('simplemde');
 require('../../../node_modules/simplemde/dist/simplemde.min.css');
 const gravatar = require('gravatar');

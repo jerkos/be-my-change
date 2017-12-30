@@ -115,7 +115,7 @@ class MainTitle extends SimpleDom.Component {
                                    });
                                }}
                             >
-                                <i class="lnr lnr-plus-circle" style="color:#62dbb3; min-height: 15px; min-width: 15px"/>
+                                <i class="fa fa-plus" style="color:#62dbb3; min-height: 15px; min-width: 15px; margin-right:5px"/>
                                 Action
                             </a>
                         </li>
@@ -128,7 +128,7 @@ class MainTitle extends SimpleDom.Component {
                                    });
                                }}
                             >
-                                <i class="lnr lnr-plus-circle" style="color:#62dbb3; min-height: 15px; min-width: 15px"/>
+                                <i class="fa fa-plus" style="color:#62dbb3; min-height: 15px; min-width: 15px; margin-right:5px"/>
                                 Evènement
                             </a>
                         </li>
