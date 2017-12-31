@@ -12,6 +12,7 @@ from hozons.user.forms import RegisterForm
 from hozons.user.models import User, Tags
 from hozons.utils import flash_errors
 from hozons.settings import DevConfig, ProdConfig
+from goose3 import Goose
 
 blueprint = Blueprint('public', __name__, static_folder='../static')
 
@@ -84,12 +85,18 @@ def gather_informations():
     #apikey = request.args('apikey', '')
     #if not apikey or apikey != get_current_config().SECRET_KEY:
     #    abort(403)
-    url = request.args['url'];
-    response = {}
+    url = request.args['url']
+    g = Goose()
     try:
-        response = lassie.fetch(url)
-    except lassie.LassieError as e:
-        pass
-    return jsonify(response)
+        response = g.extract(url=url)
+    except Exception as e:
+        return jsonify({'error': True, 'message': e}), 500
+
+    return jsonify({
+            'title': response.title,
+            'urlRequested': url,
+            'text': response.cleaned_text[:200],
+            'mainImage': response.top_image.src
+        }), 200
 
 

@@ -44,35 +44,39 @@ class Participant extends ComposedComponent {
 
     render() {
         return (
-            <li style="pointer: cursor; display: flex; justify-content: space-around;" class="collection-item avatar">
-                {SimpleDom.predicate(this.props.user.email,
-                    () => <img class="circle" src={gravatar.url(this.props.user.email, {s: '60'})}/>,
-                    () => <div class="avatar-spec avatar-spec-sm"
-                               style="color: white; background-color: #5764c6;"
-                               data-initial={this.props.user.username.slice(0, 2) || ''}
-                    />
-                )}
-                <p class="info-points">
+            <li style="pointer: cursor; display: flex; flex-direction: column; justify-content: center;"
+                class="collection-item avatar">
+                <div style="display: flex; justify-content: space-around;">
+                    {SimpleDom.predicate(this.props.user.email,
+                        () => <img class="circle" src={gravatar.url(this.props.user.email, {s: '60'})}/>,
+                        () => <div class="avatar-spec avatar-spec-sm"
+                                   style="color: white; background-color: #5764c6;"
+                                   data-initial={this.props.user.username.slice(0, 2) || ''}
+                        />
+                    )}
+                    <p class="info-points">
                     <span class="title">
-                        <a target="_blank" href={`/users/profile?name=${this.props.user.username}`}>{this.props.user.username}</a>
+                        <a target="_blank"
+                           href={`/users/profile?name=${this.props.user.username}`}>{this.props.user.username}</a>
                         </span>
-                    <br/>
-                    <span>
+                        <br/>
+                        <span>
                     {this.props.user.points_pers
                     + this.props.user.points_env
                     + this.props.user.points_rel
                     }
                 </span> points
-                </p>
-                <div class="participant-action">
-                    <p class="action">
-                        <span class="lnr lnr-plus-circle"/>
-                        Ajouter à mes connexions
                     </p>
-                    <p class="action">
-                        <span class="lnr lnr-bubble"/>
-                        Envoyer un message
-                    </p>
+                    <div class="participant-action">
+                        <p class="action">
+                            <span class="lnr lnr-plus-circle"/>
+                            Ajouter à mes connexions
+                        </p>
+                        <p class="action">
+                            <span class="lnr lnr-bubble"/>
+                            Envoyer un message
+                        </p>
+                    </div>
                 </div>
             </li>
         );

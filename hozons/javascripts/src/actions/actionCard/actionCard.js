@@ -13,6 +13,7 @@ import { createSlider } from '../../components/slider/slider';
 import { CommentariesTab } from '../commentaries/commentaries';
 import { ParticipantTab } from '../participants/participants';
 import { TagSelector } from "../tagSelector/tagSelector";
+import {RessourcesTab} from "../ressources/ressources";
 import {ActionInfo} from "../actionInfoSlider/actionInfoSlider";
 
 import '../../css/popovers.less';
@@ -247,8 +248,14 @@ export class ActionCard extends SimpleDom.Component {
                             </a>
 
                             <a class="hbtn-action"
-                               onclick={e => {
-                                   console.log('plus clicked');
+                               onclick={event => {
+                                   createSlider(
+                                       'Ressources',
+                                       <RessourcesTab
+                                           action={this.userAction.action}
+                                       />,
+                                       event
+                                   );
                                }}>
                                 <div class="action-indicator">
                                     {this.state.actionsDataCount.ressources[this.userAction.action_id] || 0}
