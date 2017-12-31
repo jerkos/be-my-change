@@ -15,6 +15,7 @@ from .models import Commentary
 from .models import Tags
 from .models import User
 from .models import UserAction
+from .models import Ressource
 
 user = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
 
@@ -440,4 +441,35 @@ def change_tag_of_user_action(user_action_id):
         'tags': [tag.to_dict() for tag in Tags.get_tree(current_user.id)],
         'user_action': user_action.to_dict()
     }), 200
+
+
+## ressource endpoints
+@user.route('/ressources/<int: action_id>', methods=['GET', 'POST'])
+@login_required
+@csrf_protect.exempt
+def get_ressources_for_action(action_id):
+    if request.method == 'GET':
+        ressources = Ressource.query.filter(Ressource.action_id == action_id).all()
+        return Ressource.arr_to_json(ressources), 200
+    if request.method == 'POST':
+        data = request.get_json(force=True)
+        Ressource.create(
+            user_id=current_user.id,
+            action_id=action_id,
+            url=data.get('url'),
+            content=data.get('content')
+        )
+        return json.dumps({}), 200
+
+
+@user.route('/ressources/ressource-exists', methods=['GET'])
+@login_required
+@csrf_protect.exempt
+def is_ressource_already_exists():
+    url = request.args.get('url')
+    if url is None:
+        return json.dumps({}), 404
+    return Ressource.to_json(
+        Ressource.query.filter(Ressource.url == url).first_or_404()
+    ), 200
 
