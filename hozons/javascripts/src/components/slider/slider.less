@@ -19,23 +19,11 @@
   background: #F9FAFB !important;
   overflow:hidden;
 
-  .lnr-bubble {
-  color:#62dbb2;
-  padding-right:15px;
-  font-size:1.5em;
-  }
-}
-
-.slider {
-  overflow:scroll;
-  height:100%;
-  .slider-cross {
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    cursor: pointer;
-    transition: all 0.6s;
-  }
+  span[class^='lnr'], i[class^='lnr'], div[class^='lnr']{
+    color:#62dbb2;
+    padding-right:15px;
+    font-size:1.5em;
+    }
 }
 
 .collection {
@@ -110,6 +98,19 @@ blockquote {
     
 }
 
+.slider {
+  overflow:scroll;
+  height:100%;
+
+  .slider-cross {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    cursor: pointer;
+    transition: all 0.6s;
+    color: white
+  }
+}
 
 
 

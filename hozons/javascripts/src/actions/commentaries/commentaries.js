@@ -36,7 +36,7 @@ class Commentary extends SimpleDom.Component {
 class CommentariesList extends SimpleDom.Component {
     render() {
         return (
-            <ul class="collection">
+            <ul class="commentaries-list collection">
                 {this.props.commentaries.map((comm, i) => {
                     return <Commentary commentary={comm} index={i} />
                 })}
@@ -64,7 +64,6 @@ export class CommentariesTab extends SimpleDom.Component {
     }
 
     render() {
-        console.log(this.props.action);
         return (
             <div class="action-info">
                 <h4 class="action-info-title">
