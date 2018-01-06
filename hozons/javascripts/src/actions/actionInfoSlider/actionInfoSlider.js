@@ -8,8 +8,9 @@ const SimpleMDE = require('simplemde');
 import './actionInfoSlider.less';
 import '../../css/empty.less';
 import {withVeilAndMessages} from "../../components/veil/veil";
-import {getFullTag} from "../utils";
-
+import {fillUptag, getFullTag, getTagsNumber, updateSidebarTags} from "../utils";
+import {TagSelector} from "../tagSelector/tagSelector";
+import "../tagSelector/tagSelector.less";
 
 class ModifiableTextArea extends SimpleDom.Component {
 
@@ -206,7 +207,9 @@ class JournalEntries extends SimpleDom.Component {
     }
 }
 
+
 export class ActionInfo extends SimpleDom.Component {
+
     eventsToSubscribe() {
         return ['ACTION_INFO_TO_REFRESH'];
     }
@@ -218,11 +221,43 @@ export class ActionInfo extends SimpleDom.Component {
         store.updateState({journalEntries: this.props.journalEntries});
         this.descriptionContentAsText = this.action.description || '';
         this.mdeDescriptionEditor = undefined;
+        this.tagsAsText = getFullTag(this.userAction, this.props.tags);
+        store.updateState({tags: this.props.tags});
+    }
+
+    componentDidMount() {
+        this.props.userAction.tags
+            .concat(this.props.userAction.tagsToCreate || [])
+            .forEach((tag, i) =>
+                tippy(`#card-image-tag-${i}`, {
+                    html: document.querySelector(`#card-edit-tag-slider-${i}`),
+                    theme: 'light',
+                    arrow: true,
+                    distance: 15,
+                    placement: 'top',
+                    trigger: 'click',
+                    interactive: true,
+                    size: 'large',
+                    onShown: () => $(`#card-edit-tag-slider-${i} input`).focus()
+                })
+            );
+        tippy('.add-tag', {
+            html: document.querySelector('#card-edit-tag-add'),
+            theme: 'light',
+            arrow: true,
+            distance: 15,
+            placement: 'top',
+            trigger: 'click',
+            interactive: true,
+            size: 'large',
+            onShown: () => $(`#card-edit-tag-add`).find(`input`).focus()
+
+        })
     }
 
     render() {
         return (
-            <div class="action-info">
+            <div class="action-info" style="padding-bottom: 50px;">
                 <h4 class="action-info-title">
                     <img class="action-info-image" src={this.userAction.action.image_url} />
                     <span>{this.action.title}</span>
@@ -267,17 +302,93 @@ export class ActionInfo extends SimpleDom.Component {
                         <JournalEntries userAction={this.userAction}/>
                     </div>
                     <h6 class="action-info-subtitle" id="tags">Tags</h6>
-                    <div style="position: relative; min-height: 50px;">
-                        <div class="card-image-tag"
-                             onclick={e => {
-                                 e.preventDefault();
-                                 e.stopPropagation();
-                                 //$(`#card-edit-tag-${this.userAction.id}`).modal('open');
-                             }}>
-                            {getFullTag(this.userAction, this.props.tags)}
-                        </div>
-                        <a href="#" class="hbtn hbtn-action">+</a>
+                    <div class="tag-container">
+                        {this.tagsAsText
+                            .concat(this.userAction.tagsToCreate || [])
+                            .map((tag, i) => {
+                            return (
+                                <div class="one-tag">
+                                    <div id={`card-edit-tag-slider-${i}`}>
+                                        <div class="tag-change-content">
+                                            <h4>Changer de tag</h4>
+                                            <div class="tag-change-validate">
+                                                <TagSelector tags={tag} id={i}/>
+                                                <a href="#" class="hbtn"
+                                                   onclick={() => {
+                                                       //const newTags = state.tagsToCreate.split('/');
+                                                       //let existingTags = state.tags;
+
+                                                       const result = updateSidebarTags(this.state);
+                                                       withVeilAndMessages(
+                                                           window.fetchJsonData(
+                                                               `/users/tags/change-tag/${this.userAction.id}?tag_mapping_id=${this.userAction.tags[i].id}`,
+                                                               {
+                                                                   method: 'POST',
+                                                                   body: JSON.stringify({
+                                                                       tagsToCreate: result.tagsToCreate,
+                                                                       tagsSlug: result.tagsSlug
+                                                                   })
+                                                               }), true
+                                                       ).then(({tags, user_action}) => {
+                                                           this.props.userAction = user_action;
+                                                           this.tagsAsText[i] = this.state.tagsToCreate;
+                                                           tippy().destroyAll();
+                                                           document.getElementById(`card-image-tag-${i}`)._tippy.hide();
+                                                           this.store.updateState({tags}, 'ACTION_INFO_TO_REFRESH');
+                                                       })
+                                                   }}
+                                                >
+                                                    Valider
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id={`card-image-tag-${i}`}
+                                         onclick={e => {
+                                             e.preventDefault();
+                                             e.stopPropagation();
+                                         }}>
+                                        {tag}
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
+                    <div id={`card-edit-tag-add`}>
+                        <div class="tag-change-content">
+                            <h4>Ajouter un tag</h4>
+                            <div class="tag-change-validate">
+                                <TagSelector tags={''} id={999}/>
+                                <a href="#" class="hbtn"
+                                   onclick={() => {
+                                       const result = updateSidebarTags(this.state);
+                                       withVeilAndMessages(
+                                           window.fetchJsonData(`/users/tags/change-tag/${this.userAction.id}`,
+                                               {
+                                                   method: 'POST',
+                                                   body: JSON.stringify({
+                                                       tagsToCreate: result.tagsToCreate,
+                                                       tagsSlug: result.tagsSlug
+                                                   })
+                                               }), true
+                                       ).then(({tags, user_action}) => {
+                                           this.props.userAction = user_action;
+                                           if (!this.userAction.tagsToCreate) {
+                                               this.userAction.tagsToCreate = [];
+                                           }
+                                           this.userAction.tagsToCreate.push(this.state.tagsToCreate);
+                                           tippy().destroyAll();
+                                           $('.add-tag')[0]._tippy.hide();
+                                           this.store.updateState({tags}, 'ACTION_INFO_TO_REFRESH');
+                                       })
+                                   }}
+                                >
+                                    Valider
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="add-tag hbtn hbtn-action">+</a>
                 </div>
             </div>
         );

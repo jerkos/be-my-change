@@ -45,20 +45,22 @@ export class ActionCard extends SimpleDom.Component {
     }
 
     getFullTag() {
-        const userActionTags = this.userAction.tag.split('-');
-        let tags = this.state.tags.slice();
-        let result = [];
-        while (userActionTags.length) {
-            const currTag = userActionTags.shift();
-            const targetTag = tags.find(tag => '' + tag.id === currTag);
-            result.push(targetTag.name);
-            if (targetTag && targetTag.sons) {
-                tags = targetTag.sons;
-                continue;
+        return this.userAction.tags.map(tag => {
+            const userActionTags = tag.tag_slug.split('-');
+            let tags = this.state.tags.slice();
+            let result = [];
+            while (userActionTags.length) {
+                const currTag = userActionTags.shift();
+                const targetTag = tags.find(tag => '' + tag.id === currTag);
+                result.push(targetTag.name);
+                if (targetTag && targetTag.sons) {
+                    tags = targetTag.sons;
+                    continue;
+                }
+                break;
             }
-            break;
-        }
-        return result.join('/');
+            return result.join('/');
+        })
     }
 
     getUserActionProgress() {
@@ -76,7 +78,7 @@ export class ActionCard extends SimpleDom.Component {
             <div id={`card-edit-tag-${this.userAction.id}`} class="modal">
                 <div class="modal-content">
                     <h4>Changer de tag</h4>
-                    <TagSelector tags={this.getFullTag()}/>
+                    {this.getFullTag().map(tag => <TagSelector tags={tag}/>)}
                 </div>
                 <div class="modal-footer">
                     <div class="right">
@@ -95,7 +97,7 @@ export class ActionCard extends SimpleDom.Component {
                                            })
                                        }), true
                                ).then(({tags, user_action}) => {
-                                   this.userAction.tag = user_action.tag;
+                                   this.userAction.tags = user_action.tags;
                                    fillUptag(tags);
                                    const countByTagSlug = {};
                                    //test if the user has participated into the action
@@ -152,14 +154,16 @@ export class ActionCard extends SimpleDom.Component {
                                    data-caption={this.userAction.action.title}
                                    href={this.userAction.action.image_url}>
                                     <img class="lozad" src={this.userAction.action.image_url} />
-                                    <div class="card-image-tag"
-                                        onclick={e => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            $(`#card-edit-tag-${this.userAction.id}`).modal('open');
-                                        }}>
-                                        {this.getFullTag()}
-                                    </div>
+                                    {this.getFullTag().map(tag =>
+                                        <div class="card-image-tag"
+                                            onclick={e => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                $(`#card-edit-tag-${this.userAction.id}`).modal('open');
+                                            }}>
+                                            {tag}
+                                        </div>
+                                    )}
                                 </a>
                             );
                         }
@@ -180,7 +184,27 @@ export class ActionCard extends SimpleDom.Component {
                                         journalEntries={commentaries}
                                     />,
                                     event,
-                                    ''
+                                    () => {
+                                        withVeilAndMessages(
+                                            Promise.all([
+                                                fetchJsonData('/users/actions/get'),
+                                                fetchJsonData('/users/tags/all')
+                                            ]),
+                                            true
+                                        ).then(([{actions, counting}, tags]) => {
+                                            fillUptag(tags);
+                                            const countByTagSlug = {};
+                                            getTagsNumber(actions, countByTagSlug);
+                                            const selectedActionsId = new Set(this.state.selectedActions.map(action => action.id));
+                                            this.store.updateState({
+                                                    actions,
+                                                    selectedActions: actions.filter(action => selectedActionsId.has(action.id)),
+                                                    countByTagSlug,
+                                                    tags
+                                                }, 'SIDEBAR_TO_UPDATE', 'ACTIONS_LIST_TO_UPDATE', 'TITLE_TO_REFRESH'
+                                            );
+                                        })
+                                    }
                                 )
                             })
                         }}

@@ -217,15 +217,17 @@ $(document).ready(function () {
         const newSelectedActions = !store.state.selectedTagSlug ? store.actions
             : store.state.actions.filter(action => {
                 const splitted = store.state.selectedTagSlug.split('-');
-                const splittedTag = action.tag.split('-');
-                let i = 0;
-                while (i < splitted.length && i < splittedTag.length) {
-                    if (splitted[i] !== splittedTag[i]) {
-                        return false;
+                return action.tags.map(tag => {
+                    const splittedTag = tag.tag_slug.split('-');
+                    let i = 0;
+                    while (i < splitted.length && i < splittedTag.length) {
+                        if (splitted[i] !== splittedTag[i]) {
+                            return false;
+                        }
+                        ++i;
                     }
-                    ++i;
-                }
-                return true;
+                    return true;
+                }).some(bool => bool)
             });
 
         store.updateState({

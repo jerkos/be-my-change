@@ -1,4 +1,4 @@
-require('../../home');
+import '../../home';
 import * as SimpleDom from 'simpledom-component';
 import { withVeilAndMessages } from '../../components/veil/veil';
 
@@ -82,15 +82,6 @@ class Tag extends SimpleDom.Component {
                                         this.store.updateState({}, [`REFRESH_TAG_${this.props.id}`]);
                                     }} 
                                     class="hbtn-action lnr lnr-pencil sub-tag-edit">
-                                </span>
-                                <span 
-                                    onclick={event => {
-                                        event.stopPropagation();
-                                        this.tag.sons.push(null);
-                                        this.isActive = true;
-                                        this.store.updateState({}, [`REFRESH_TAG_${this.props.id}`]);                                
-                                    }}  
-                                    class="hbtn-action sub-tag-edit">&#43;
                                 </span>
                                 {SimpleDom.predicate(!this.state.countByTagSlug[this.tag.tag_slug],
                                     () => < span

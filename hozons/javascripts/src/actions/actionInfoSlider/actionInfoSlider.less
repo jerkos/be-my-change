@@ -136,7 +136,7 @@
   }
 }
 
-.card-image-tag {
+div[id^='card-image-tag'] {
   display: inline-block;
   top: 10px;
   left: 10px;
@@ -148,6 +148,7 @@
   padding: 0 5px;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: pointer;
 
   & + a {
     display: inline-block;
@@ -249,4 +250,64 @@
   overflow:hidden !important;
   left:0px;
   top:275px;
+}
+
+.tag-container {
+  position: relative;
+  min-height: 50px;
+  display: flex;
+  //justify-content: space-between;
+
+  h4 {
+    text-align: left;
+  }
+}
+
+.tippy-tooltip.light-theme {
+  /* Your styling here. Example: */
+  background-color: white;
+  border: none;
+  box-shadow: -5px 2px 50px rgba(0, 0, 0, 0.18);
+}
+
+.tippy-popper[x-placement^=top] .tippy-tooltip.light-theme .tippy-arrow {
+  border-top: 7px solid white;
+}
+
+.tippy-content {
+  color: black;
+  background-color: white;
+  div[id^="card-edit-tag-slider"], div[id^="card-edit-tag-add"]{
+    background-color: white;
+    min-width: 400px;
+    min-height: 100px;
+    h4 {
+      font-size: 1.2em;
+    }
+  }
+}
+
+.tag-change-validate {
+  display: flex;
+  h4 {
+    text-align: left;
+  }
+  input {
+    margin-bottom: 0 !important;
+    margin-right: 10px !important;
+  }
+
+  .hbtn {
+    margin: 0 !important;
+  }
+}
+
+.tag-change-content {
+  h4 {
+    text-align: left;
+  }
+}
+
+.one-tag + .one-tag {
+  margin-left: 10px;
 }

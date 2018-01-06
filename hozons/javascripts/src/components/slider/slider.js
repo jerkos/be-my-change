@@ -2,7 +2,7 @@ import '../../home';
 import * as SimpleDom from 'simpledom-component';
 import './slider.less';
 
-export function createSlider(title, node, e, iconsClass=null) {
+export function createSlider(title, node, e, onClose = () => {}) {
     if (!document.getElementById('slide-out-actions')) {
         let slideContainer = document.createElement('div');
         slideContainer.id = "slide-out-actions";
@@ -20,10 +20,11 @@ export function createSlider(title, node, e, iconsClass=null) {
             SimpleDom.renderToDom(
                 'slide-out-actions',
                 <SlideActionInfo
-                    //title={title}
-                    close={() => $(e.target).sideNav('destroy')}
+                    close={() => {
+                        onClose();
+                        $(e.target).sideNav('destroy')
+                    }}
                     node={node}
-                    //titleIconClass={iconsClass}
                 />,
                 slideStore
             );

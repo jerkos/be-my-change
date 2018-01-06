@@ -10,12 +10,11 @@ from sqlalchemy import desc, func, or_, and_
 
 from hozons.extensions import csrf_protect
 from hozons.extensions import db
-from .models import Action
+from .models import Action, UserActionTagMapping
 from .models import Commentary
 from .models import Tags
 from .models import User
 from .models import UserAction
-from .models import Ressource
 
 user = Blueprint('user', __name__, url_prefix='/users', static_folder='../static')
 
@@ -263,8 +262,8 @@ def create_action():
     data = request.get_json(force=True)
 
     if request.method == 'PUT':
-        action_id_to_update =  data.get('actionId')
-        description=data.get('actionDescription')
+        action_id_to_update = data.get('actionId')
+        description = data.get('actionDescription')
         action_to_update = Action.query.filter(Action.id == action_id_to_update).first_or_404()
         action_to_update.update(description=description)
         return json.dumps(action_to_update.to_dict()), 200
@@ -282,7 +281,6 @@ def create_action():
     final_slug = Tags.build_tags_slug(data.get('tagsSlug'), new_tags)
 
     # setup dates
-    print("START DATE:" + start_date)
     start_dt = dt.datetime.strptime(start_date, '%Y-%m-%d')
     end_dt = dt.datetime.strptime(start_date, '%Y-%m-%d') + dt.timedelta(days=duration)
 
@@ -292,8 +290,6 @@ def create_action():
         description=data.get('actionDescription'),
         image_url=data.get('actionImageUrl'),
         initial_nb_days=duration,
-        kind=data.get('actionType', 'PERS'),
-        is_personal_action=(not data.get('isPublic')),
         public=data.get('isPublic'),
         created_at=dt.datetime.utcnow(),
         start_date=start_dt,
@@ -307,11 +303,15 @@ def create_action():
         action_id=new_action.id,
         start_date=start_dt,
         end_date=end_dt,
-        tag=final_slug
+        # tag=final_slug
     )
 
+    db.engine.execute('insert into user_action_tag_mapping(user_action_id, tag_slug) values(:uaid, :tag)',
+                      **{'uaid': new_user_action.id, 'tag': final_slug})
+
+
     return json.dumps({
-        'tags': [tag.to_dict() for tag in Tags.get_tree()],
+        'tags': [tag.to_dict() for tag in Tags.get_tree(current_user.id)],
         'user_action': new_user_action.to_dict()
     }), 200
 
@@ -418,13 +418,37 @@ def delete_tag(tag_id):
     delete_t(tag)
     return '{}', 200
 
+#
+# @user.route('/tags/change-tag/<int:user_action_id>', methods=['POST'])
+# @login_required
+# @csrf_protect.exempt
+# def change_tag_of_user_action(user_action_id):
+#     data = request.get_json(force=True)
+#
+#     # first save new tags eventually
+#     tags_to_create = data.get('tagsToCreate')
+#
+#     # all tags with fresh new ids
+#     new_tags = Tags.create_all(tags_to_create, current_user.id)
+#
+#     # setup tag slug for action
+#     final_slug = Tags.build_tags_slug(data.get('tagsSlug'), new_tags)
+#
+#     user_action = UserAction.query.filter(UserAction.id == user_action_id).first_or_404()
+#     user_action.update(tag=final_slug)
+#
+#     return json.dumps({
+#         'tags': [tag.to_dict() for tag in Tags.get_tree(current_user.id)],
+#         'user_action': user_action.to_dict()
+#     }), 200
+
 
 @user.route('/tags/change-tag/<int:user_action_id>', methods=['POST'])
 @login_required
 @csrf_protect.exempt
 def change_tag_of_user_action(user_action_id):
     data = request.get_json(force=True)
-
+    tag_mapping_id = request.args.get('tag_mapping_id')
     # first save new tags eventually
     tags_to_create = data.get('tagsToCreate')
 
@@ -434,42 +458,18 @@ def change_tag_of_user_action(user_action_id):
     # setup tag slug for action
     final_slug = Tags.build_tags_slug(data.get('tagsSlug'), new_tags)
 
+    if tag_mapping_id is not None:
+        tag_mapping = UserActionTagMapping.query.filter(UserActionTagMapping.id == tag_mapping_id).first_or_404()
+        tag_mapping.update(tag_slug=final_slug)
+    else:
+        db.engine.execute(
+            'insert into user_action_tag_mapping(user_action_id, tag_slug) values(:uaid, :tag)',
+            **{'uaid': user_action_id, 'tag': final_slug}
+        )
+
     user_action = UserAction.query.filter(UserAction.id == user_action_id).first_or_404()
-    user_action.update(tag=final_slug)
 
     return json.dumps({
         'tags': [tag.to_dict() for tag in Tags.get_tree(current_user.id)],
         'user_action': user_action.to_dict()
     }), 200
-
-
-## ressource endpoints
-@user.route('/ressources/<int: action_id>', methods=['GET', 'POST'])
-@login_required
-@csrf_protect.exempt
-def get_ressources_for_action(action_id):
-    if request.method == 'GET':
-        ressources = Ressource.query.filter(Ressource.action_id == action_id).all()
-        return Ressource.arr_to_json(ressources), 200
-    if request.method == 'POST':
-        data = request.get_json(force=True)
-        Ressource.create(
-            user_id=current_user.id,
-            action_id=action_id,
-            url=data.get('url'),
-            content=data.get('content')
-        )
-        return json.dumps({}), 200
-
-
-@user.route('/ressources/ressource-exists', methods=['GET'])
-@login_required
-@csrf_protect.exempt
-def is_ressource_already_exists():
-    url = request.args.get('url')
-    if url is None:
-        return json.dumps({}), 404
-    return Ressource.to_json(
-        Ressource.query.filter(Ressource.url == url).first_or_404()
-    ), 200
-

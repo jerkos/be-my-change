@@ -19,18 +19,19 @@ export function getTagsNumber(actions, result) {
     }
 
     for (let action of actions) {
-        console.log(action);
-        const targetTag = action.tag;
-        if (!targetTag) {
-            return;
-        }
-        plusOne(targetTag);
+        for (let tag of action.tags) {
+            const targetTag = tag.tag_slug;
+            if (!targetTag) {
+                return;
+            }
+            plusOne(targetTag);
 
-        let val = targetTag.split('-');
-        val.pop();
-        while (val.length !== 0) {
-            plusOne(val.join('-'));
+            let val = targetTag.split('-');
             val.pop();
+            while (val.length !== 0) {
+                plusOne(val.join('-'));
+                val.pop();
+            }
         }
     }
 }
@@ -70,18 +71,20 @@ export function updateSidebarTags(state) {
 }
 
 export function getFullTag(userAction, tagsInput) {
-    const userActionTags = userAction.tag.split('-');
-    let tags = tagsInput.slice();
-    let result = [];
-    while (userActionTags.length) {
-        const currTag = userActionTags.shift();
-        const targetTag = tags.find(tag => '' + tag.id === currTag);
-        result.push(targetTag.name);
-        if (targetTag && targetTag.sons) {
-            tags = targetTag.sons;
-            continue;
+    return userAction.tags.map(tag => {
+        const userActionTags = tag.tag_slug.split('-');
+        let tags = tagsInput.slice();
+        let result = [];
+        while (userActionTags.length) {
+            const currTag = userActionTags.shift();
+            const targetTag = tags.find(tag => '' + tag.id === currTag);
+            result.push(targetTag.name);
+            if (targetTag && targetTag.sons) {
+                tags = targetTag.sons;
+                continue;
+            }
+            break;
         }
-        break;
-    }
-    return result.join('/');
+        return result.join('/');
+    })
 }

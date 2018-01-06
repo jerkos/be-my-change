@@ -2,7 +2,7 @@
 """The app module, containing the app factory function."""
 from flask import Flask, render_template
 
-from hozons import commands, public, user
+from hozons import commands, public, user, resources
 from hozons.extensions import bcrypt, cache, db, debug_toolbar, login_manager, migrate, csrf_protect, gravatar
 from hozons.settings import ProdConfig, DevConfig
 
@@ -39,6 +39,7 @@ def register_blueprints(app):
     """Register Flask blueprints."""
     app.register_blueprint(public.views.blueprint)
     app.register_blueprint(user.views.user)
+    app.register_blueprint(resources.views.resource)
     return None
 
 

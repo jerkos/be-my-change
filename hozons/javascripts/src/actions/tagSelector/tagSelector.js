@@ -8,20 +8,19 @@ export class TagSelector extends SimpleDom.Component {
         return ['TAG_SELECTOR_UPDATE'];
     }
 
+    componentDidMount() {
+        this.input.focus();
+    }
+
     render() {
         return (
-            <div class="row">
-                <div class="tag-selector">
-                    <div class="tag-selector-input">
-                        <input type="text"
-                               value={this.props.tags || this.state.tagsToCreate || ''}
-                               onchange={e => {
-                                   this.store.updateState({tagsToCreate: e.target.value})
-                               }}
-                        />
-                    </div>
-                </div>
-            </div>
+            <input type="text"
+                   value={this.props.tags || this.state.tagsToCreate || ''}
+                   ref={ref => this.input = ref}
+                   onchange={e => {
+                       this.store.updateState({tagsToCreate: e.target.value})
+                   }}
+            />
         );
     }
 }
