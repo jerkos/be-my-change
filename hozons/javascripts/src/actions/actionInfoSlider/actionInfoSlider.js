@@ -258,6 +258,14 @@ export class ActionInfo extends SimpleDom.Component {
     render() {
         return (
             <div class="action-info" style="padding-bottom: 50px;">
+                <div class="row" style="margin: 0;">
+                    <span class="lnr lnr-cross fa-3x slider-cross"
+                          onclick={() => {
+                              this.props.sliderClose();
+                              this.props.onClose({tags: this.state.tags, user_action: this.props.userAction});
+                          }}
+                    />
+                </div>
                 <h4 class="action-info-title">
                     <img class="action-info-image" src={this.userAction.action.image_url} />
                     <span>{this.action.title}</span>

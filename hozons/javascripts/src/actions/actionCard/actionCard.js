@@ -182,29 +182,24 @@ export class ActionCard extends SimpleDom.Component {
                                         userAction={this.userAction}
                                         tags={this.state.tags}
                                         journalEntries={commentaries}
-                                    />,
-                                    event,
-                                    () => {
-                                        withVeilAndMessages(
-                                            Promise.all([
-                                                fetchJsonData('/users/actions/get'),
-                                                fetchJsonData('/users/tags/all')
-                                            ]),
-                                            true
-                                        ).then(([{actions, counting}, tags]) => {
+                                        onClose={({tags, user_action}) => {
+                                            this.userAction.tags = user_action.tags;
                                             fillUptag(tags);
                                             const countByTagSlug = {};
-                                            getTagsNumber(actions, countByTagSlug);
-                                            const selectedActionsId = new Set(this.state.selectedActions.map(action => action.id));
+                                            //test if the user has participated into the action
+                                            // add maybe user action ?
+                                            getTagsNumber(this.state.actions, countByTagSlug);
+                                            //let action = this.state.actions.find(action => action.id === this.userAction.id);
+                                            //action = this.userAction;
+                                            console.log(this.state.actions);
                                             this.store.updateState({
-                                                    actions,
-                                                    selectedActions: actions.filter(action => selectedActionsId.has(action.id)),
-                                                    countByTagSlug,
-                                                    tags
-                                                }, 'SIDEBAR_TO_UPDATE', 'ACTIONS_LIST_TO_UPDATE', 'TITLE_TO_REFRESH'
-                                            );
-                                        })
-                                    }
+                                                    tags,
+                                                    countByTagSlug
+                                                },
+                                                'SIDEBAR_TO_UPDATE', 'ACTIONS_LIST_TO_UPDATE', 'TITLE_TO_REFRESH');
+                                        }}
+                                    />,
+                                    event
                                 )
                             })
                         }}
@@ -236,8 +231,7 @@ export class ActionCard extends SimpleDom.Component {
                                                action={this.userAction.action}
                                                commentaries={commentaries || []}
                                            />,
-                                           event,
-                                           'lnr lnr-bubble'
+                                           event
                                        ))
                                }}
                             >

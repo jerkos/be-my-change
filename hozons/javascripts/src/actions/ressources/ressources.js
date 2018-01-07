@@ -48,6 +48,11 @@ export class RessourcesTab extends SimpleDom.Component {
     render() {
         return (
             <div class="action-info">
+                <span class="lnr lnr-cross fa-3x slider-cross"
+                      onclick={() => {
+                          this.props.sliderClose();
+                      }}
+                />
                 <h4 class="action-info-title">
                     <img class="action-info-image" src={this.props.action.image_url} />
                     <span>{this.props.action.title}</span>

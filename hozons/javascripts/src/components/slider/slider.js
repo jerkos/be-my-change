@@ -2,7 +2,7 @@ import '../../home';
 import * as SimpleDom from 'simpledom-component';
 import './slider.less';
 
-export function createSlider(title, node, e, onClose = () => {}) {
+export function createSlider(title, node, e) {
     if (!document.getElementById('slide-out-actions')) {
         let slideContainer = document.createElement('div');
         slideContainer.id = "slide-out-actions";
@@ -21,7 +21,6 @@ export function createSlider(title, node, e, onClose = () => {}) {
                 'slide-out-actions',
                 <SlideActionInfo
                     close={() => {
-                        onClose();
                         $(e.target).sideNav('destroy')
                     }}
                     node={node}
@@ -38,13 +37,13 @@ class SlideActionInfo extends SimpleDom.Component {
 		return ['SLIDE_TO_UPDATE'];
 	}
 
+	constructor(props, store) {
+	    super(props, store);
+	    this.props.node.props['sliderClose'] = this.props.close;
+    }
+
 	render() {
 		return <div class="slider">
-			<div class="row" style="margin: 0;">
-				<span class="lnr lnr-cross fa-3x slider-cross"
-                    onclick={this.props.close}
-                />
-			</div>
 			<div class="row" style="margin: 0;">
 				<div class="col s12">
 					{this.props.node}
