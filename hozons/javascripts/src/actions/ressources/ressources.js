@@ -8,13 +8,26 @@ class Ressource extends SimpleDom.Component {
 
     render() {
         return (
-            <a href={`${this.props.ressource.urlRequested}`} target='_blank' class="ressource-item collection-item">
-                <div class="image-container">
-                    <img src={this.props.ressource.mainImage}/>
+            <a href={`${this.props.ressource.urlRequested}`} target='_blank' class="collection-item">
+                <div class="ressource-item">
+
+
+                    <div class="image-container">
+                        <img src={this.props.ressource.mainImage}/>
+                    </div>
+                    <div class="ressource-info">
+                        <h3>{this.props.ressource.title}</h3>
+                        <p>{this.props.ressource.text}</p>
+                    </div>
                 </div>
-                <div class="ressource-info">
-                    <h3>{this.props.ressource.title}</h3>
-                    <p>{this.props.ressource.text}</p>
+                <div class="ressource-footer">
+                    <div class="creator">
+                        {currentUser.username}
+                    </div>
+                    <div>
+                        <span class="lnr lnr-thumbs-up"></span>
+                        0
+                    </div>
                 </div>
             </a>
         )
@@ -29,6 +42,17 @@ class RessourcesList extends SimpleDom.Component {
     }
 
     render() {
+        if ((this.state.ressources || []).length === 0) {
+            return (
+                <section class="empty">
+                    <div class="empty-icon">
+                        <span class="lnr lnr-book fa-3x"/>
+                    </div>
+                    <h4 class="empty-title">Aucune ressource pour l'instant</h4>
+                    <p class="empty-subtitle">Soyez le premier à déposer une ressource !</p>
+                </section>
+            );
+        }
         return (
           <ul class="ressources-list collection">
               {(this.state.ressources || []).map(ressource => <Ressource ressource={ressource}/>)}
@@ -59,16 +83,7 @@ export class RessourcesTab extends SimpleDom.Component {
                 </h4>
                 <div class="action-info-author">Créé par <span>{this.props.action.creator.username}</span></div>
                 <div class="row" style="padding: 5% 15%;">
-                    {SimpleDom.predicate((this.state.ressources || []).length > 0,
-                        <RessourcesList/>,
-                        <section class="empty">
-                            <div class="empty-icon">
-                                <span class="lnr lnr-book fa-3x"/>
-                            </div>
-                            <h4 class="empty-title">Aucune ressource pour l'instant</h4>
-                            <p class="empty-subtitle">Soyez le premier à déposer une ressource !</p>
-                        </section>
-                    )}
+                    <RessourcesList/>
                 </div>
                 <div class="row" style="padding: 0 15%;">
                     <input type="text" onChange={event => {
@@ -79,6 +94,7 @@ export class RessourcesTab extends SimpleDom.Component {
                             fetchJsonData(`/gather-informations?url=${this.currentUrl}`),
                             true
                         ).then(result => {
+                            console.log(result);
                             this.store.updateState(
                                 {ressources: (this.state.ressources || []).concat(result)},
                                 'RESSOURCES_LIST_TO_UPDATE'

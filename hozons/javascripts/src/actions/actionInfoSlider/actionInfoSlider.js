@@ -268,7 +268,7 @@ export class ActionInfo extends SimpleDom.Component {
                 </div>
                 <h4 class="action-info-title">
                     <img class="action-info-image" src={this.userAction.action.image_url} />
-                    <span>{this.action.title}</span>
+                    <span>{this.action.title} <span class="lnr lnr-thumbs-up"></span>{this.action.nblike}</span>
                 </h4>
                 <div class="action-info-author">Créé par <span>Mathieu</span></div>
                 <div class="row">
