@@ -4,9 +4,9 @@
 import pytest
 from webtest import TestApp
 
-from hozons.app import create_app
-from hozons.database import db as _db
-from hozons.settings import TestConfig
+from bemychange.app import create_app
+from bemychange.database import db as _db
+from bemychange.settings import TestConfig
 
 from .factories import UserFactory
 

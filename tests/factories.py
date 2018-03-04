@@ -3,8 +3,8 @@
 from factory import PostGenerationMethodCall, Sequence
 from factory.alchemy import SQLAlchemyModelFactory
 
-from hozons.database import db
-from hozons.user.models import User
+from bemychange.database import db
+from bemychange.model.user.models import User
 
 
 class BaseFactory(SQLAlchemyModelFactory):

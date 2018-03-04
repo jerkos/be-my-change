@@ -44,16 +44,16 @@ docs/_build
 
 # Virtualenvs
 env/
-hozons/javascripts/node_modules
-hozons/javascripts/yarn.lock
-hozons/javascripts/yarn-error.log
-hozons/static/bundles
+bemychange/javascripts/node_modules
+bemychange/javascripts/yarn.lock
+bemychange/javascripts/yarn-error.log
+bemychange/static/bundles
 .vscode/
 .idea/
 Pipfile
 Pipfile.lock
 
-hozons/.DS_Store
+bemychange/.DS_Store
 *DS_Store
 
 dev.db

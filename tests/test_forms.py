@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test forms."""
-
-from hozons.public.forms import LoginForm
-from hozons.user.forms import RegisterForm
+from bemychange.model.user.forms import RegisterForm
+from bemychange.public.forms import LoginForm
 
 
 class TestRegisterForm:

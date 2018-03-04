@@ -4,7 +4,7 @@ import datetime as dt
 
 import pytest
 
-from hozons.user.models import Role, User
+from bemychange.model.user.models import Role, User
 
 from .factories import UserFactory
 

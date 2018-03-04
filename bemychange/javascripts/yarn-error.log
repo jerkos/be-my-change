@@ -1,0 +1,82 @@
+Arguments: 
+  /usr/local/Cellar/node/8.9.0/bin/node /usr/local/Cellar/yarn/1.3.2/libexec/bin/yarn.js install
+
+PATH: 
+  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/marcdubois/Documents/Tools/play-1.4.2
+
+Yarn version: 
+  1.3.2
+
+Node version: 
+  8.9.0
+
+Platform: 
+  darwin x64
+
+npm manifest: 
+  {
+    "name": "javascripts",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "build": "webpack -p",
+      "start": "webpack --hot --watch --colors --progress -d",
+      "test": "mocha --compilers js:babel-core/register"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+      "babel-core": "^6.24.0",
+      "babel-loader": "^6.4.1",
+      "babel-plugin-add-module-exports": "^0.2.1",
+      "babel-plugin-transform-react-jsx": "^6.23.0",
+      "babel-polyfill": "^6.23.0",
+      "babel-preset-es2015": "^6.24.0",
+      "babel-preset-react": "^6.23.0",
+      "babel-preset-stage-0": "^6.22.0",
+      "chai": "^3.5.0",
+      "css-loader": "^0.28.4",
+      "eslint": "^3.19.0",
+      "eslint-loader": "^1.7.1",
+      "eslint-plugin-react": "^6.10.3",
+      "extract-text-webpack-plugin": "^2.1.0",
+      "file-loader": "^0.11.2",
+      "json-loader": "^0.5.4",
+      "less": "^2.7.2",
+      "less-loader": "^4.0.3",
+      "materialize-css": "^0.98.2",
+      "materialize-loader": "^2.0.0",
+      "mocha": "^3.2.0",
+      "node-sass": "^4.5.3",
+      "sass-loader": "^6.0.6",
+      "style-loader": "^0.16.1",
+      "url-loader": "^0.5.9",
+      "webpack": "2.3.3"
+    },
+    "dependencies": {
+      "flatpickr": "^3.0.7",
+      "gravatar": "^1.6.0",
+      "highcharts": "^5.0.11",
+      "json2csv": "3.7.3",
+      "materialize-css": "^0.99.0",
+      "moment": "^2.18.1",
+      "quill": "^1.3.2",
+      "rlite-router": "^2.0.1",
+      "simpledom-component": "^0.5.6",
+      "simplemde": "^1.11.2",
+      "whatwg-fetch": "^2.0.3",
+      "animejs":"^2.2.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: getaddrinfo ENOTFOUND pasjenkins05.emea.cegedim.grp pasjenkins05.emea.cegedim.grp:8181
+      at errnoException (dns.js:50:10)
+      at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:92:26)

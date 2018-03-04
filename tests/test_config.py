@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test configs."""
-from hozons.app import create_app
-from hozons.settings import DevConfig, ProdConfig
+from bemychange.app import create_app
+from bemychange.settings import DevConfig, ProdConfig
 
 
 def test_production_config():

@@ -2,8 +2,8 @@
 """Create an application instance."""
 from flask.helpers import get_debug_flag
 
-from hozons.app import create_app
-from hozons.settings import DevConfig, ProdConfig
+from bemychange.app import create_app
+from bemychange.settings import DevConfig, ProdConfig
 
 CONFIG = DevConfig if get_debug_flag() else ProdConfig
 
