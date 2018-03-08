@@ -1,4 +1,4 @@
-from _operator import or_
+from sqlalchemy import or_
 
 from bemychange.database import JsonSerializerMixin, SurrogatePK, Model, Column, reference_col, relationship
 from bemychange.extensions import db

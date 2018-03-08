@@ -8,7 +8,7 @@ import { French } from "flatpickr/dist/l10n/fr.js"
 flatpickr.localize(French);
 
 import * as SimpleDom from 'simpledom-component';
-import { withVeilAndMessages } from '../../components/veil/veil';
+import {withVeilAndMessages} from '../../components/veil/veil';
 import {SidebarAction} from '../sidebarActions/sidebarActions';
 import {CreateAction} from '../createAction/step1';
 import {ActionCard} from "../actionCard/actionCard";
@@ -18,6 +18,8 @@ import '../../css/popovers.less';
 import '../../css/avatar.less';
 import './currentActions.less';
 import {CreateEvent} from "../createEvent/createEvent";
+import {getUserActions} from "../../services/action";
+import {allTags} from "../../services/tag";
 
 
 class ActionsList extends SimpleDom.Component {

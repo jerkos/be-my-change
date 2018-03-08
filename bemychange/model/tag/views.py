@@ -4,7 +4,8 @@ from flask import Blueprint, request
 from flask_login import login_required, current_user
 
 from bemychange.extensions import csrf_protect, db
-from bemychange.model.action.models import Tags, UserActionTagMapping, UserAction
+from bemychange.model.action.models import UserAction
+from bemychange.model.tag.models import Tags, UserActionTagMapping
 
 tag = Blueprint('tags', __name__, url_prefix='/tags', static_folder='../../static')
 
@@ -20,7 +21,7 @@ def get_all_tags():
     ), 200
 
 
-@tag.route('/<int:tag_id', methods=['PUT', 'POST'])
+@tag.route('/<int:tag_id>', methods=['PUT', 'POST'])
 @login_required
 @csrf_protect.exempt
 def update_tag(tag_id):

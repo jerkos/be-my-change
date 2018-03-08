@@ -14,25 +14,14 @@ class Action(JsonSerializerMixin, SurrogatePK, Model):
     title = Column(db.String(200), nullable=False)
     description = Column(db.Text, nullable=False)
     image_url = Column(db.Text, nullable=True)
-
     initial_nb_days = Column(db.Integer, default=1)
-
     public = Column(db.Boolean, default=True)
     is_event = Column(db.Boolean, default=False)
-
     created_at = Column(db.DateTime, default=dt.datetime.utcnow)
-    start_date = Column(db.DateTime)
-    end_date = Column(db.DateTime)
-
     default_tag = Column(db.Text, nullable=True)
-
     creator_user_id = reference_col('users', nullable=False)
     creator = relationship('models.User')
-
-    nblike = Column(db.BigInteger, default=0)
-
-    def __repr__(self):
-        return '<Action {title}>'.format(title=self.title)
+    nb_like = Column(db.BigInteger, default=0)
 
 
 class ActionLike(Model):
@@ -45,20 +34,15 @@ class ActionLike(Model):
 class UserAction(JsonSerializerMixin, SurrogatePK, Model):
     __tablename__ = 'user_actions'
     RELATIONSHIPS_TO_DICT = True
-
     user_id = reference_col('users', nullable=False)
     user = relationship('models.User')
-
     action_id = reference_col('actions', nullable=False)
     action = relationship('models.Action')
-
     created_at = Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)
     start_date = Column(db.DateTime, nullable=False)
     end_date = Column(db.DateTime, nullable=False)
-
     last_succeed = Column(db.DateTime, nullable=True)
     nb_succeed = Column(db.Integer, nullable=False, default=0)
-
     tags = db.relationship('UserActionTagMapping', uselist=True)
 
     def __init__(self, user_id, action_id, start_date, end_date, tag=None):

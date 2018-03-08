@@ -2,9 +2,9 @@ import 'whatwg-fetch'
 window.jQuery = require("jquery");
 window.$ = require("jquery");
 
-window.fetchJsonData = (url, data={}) => 
-fetch(url, {...data, credentials: 'include'})
-.then(response => response.json());
+const oldFetch = window.fetch;
+
+window.fetch = (url, data={}) => oldFetch(url, {...data, credentials: 'include'});
 
 import './css/common.less';
 import '../node_modules/materialize-css/dist/css/materialize.min.css';

@@ -23,10 +23,10 @@
   {% endif %}
   <!-- Dropdown Structure -->
   <ul id='dropdown1' class='dropdown-content'>
-    <li class="dropdown-item"><a href="{{url_for('user.profile')}}">Profil</a></li>
-    <li class="dropdown-item"><a href="{{url_for('user.profile')}}">Connexions</a></li>
-    <li class="dropdown-item"><a href="{{url_for('user.profile')}}">Messages</a></li>
-    <li class="dropdown-item"><a href="{{url_for('user.profile')}}">Groupes</a></li>    
+    <li class="dropdown-item"><a href="{{url_for('public.profile')}}">Profil</a></li>
+    <li class="dropdown-item"><a href="{{url_for('public.profile')}}">Connexions</a></li>
+    <li class="dropdown-item"><a href="{{url_for('public.profile')}}">Messages</a></li>
+    <li class="dropdown-item"><a href="{{url_for('public.profile')}}">Groupes</a></li>
     <li class="divider"></li>
     <li class="dropdown-item"><a href="{{url_for('public.logout')}}">Se déconnecter</a></li>
   </ul>
@@ -47,9 +47,9 @@
           </div>
           {%if current_user and current_user.is_authenticated %}
           
-            <a href="{{url_for('user.inspire')}}"><span class="lnr lnr-earth"></span>Fil d'actualités</a>
-            <a href="{{url_for('user.current_actions_view')}}"><span class="lnr lnr-rocket"></span>J'agis</a>
-            <a class="point-counter">{{current_user.points_pers + current_user.points_env + current_user.points_rel}} pts</a>
+            <a href="{{url_for('public.inspire')}}"><span class="lnr lnr-earth"></span>Fil d'actualités</a>
+            <a href="{{url_for('public.current_actions_view')}}"><span class="lnr lnr-rocket"></span>J'agis</a>
+            <a class="point-counter">{{current_user.points or 0}} pts</a>
             <div>
                 <a class='dropdown-button' href='#' data-activates='dropdown1'>
                     <div class="nav-header-img">

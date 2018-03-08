@@ -4,7 +4,7 @@ from flask_login import login_required, login_user, logout_user, current_user
 from flask.helpers import get_debug_flag
 
 from bemychange.extensions import login_manager
-from bemychange.model.action.models import Tags
+from bemychange.model.tag.models import Tags
 from bemychange.model.user.forms import RegisterForm
 from bemychange.public.forms import LoginForm
 from bemychange.model.user.models import User
@@ -12,7 +12,11 @@ from bemychange.utils import flash_errors
 from bemychange.settings import DevConfig, ProdConfig
 from goose3 import Goose
 
-main_views = Blueprint('public', __name__, static_folder='../static')
+main_views = Blueprint(
+    'public',
+    __name__,
+    static_folder='../static',
+    template_folder='../templates/public')
 
 
 def get_current_config():    
@@ -33,7 +37,7 @@ def home():
         if form.validate_on_submit():
             login_user(form.user)
             flash('You are logged in.', 'success')
-            redirect_url = request.args.get('next') or url_for('user.inspire')
+            redirect_url = request.args.get('next') or url_for('public.inspire')
             return redirect(redirect_url)
         else:
             flash_errors(form)
@@ -99,7 +103,7 @@ def actions_view():
 @main_views.route('/actions/current')
 @login_required
 def current_actions_view():
-    return render_template('users/current_actions.html')
+    return render_template('current_actions.html')
 
 
 @main_views.route('/actions/look-for-actions')
@@ -118,7 +122,7 @@ def create_action_view():
 @login_required
 def inspire():
     """List inspirations"""
-    return render_template('users/inspire.html')
+    return render_template('inspire.html')
 
 
 @main_views.route('/profile', methods=['GET'])
@@ -127,5 +131,5 @@ def profile():
     """profile page"""
     name = request.args.get("name")
     user = current_user if name is None else User.query.filter(User.username == name).first_or_404()
-    return render_template('users/profile.html', user=user)
+    return render_template('profile.html', user=user)
 

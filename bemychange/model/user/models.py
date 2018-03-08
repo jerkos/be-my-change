@@ -3,6 +3,7 @@
 import datetime as dt
 
 from flask_login import UserMixin
+from sqlalchemy import text
 
 from bemychange.database import Column, Model, SurrogatePK, db, reference_col, relationship, JsonSerializerMixin
 from bemychange.extensions import bcrypt
@@ -72,18 +73,18 @@ class User(JsonSerializerMixin, UserMixin, SurrogatePK, Model):
         return '<User({username!r})>'.format(username=self.username)
     
     def user_actions(self, requested_date):
-        rows = db.engine.execute('select json_agg(_) as result from (SELECT *,  '
-                                 '(select row_to_json('
-                                 '   select * from actions '
-                                 '   where actions.id = user_actions.action_id'
-                                 ')_) as action'
-                                 'from user_actions '
-                                 'where :requested_data BETWEEN '
-                                 '  user_actions.start_date AND user_actions.end_date'
-                                 '  AND user_actions.user_id = :user_id'
-                                 ')_', **{'requested_date': requested_date, 'user_id': self.get_id()}
-                                 )
+        rows = db.engine.execute(text(
+            'SELECT json_agg(_) AS result FROM ('
+            '   SELECT *,'
+            '   (SELECT row_to_json(_) FROM ('
+            '       SELECT * FROM actions'
+            '        WHERE actions.id = user_actions.action_id'
+            '   )_) AS action'
+            ' FROM user_actions'
+            ' WHERE :requested_date BETWEEN'
+            ' user_actions.start_date AND user_actions.end_date'
+            ' AND user_actions.user_id = :user_id'
+            ' )_'),
+            **{'requested_date': requested_date, 'user_id': self.get_id()})
 
-        print(rows)
-        return rows
-
+        return rows.first()['result'] or []
