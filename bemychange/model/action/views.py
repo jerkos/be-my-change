@@ -3,11 +3,10 @@ import json
 
 from flask import Blueprint, request, abort, current_app, logging, redirect, url_for
 from flask_login import login_required, current_user
-from sqlalchemy import func, desc, or_
+from sqlalchemy import func, desc, or_, text
 
 from bemychange.extensions import db, csrf_protect
 from bemychange.model.action.models import UserAction, Action
-from bemychange.model.commentary.models import Commentary
 from bemychange.model.tag.models import Tags
 from bemychange.model.user.models import User
 
@@ -25,18 +24,20 @@ def get_user_actions():
         requested_date = dt.datetime.strptime(requested_date, '%Y-%m-%d')
 
     user_actions = current_user.user_actions(requested_date)
-    actions_ids = [ua.action_id for ua in user_actions]
-    counting = {'commentaries': {}, 'participants': {}, 'resources': []}
-    if actions_ids:
-        commentaries = {k: v for (k, v) in Commentary.count_for_actions(actions_ids)}
-        counting['commentaries'] = commentaries
-        participants = {k: v for (k, v) in UserAction.get_count_for_action_ids(actions_ids)}
-        counting['participants'] = participants
-
-    return json.dumps({
-        'actions': [ua.to_dict() for ua in user_actions],
-        'counting': counting
-    }), 200
+    print(user_actions)
+    return user_actions, 200
+    # actions_ids = [ua.action_id for ua in user_actions]
+    # counting = {'commentaries': {}, 'participants': {}, 'resources': []}
+    # if actions_ids:
+    #     commentaries = {k: v for (k, v) in Commentary.count_for_actions(actions_ids)}
+    #     counting['commentaries'] = commentaries
+    #     participants = {k: v for (k, v) in UserAction.get_count_for_action_ids(actions_ids)}
+    #     counting['participants'] = participants
+    #
+    # return json.dumps({
+    #     'actions': [ua.to_dict() for ua in user_actions],
+    #     'counting': counting
+    # }), 200
 
 
 @action.route('/', methods=['POST', 'PUT'])
@@ -77,8 +78,8 @@ def create_action():
         initial_nb_days=duration,
         public=data.get('isPublic'),
         created_at=dt.datetime.utcnow(),
-        start_date=start_dt,
-        end_date=end_dt,
+        # start_date=start_dt,
+        # end_date=end_dt,
         creator_user_id=current_user.id,
         default_tag=final_slug or None
     )
@@ -91,8 +92,12 @@ def create_action():
         # tag=final_slug
     )
 
-    db.engine.execute('insert into user_action_tag_mapping(user_action_id, tag_slug) values(:uaid, :tag)',
-                      **{'uaid': new_user_action.id, 'tag': final_slug})
+    db.engine.execute(
+        text('insert '
+             'into user_action_tag_mapping(user_action_id, tag_slug) '
+             'values(:uaid, :tag)'),
+        **{'uaid': new_user_action.id, 'tag': final_slug}
+    )
 
     return json.dumps({
         'tags': [tag.to_dict() for tag in Tags.get_tree(current_user.id)],
@@ -107,7 +112,7 @@ def remove_user_action(user_action_id):
     user_action = UserAction.get_by_id(user_action_id)
     if user_action is None:
         abort(404)
-    user_action.delete()
+    user_action.custom_delete()
     return '{}', 200
 
 

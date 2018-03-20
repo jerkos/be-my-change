@@ -10,6 +10,7 @@ import { ComposedComponent, ParentComponent } from '../../composedComponent'
 import './createAction.less'
 import {fillUptag, getTagsNumber, updateSidebarTags} from "../utils";
 import { TagSelector } from "../tagSelector/tagSelector";
+import {createUserAction} from "../../services/action";
 
 
 
@@ -68,7 +69,7 @@ class CreateActionStep1 extends ComposedComponent {
                 <div class="row">
                     <div class="popover popover-right">
                         <a class="right hbtn hbtn-big"
-                            onclick={e => {
+                            onclick={() => {
                                 let hasError = false;
                                 let errors = {};
                                 if (! !!this.cstate.actionTitle) {
@@ -204,15 +205,11 @@ class CreateActionStep2 extends ComposedComponent {
                             $('#createAction').modal('close');
                             const result = updateSidebarTags(this.state);
                             withVeilAndMessages(
-                                window.fetchJsonData('/users/actions/create',
-                                    {
-                                        method: 'POST',
-                                        body: JSON.stringify({
-                                            ...this.cstate,
-                                            tagsToCreate: result.tagsToCreate,
-                                            tagsSlug: result.tagsSlug
-                                        })
-                                    }), true
+                                createUserAction({
+                                    ...this.cstate,
+                                    tagsToCreate: result.tagsToCreate,
+                                    tagsSlug: result.tagsSlug
+                                }), true
                             ).then(({tags, user_action}) => {
                                 fillUptag(tags);
                                 const countByTagSlug = {};

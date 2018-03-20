@@ -1,6 +1,6 @@
 import datetime as dt
 
-from sqlalchemy import func
+from sqlalchemy import func, text
 
 from bemychange.database import JsonSerializerMixin, SurrogatePK, Model, Column, reference_col, relationship
 from bemychange.extensions import db
@@ -74,3 +74,11 @@ class UserAction(JsonSerializerMixin, SurrogatePK, Model):
 
     def realised(self):
         return self.update(last_succeed=dt.datetime.utcnow(), nb_succeed=self.nb_succeed + 1)
+    
+    def custom_delete(self):
+        db.engine.execute(text(
+            'begin transaction;'
+            'delete from user_action_tag_mapping where user_action_id = :uaid;'
+            'delete from user_actions where id = :uaid;'
+            'end TRANSACTION;'
+        ), **{'uaid': self.id})

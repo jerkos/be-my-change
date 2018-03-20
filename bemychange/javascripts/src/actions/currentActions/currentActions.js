@@ -214,8 +214,7 @@ $(document).ready(function () {
 
     const store = new SimpleDom.Store();
 
-    store.subscribe('ACTION_VIEW_TO_UPDATE', (state, oldState) => {
-        // TODO refactor a bit this shit
+    store.subscribe('ACTION_VIEW_TO_UPDATE', () => {
         const newSelectedActions = !store.state.selectedTagSlug ? store.actions
             : store.state.actions.filter(action => {
                 const splitted = store.state.selectedTagSlug.split('-');
@@ -243,9 +242,9 @@ $(document).ready(function () {
             fillUptag(tags);
             const countByTagSlug = {};
             getTagsNumber(actions, countByTagSlug);
-            store.updateState({ 
+            store.updateState({
                 actions,
-                countByTagSlug,
+                countByTagSlug: getTagsNumber(actions, countByTagSlug),
                 selectedActions: actions.slice(),
                 selectedDate: moment(new Date()).format('YYYY-MM-DD'),
                 tags,

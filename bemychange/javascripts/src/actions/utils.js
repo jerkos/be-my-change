@@ -10,7 +10,9 @@ export function fillUptag(tags, val='') {
     }
 }
 
-export function getTagsNumber(actions, result) {
+export function getTagsNumber(actions) {
+    const result = {};
+
     function plusOne(key) {
         if (!Object.keys(result).includes(key)) {
             result[key] = 0;
@@ -34,6 +36,7 @@ export function getTagsNumber(actions, result) {
             }
         }
     }
+    return result;
 }
 
 export function updateSidebarTags(state) {

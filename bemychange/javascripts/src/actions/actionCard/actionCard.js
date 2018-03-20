@@ -1,4 +1,4 @@
-import {fillUptag, getTagsNumber, updateSidebarTags} from "../utils";
+import {fillUptag, getFullTag, getTagsNumber, updateSidebarTags} from "../utils";
 
 require('../../home');
 const moment = require('moment');
@@ -19,6 +19,8 @@ import {ActionInfo} from "../actionInfoSlider/actionInfoSlider";
 import '../../css/popovers.less';
 import '../../css/avatar.less';
 import './actionCard.less';
+import {deleteAction, realiseAction} from "../../services/action";
+
 
 export class ActionCard extends SimpleDom.Component {
 
@@ -44,23 +46,11 @@ export class ActionCard extends SimpleDom.Component {
         return time.replace('une', '1').replace('un', '1').replace('heure', 'h');
     }
 
-    getFullTag() {
-        return this.userAction.tags.map(tag => {
-            const userActionTags = tag.tag_slug.split('-');
-            let tags = this.state.tags.slice();
-            let result = [];
-            while (userActionTags.length) {
-                const currTag = userActionTags.shift();
-                const targetTag = tags.find(tag => '' + tag.id === currTag);
-                result.push(targetTag.name);
-                if (targetTag && targetTag.sons) {
-                    tags = targetTag.sons;
-                    continue;
-                }
-                break;
-            }
-            return result.join('/');
-        })
+    getCount(kind) {
+        console.log(this.state.actionsDataCount[kind]);
+        return (this.state.actionsDataCount[kind].find(
+            elem => elem.action_id === this.userAction.action_id
+        ) || {}).count || 0;
     }
 
     getUserActionProgress() {
@@ -72,13 +62,14 @@ export class ActionCard extends SimpleDom.Component {
     }
 
     render() {
-        const style= this.hasBeenRealised ? {'opacity': '0'} : undefined;
         return (
             <div>
             <div id={`card-edit-tag-${this.userAction.id}`} class="modal">
                 <div class="modal-content">
                     <h4>Changer de tag</h4>
-                    {this.getFullTag().map(tag => <TagSelector tags={tag}/>)}
+                    {getFullTag(this.userAction, this.state.tags)
+                        .map(tag => <TagSelector tags={tag}/>)
+                    }
                 </div>
                 <div class="modal-footer">
                     <div class="right">
@@ -121,10 +112,8 @@ export class ActionCard extends SimpleDom.Component {
                 <div class="hbtn-action my-card-delete"
                      onclick={() => {
                          withVeilAndMessages(
-                             window.fetchJsonData(
-                                 `/users/actions/user-action/delete/${this.userAction.id}`,
-                                 {method: 'DELETE'}
-                             ), true
+                             deleteAction(this.userAction.id),
+                             true
                          ).then(() => {
                              this.card.classList.toggle('to-be-deleted');
                              setTimeout(() => {
@@ -132,13 +121,11 @@ export class ActionCard extends SimpleDom.Component {
                                      .filter(action => action.id !== this.userAction.id);
                                  const actions = this.state.selectedActions
                                      .filter(action => action.id !== this.userAction.id);
-                                 const countByTagSlug = {};
-                                 getTagsNumber(actions, countByTagSlug);
 
                                  this.store.updateState({
                                      actions,
                                      selectedActions,
-                                     countByTagSlug
+                                     countByTagSlug: getTagsNumber(actions)
                                  }, 'SIDEBAR_TO_UPDATE', 'ACTIONS_LIST_TO_UPDATE', 'TITLE_TO_REFRESH')
                              }, 600);
                          })
@@ -154,16 +141,17 @@ export class ActionCard extends SimpleDom.Component {
                                    data-caption={this.userAction.action.title}
                                    href={this.userAction.action.image_url}>
                                     <img class="lozad" src={this.userAction.action.image_url} />
-                                    {this.getFullTag().map(tag =>
-                                        <div class="card-image-tag"
-                                            onclick={e => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                $(`#card-edit-tag-${this.userAction.id}`).modal('open');
-                                            }}>
-                                            {tag}
-                                        </div>
-                                    )}
+                                    {getFullTag(this.userAction, this.state.tags)
+                                        .map(tag =>
+                                            <div class="card-image-tag"
+                                                 onclick={e => {
+                                                     e.preventDefault();
+                                                     e.stopPropagation();
+                                                     $(`#card-edit-tag-${this.userAction.id}`).modal('open');
+                                                 }}>
+                                                {tag}
+                                            </div>
+                                        )}
                                 </a>
                             );
                         }
@@ -236,7 +224,7 @@ export class ActionCard extends SimpleDom.Component {
                                }}
                             >
                                 <div class="action-indicator">
-                                    {this.state.actionsDataCount.commentaries[this.userAction.action_id] || 0}
+                                    {this.getCount('commentaries')}
                                 </div>
                                 <span class="lnr lnr-bubble fa-2x"/>
                             </a>
@@ -260,7 +248,7 @@ export class ActionCard extends SimpleDom.Component {
                                }}
                             >
                                 <div class="action-indicator">
-                                    {this.state.actionsDataCount.participants[this.userAction.action_id] || 0}
+                                    {this.getCount('participants')}
                                 </div>
                                 <span class="lnr lnr-users fa-2x"/>
                             </a>
@@ -276,7 +264,7 @@ export class ActionCard extends SimpleDom.Component {
                                    );
                                }}>
                                 <div class="action-indicator">
-                                    {this.state.actionsDataCount.ressources[this.userAction.action_id] || 0}
+                                    {this.getCount('ressources')}
                                 </div>
                                 <span class="lnr lnr-book fa-2x"/>
                             </a>
@@ -294,7 +282,7 @@ export class ActionCard extends SimpleDom.Component {
                                          onclick={ e => {
                                              e.preventDefault();
                                              withVeilAndMessages(
-                                                 fetchJsonData(`/users/actions/user-action/done/${this.userAction.id}`),
+                                                 realiseAction(this.userAction.id),
                                                  true
                                              ).then(userAction => {
                                                  this.userAction = userAction;
