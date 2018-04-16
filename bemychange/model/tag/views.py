@@ -45,7 +45,7 @@ def update_tag(tag_id):
 @login_required
 @csrf_protect.exempt
 def delete_tag(tag_id):
-    tag = Tags.get_by_id(tag_id)
+    tag_inst = Tags.get_by_id(tag_id)
     # recursive delete ?
 
     def delete_t(t):
@@ -56,7 +56,7 @@ def delete_tag(tag_id):
             tt.delete()
         t.delete()
 
-    delete_t(tag)
+    delete_t(tag_inst)
     return '{}', 200
 
 

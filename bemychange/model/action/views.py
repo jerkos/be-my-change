@@ -9,8 +9,14 @@ from bemychange.extensions import db, csrf_protect
 from bemychange.model.action.models import UserAction, Action
 from bemychange.model.tag.models import Tags
 from bemychange.model.user.models import User
+from bemychange.utils import with_transaction
 
-action = Blueprint('actions', __name__, url_prefix='/user-actions', static_folder='../../static')
+action = Blueprint(
+    'actions',
+    __name__,
+    url_prefix='/user-actions',
+    static_folder='../../static'
+)
 
 
 @action.route('/', methods=['GET'])
@@ -24,20 +30,7 @@ def get_user_actions():
         requested_date = dt.datetime.strptime(requested_date, '%Y-%m-%d')
 
     user_actions = current_user.user_actions(requested_date)
-    print(user_actions)
     return user_actions, 200
-    # actions_ids = [ua.action_id for ua in user_actions]
-    # counting = {'commentaries': {}, 'participants': {}, 'resources': []}
-    # if actions_ids:
-    #     commentaries = {k: v for (k, v) in Commentary.count_for_actions(actions_ids)}
-    #     counting['commentaries'] = commentaries
-    #     participants = {k: v for (k, v) in UserAction.get_count_for_action_ids(actions_ids)}
-    #     counting['participants'] = participants
-    #
-    # return json.dumps({
-    #     'actions': [ua.to_dict() for ua in user_actions],
-    #     'counting': counting
-    # }), 200
 
 
 @action.route('/', methods=['POST', 'PUT'])
@@ -78,8 +71,6 @@ def create_action():
         initial_nb_days=duration,
         public=data.get('isPublic'),
         created_at=dt.datetime.utcnow(),
-        # start_date=start_dt,
-        # end_date=end_dt,
         creator_user_id=current_user.id,
         default_tag=final_slug or None
     )

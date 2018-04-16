@@ -3,9 +3,6 @@ import {fillUptag, getFullTag, getTagsNumber, updateSidebarTags} from "../utils"
 require('../../home');
 const moment = require('moment');
 require('moment/locale/fr');
-const flatpickr = require("flatpickr");
-const francese = require("flatpickr/dist/l10n/fr.js").fr;
-flatpickr.localize(francese);
 
 import * as SimpleDom from 'simpledom-component';
 import { withVeilAndMessages } from '../../components/veil/veil';
