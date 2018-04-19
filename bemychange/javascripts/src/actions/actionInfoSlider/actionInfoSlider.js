@@ -222,6 +222,7 @@ export class ActionInfo extends SimpleDom.Component {
         this.descriptionContentAsText = this.action.description || '';
         this.mdeDescriptionEditor = undefined;
         this.tagsAsText = getFullTag(this.userAction, this.props.tags);
+        console.log(this.action);
         store.updateState({tags: this.props.tags});
     }
 

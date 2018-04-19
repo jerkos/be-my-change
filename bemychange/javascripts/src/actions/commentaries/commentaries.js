@@ -54,6 +54,7 @@ export class CommentariesTab extends SimpleDom.Component {
     constructor(props, store) {
         super(props, store);
         this.commentaries = this.props.commentaries.slice();
+        console.log(this.props.action);
         this.editor = undefined;
     }
 

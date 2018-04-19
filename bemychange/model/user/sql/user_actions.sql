@@ -5,8 +5,21 @@ WITH actions_for_date AS (
              *,
              (SELECT row_to_json(_)
               FROM (
-                     SELECT *
+                     SELECT actions.*,
+                       (select row_to_json(_) from (
+                         select u.active,
+                           u.created_at,
+                           u.email,
+                           u.first_name,
+                           u.has_image,
+                           u.id,
+                           u.is_admin,
+                           u.last_name,
+                           u.points,
+                           u.username
+                       ) _) as creator
                      FROM actions
+                       join users u on actions.creator_user_id = u.id
                      WHERE actions.id = user_actions.action_id
                    ) _) AS action,
              (SELECT jsonb_agg(row_to_json(_))

@@ -24,3 +24,8 @@ export function deleteAction(userActionId) {
         method: 'DELETE'
     }).then(response => response.json());
 }
+
+export function getUserActionParticipants(userActionId) {
+    return fetch(`/user-actions/${userActionId}/participants`)
+        .then(response => response.json())
+}

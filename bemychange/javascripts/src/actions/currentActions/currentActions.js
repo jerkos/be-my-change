@@ -50,7 +50,7 @@ class ActionsList extends SimpleDom.Component {
     }
 
     render() {
-         const nbActions = this.state.minisidebar ? 4 : 3;
+        const nbActions = this.state.minisidebar ? 4 : 3;
         const colSize = this.state.minisidebar ?  'm3' : 'm4';
         if (!(this.state.selectedActions || []).length) {
             return (

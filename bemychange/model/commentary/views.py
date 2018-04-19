@@ -13,8 +13,6 @@ commentary = Blueprint('commentaries', __name__, url_prefix='/commentaries', sta
 def get_commentaries(action_id):
     is_journal = request.args.get('is_journal')
     if is_journal == 'True':
-        # todo put in a function in commentary class
-        print("is journal is true")
         commentaries = Commentary.query.filter(
             and_(
                 Commentary.action_id == action_id,
