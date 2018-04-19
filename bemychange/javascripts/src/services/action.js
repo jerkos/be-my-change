@@ -11,6 +11,13 @@ export function createUserAction(body) {
     return fetch('/user-actions/', {
         method: 'POST',
         body: JSON.stringify(body)
+    }).then(response => response.json());
+}
+
+export function updateUserAction(body) {
+    return fetch('/user-actions/', {
+        method: 'PUT',
+        body: JSON.stringify(body)
     }).then(response => response.json())
 }
 
