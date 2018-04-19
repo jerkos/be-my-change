@@ -4,7 +4,8 @@ require('../../home');
 const moment = require('moment');
 require('moment/locale/fr');
 import flatpickr from 'flatpickr';
-import { French } from 'flatpickr/dist/l10n/fr.js';
+import {French} from 'flatpickr/dist/l10n/fr.js';
+
 flatpickr.localize(French);
 require('flatpickr/dist/flatpickr.min.css');
 
@@ -36,9 +37,13 @@ class ActionsList extends SimpleDom.Component {
         const allCallbacks = anime({
             targets: '.card',
             opacity: 1,
-            delay: function(el, i) { return 100 + (i * 100); },
-            duration: function(el, i) { return 500 + (i * 500); }
-          });
+            delay: function (el, i) {
+                return 100 + (i * 100);
+            },
+            duration: function (el, i) {
+                return 500 + (i * 500);
+            }
+        });
     }
 
     partitionList(input, spacing) {
@@ -51,7 +56,7 @@ class ActionsList extends SimpleDom.Component {
 
     render() {
         const nbActions = this.state.minisidebar ? 4 : 3;
-        const colSize = this.state.minisidebar ?  'm3' : 'm4';
+        const colSize = this.state.minisidebar ? 'm3' : 'm4';
         if (!(this.state.selectedActions || []).length) {
             return (
                 <section class="empty">
@@ -66,7 +71,7 @@ class ActionsList extends SimpleDom.Component {
                                    startingTop: '2%'
                                });
                            }}
-                           > ici
+                        > ici
                         </a> !
                     </p>
                 </section>
@@ -77,7 +82,7 @@ class ActionsList extends SimpleDom.Component {
                 <div class="row">
                     {subactions.map(action =>
                         <div class={`col ${colSize} s12`}>
-                            <ActionCard userAction={action} />
+                            <ActionCard userAction={action}/>
                         </div>
                     )}
                 </div>
@@ -118,7 +123,8 @@ class MainTitle extends SimpleDom.Component {
                                    });
                                }}
                             >
-                                <i class="fa fa-plus" style="color:#62dbb3; min-height: 15px; min-width: 15px; margin-right:5px"/>
+                                <i class="fa fa-plus"
+                                   style="color:#62dbb3; min-height: 15px; min-width: 15px; margin-right:5px"/>
                                 Action
                             </a>
                         </li>
@@ -131,14 +137,15 @@ class MainTitle extends SimpleDom.Component {
                                    });
                                }}
                             >
-                                <i class="fa fa-plus" style="color:#62dbb3; min-height: 15px; min-width: 15px; margin-right:5px"/>
+                                <i class="fa fa-plus"
+                                   style="color:#62dbb3; min-height: 15px; min-width: 15px; margin-right:5px"/>
                                 Evènement
                             </a>
                         </li>
                     </ul>
                 </div>
                 <span href="#" class="right hbtn-action hbtn-main-color add-action"
-                   title="Hello world"
+                      title="Hello world"
                 >
                     <i class="material-icons white-text">add</i>
                 </span>
@@ -154,16 +161,16 @@ class App extends SimpleDom.Component {
             <div id="top" class="action">
                 <div id="createAction" class="modal" style="display: none">
                     <div class="modal-content">
-                        <CreateAction />
+                        <CreateAction/>
                     </div>
                 </div>
                 <div id="createEvent" class="modal" style="display: none">
                     <div class="modal-content">
-                        <CreateEvent />
+                        <CreateEvent/>
                     </div>
                 </div>
                 <div class="boxed-layout">
-                    <SidebarAction />
+                    <SidebarAction/>
                     <div class="row">
                         <div id="actions" class="col s12">
                             <MainTitle/>
@@ -200,7 +207,7 @@ class App extends SimpleDom.Component {
                             </div>
                             <div class="row">
                                 <div class="col s12">
-                                    <ActionsList />
+                                    <ActionsList/>
                                 </div>
                             </div>
                         </div>
@@ -252,9 +259,9 @@ $(document).ready(function () {
                 activeTags: new Set(),
                 actionsDataCount: counting
             });
-            
-            SimpleDom.renderToDom('container', <App />, store);
-            
+
+            SimpleDom.renderToDom('container', <App/>, store);
+
             // jquery functions
             flatpickr('.flatpicker',
                 {
@@ -274,7 +281,8 @@ $(document).ready(function () {
                                 countByTagSlug,
                                 selectedActions: actions.slice(),
                                 actionsDataCount: counting,
-                                selectedDate: date }, 'ACTIONS_LIST_TO_UPDATE', 'SIDEBAR_TO_UPDATE')
+                                selectedDate: date
+                            }, 'ACTIONS_LIST_TO_UPDATE', 'SIDEBAR_TO_UPDATE')
                         })
                     }
                 }
