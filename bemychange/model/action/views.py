@@ -160,22 +160,24 @@ def participate_to_action(action_id, tag=None):
 def get_participants_for_action(action_id):
     """get participants of action"""
     page = request.args.get('page', 1)
-    per_page = request.args.get('per_page', current_app.config['PER_PAGE'])
+    per_page = request.args.get('per_page', 20)
+
+    if Action.get_by_id(action_id) is None:
+        return '{\"message\": not found}', 404
+
     total_count = (db.session.query(func.count(User.id))
                    .join(UserAction)
                    .filter(UserAction.action_id == action_id)
                    .scalar())
-    if Action.get_by_id(action_id is None):
-        return '{\"message\": not found}', 404
+    result = (User.query
+              .join(UserAction)
+              .join(Action)
+              .filter(UserAction.action_id == action_id).all())
 
-    query = (User.query
-             .join(UserAction)
-             .join(Action)
-             .filter(UserAction.action_id == action_id))
-
-    response = paginate(query, page, total_count, User)
-    logging.DEBUG('participants for action send response: \n' + str(response))
-    return json.dumps(response), 200
+    # response = query.paginate() # paginate(query, page, total_count, User)
+    # logging.DEBUG('participants for action send response: \n' + str(response))
+    return User.arr_to_json(result, exclude=set('password')), 200
+    # return json.dumps(response), 200
 
 
 @action.route('/matching-with-text')

@@ -61,10 +61,7 @@ class Participant extends ComposedComponent {
                         </span>
                         <br/>
                         <span>
-                    {this.props.user.points_pers
-                    + this.props.user.points_env
-                    + this.props.user.points_rel
-                    }
+                    {this.props.user.points}
                 </span> points
                     </p>
                     <div class="participant-action">

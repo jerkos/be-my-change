@@ -222,9 +222,12 @@ export class ActionCard extends SimpleDom.Component {
                                 <a class="hbtn-action"
                                    onclick={event => {
                                        withVeilAndMessages(
-                                           getUserActionParticipants(this.userAction.action.id),
+                                           getUserActionParticipants(this.userAction.action_id),
                                            true
-                                       ).then(({users, total_pages, current_page}) => {
+                                       ).then(users => {
+                                           console.log(users);
+                                           const total_pages = 1;
+                                           const current_page = 1;
                                            createSlider(
                                                `Participants`,
                                                <ParticipantTab
