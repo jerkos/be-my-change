@@ -248,11 +248,9 @@ $(document).ready(function () {
         Promise.all([getUserActions(), allTags()]), true)
         .then(([{actions, counting}, tags]) => {
             fillUptag(tags);
-            const countByTagSlug = {};
-            getTagsNumber(actions, countByTagSlug);
             store.updateState({
                 actions,
-                countByTagSlug: getTagsNumber(actions, countByTagSlug),
+                countByTagSlug: getTagsNumber(actions),
                 selectedActions: actions.slice(),
                 selectedDate: moment(new Date()).format('YYYY-MM-DD'),
                 tags,
@@ -273,12 +271,9 @@ $(document).ready(function () {
                             getUserActions(moment(date).format('YYYY-MM-DD')),
                             true
                         ).then(({actions, counting}) => {
-                            const countByTagSlug = {};
-                            getTagsNumber(actions, countByTagSlug);
-
                             store.updateState({
                                 actions,
-                                countByTagSlug,
+                                countByTagSlug: getTagsNumber(actions),
                                 selectedActions: actions.slice(),
                                 actionsDataCount: counting,
                                 selectedDate: date

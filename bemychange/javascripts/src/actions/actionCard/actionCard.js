@@ -83,14 +83,9 @@ export class ActionCard extends SimpleDom.Component {
                                    ).then(({tags, user_action}) => {
                                        this.userAction.tags = user_action.tags;
                                        fillUptag(tags);
-                                       const countByTagSlug = {};
-                                       //test if the user has participated into the action
-                                       // add maybe user action ?
-                                       getTagsNumber(this.state.actions, countByTagSlug);
-
                                        this.store.updateState({
                                                tags,
-                                               countByTagSlug
+                                               countByTagSlug: getTagsNumber(this.state.actions)
                                            },
                                            'SIDEBAR_TO_UPDATE', 'ACTIONS_LIST_TO_UPDATE', 'TITLE_TO_REFRESH');
                                    })
@@ -101,7 +96,8 @@ export class ActionCard extends SimpleDom.Component {
                         </div>
                     </div>
                 </div>
-                <div class="card my-card" style={{'opacity': this.hasBeenRealised ? '1' : '0'}}
+                <div class="card my-card"
+                     style={{'opacity': this.hasBeenRealised ? '1' : '0'}}
                      ref={ref => this.card = ref}>
                     <div class="hbtn-action my-card-delete"
                          onclick={() => {
@@ -128,6 +124,19 @@ export class ActionCard extends SimpleDom.Component {
                         &#10005;
                     </div>
                     <div class="card-image waves-block waves-light">
+                        <div class="card-image-tag-container">
+                            {getFullTag(this.userAction, this.state.tags)
+                                .map(tag =>
+                                    <div className="card-image-tag"
+                                         onClick={e => {
+                                             e.preventDefault();
+                                             e.stopPropagation();
+                                             $(`#card-edit-tag-${this.userAction.id}`).modal('open');
+                                         }}>
+                                        {tag}
+                                    </div>
+                                )}
+                        </div>
                         {SimpleDom.predicate(this.userAction.action.image_url,
                             () => {
                                 return (
@@ -135,17 +144,6 @@ export class ActionCard extends SimpleDom.Component {
                                        data-caption={this.userAction.action.title}
                                        href={this.userAction.action.image_url}>
                                         <img class="lozad" src={this.userAction.action.image_url}/>
-                                        {getFullTag(this.userAction, this.state.tags)
-                                            .map(tag =>
-                                                <div class="card-image-tag"
-                                                     onclick={e => {
-                                                         e.preventDefault();
-                                                         e.stopPropagation();
-                                                         $(`#card-edit-tag-${this.userAction.id}`).modal('open');
-                                                     }}>
-                                                    {tag}
-                                                </div>
-                                            )}
                                     </a>
                                 );
                             }
@@ -159,7 +157,6 @@ export class ActionCard extends SimpleDom.Component {
                                   true
                               ).then(commentaries => {
                                   createSlider(
-                                      '',
                                       <ActionInfo
                                           userAction={this.userAction}
                                           tags={this.state.tags}
@@ -167,13 +164,10 @@ export class ActionCard extends SimpleDom.Component {
                                           onClose={({tags, user_action}) => {
                                               this.userAction.tags = user_action.tags;
                                               fillUptag(tags);
-                                              const countByTagSlug = {};
-                                              //test if the user has participated into the action
-                                              // add maybe user action ?
-                                              getTagsNumber(this.state.actions, countByTagSlug);
+                                              //test if the user has participated into the action, add maybe user action ?
                                               this.store.updateState({
                                                       tags,
-                                                      countByTagSlug
+                                                      countByTagSlug: getTagsNumber(this.state.actions)
                                                   },
                                                   'SIDEBAR_TO_UPDATE', 'ACTIONS_LIST_TO_UPDATE', 'TITLE_TO_REFRESH');
                                           }}
@@ -205,7 +199,6 @@ export class ActionCard extends SimpleDom.Component {
                                            true
                                        ).then(commentaries =>
                                            createSlider(
-                                               `Commentaires`,
                                                <CommentariesTab
                                                    action={this.userAction.action}
                                                    commentaries={commentaries || []}
@@ -229,7 +222,6 @@ export class ActionCard extends SimpleDom.Component {
                                            const total_pages = 1;
                                            const current_page = 1;
                                            createSlider(
-                                               `Participants`,
                                                <ParticipantTab
                                                    users={users || []}
                                                    action={this.userAction.action}
@@ -250,7 +242,6 @@ export class ActionCard extends SimpleDom.Component {
                                 <a class="hbtn-action"
                                    onclick={event => {
                                        createSlider(
-                                           'Ressources',
                                            <RessourcesTab
                                                action={this.userAction.action}
                                            />,

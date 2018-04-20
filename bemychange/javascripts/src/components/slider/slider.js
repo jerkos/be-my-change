@@ -2,7 +2,7 @@ import '../../home';
 import * as SimpleDom from 'simpledom-component';
 import './slider.less';
 
-export function createSlider(title, node, e) {
+export function createSlider(node, e) {
     if (!document.getElementById('slide-out-actions')) {
         let slideContainer = document.createElement('div');
         slideContainer.id = "slide-out-actions";
