@@ -298,10 +298,6 @@ export class ActionInfo extends SimpleDom.Component {
                                         }),
                                         true
                                     );
-                                    /*.then(() => {
-                                    this.userAction.action.description = markdownContent;
-                                    this.store.updateState({}, 'ACTION_INFO_TO_REFRESH')
-                                })*/
                                 }}
                             />
                         </div>
@@ -326,8 +322,6 @@ export class ActionInfo extends SimpleDom.Component {
                                                     <TagSelector tags={tag} id={i}/>
                                                     <a href="#" class="hbtn"
                                                        onclick={() => {
-                                                           //const newTags = state.tagsToCreate.split('/');
-                                                           //let existingTags = state.tags;
                                                            const result = updateSidebarTags(this.state);
                                                            withVeilAndMessages(
                                                                changeTags(this.userAction.id, {

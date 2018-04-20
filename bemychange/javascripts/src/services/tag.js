@@ -5,7 +5,7 @@ export function allTags() {
 export function changeTags(actionId, body, tagMappingId) {
     let url = `/tags/change-tag/${actionId}`;
     if (tagMappingId) {
-        url += `&tag_mapping_id=${tagMappingId}`;
+        url += `?tag_mapping_id=${tagMappingId}`;
     }
     return fetch(url,
         {
