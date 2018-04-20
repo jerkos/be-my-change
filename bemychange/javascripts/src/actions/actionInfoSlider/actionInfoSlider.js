@@ -33,7 +33,8 @@ class ModifiableTextArea extends SimpleDom.Component {
     componentDidMount() {
         if (this.editMode) {
             this.mdeEditor = new SimpleMDE({
-                element: document.getElementById(`entryEditor${this.props.id}`)
+                element: document.getElementById(`entryEditor${this.props.id}`),
+                spellChecker: false
             });
         } else {
             const element = document.getElementById(`entryTarget${this.props.id}`);
@@ -272,9 +273,9 @@ export class ActionInfo extends SimpleDom.Component {
                 </div>
                 <h4 class="action-info-title">
                     <img class="action-info-image" src={this.userAction.action.image_url}/>
-                    <span>{this.action.title} <span class="lnr lnr-thumbs-up"></span>{this.action.nblike}</span>
+                    <span>{this.action.title} <span class="lnr lnr-thumbs-up"/>{this.action.nblike}</span>
                 </h4>
-                <div class="action-info-author">Créé par <span>Mathieu</span></div>
+                <div class="action-info-author">Créé par <span>{this.userAction.action.creator.username}</span></div>
                 <div class="row">
                     <div class="action-info-menu">
                         <ul>
