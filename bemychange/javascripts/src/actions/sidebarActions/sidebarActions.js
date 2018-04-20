@@ -18,6 +18,7 @@ class Tag extends SimpleDom.Component {
         this.editMode = this.tag === null;
         this.isActive = this.state.activeTags.has((this.tag || {}).tag_slug) || false;
         this.isHighlighted = false;
+        this.inputRef = undefined;
     }
 
     eventsToSubscribe() {
@@ -36,6 +37,12 @@ class Tag extends SimpleDom.Component {
             newActiveTags.delete(this.tag.tag_slug);
         }
         this.store.updateState({activeTags: newActiveTags}, `REFRESH_TAG_${this.props.id}`);
+    }
+
+    componentDidMount() {
+        if (this.inputRef) {
+            this.inputRef.focus();
+        }
     }
 
     render() {
@@ -112,6 +119,12 @@ class Tag extends SimpleDom.Component {
                     },
                     () => <input type="text"
                                  class="sub-tag-input"
+                                 ref={ref => this.inputRef = ref}
+                                 onkeyup={event => {
+                                     if (event.keyCode === 27) {
+                                         this.inputRef.blur();
+                                     }
+                                 }}
                                  onblur={event => {
                                      event.stopPropagation();
                                      const value = event.target.value;
@@ -134,10 +147,9 @@ class Tag extends SimpleDom.Component {
                                          });
                                          return;
                                      }
-                                     withVeilAndMessages(
-                                         updateTag(this.tag.id, {id: this.tag.id, name: value}),
-                                         true
-                                     ).then((tag) => {
+                                     // no veil and messages here
+                                     updateTag(this.tag.id, {id: this.tag.id, name: value})
+                                     .then((tag) => {
                                          this.tag.name = tag.name;
                                          this.editMode = false;
                                          this.store.updateState({}, `REFRESH_TAG_${this.props.id}`);

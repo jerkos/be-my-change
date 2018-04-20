@@ -190,8 +190,8 @@ export class ActionCard extends SimpleDom.Component {
                                 <div class="determinate" style={`width: ${this.getUserActionProgress()}%`}/>
                             </div>
                             <p>
-                                <a class="hbtn-action tooltip"
-                                   data-position="bottom"
+                                <a class="hbtn-action tooltip with-pointer"
+                                   data-position="right"
                                    data-tooltip="Voir les commentaires à propros de cette action"
                                    onclick={event => {
                                        withVeilAndMessages(
@@ -212,7 +212,7 @@ export class ActionCard extends SimpleDom.Component {
                                     </div>
                                     <span class="lnr lnr-bubble fa-2x"/>
                                 </a>
-                                <a class="hbtn-action"
+                                <a class="hbtn-action with-pointer"
                                    onclick={event => {
                                        withVeilAndMessages(
                                            getUserActionParticipants(this.userAction.action_id),
@@ -239,7 +239,7 @@ export class ActionCard extends SimpleDom.Component {
                                     <span class="lnr lnr-users fa-2x"/>
                                 </a>
 
-                                <a class="hbtn-action"
+                                <a class="hbtn-action with-pointer"
                                    onclick={event => {
                                        createSlider(
                                            <RessourcesTab
