@@ -2,6 +2,7 @@ import json
 
 from flask import Blueprint, request
 from flask_login import login_required, current_user
+from sqlalchemy import text
 
 from bemychange.extensions import csrf_protect, db
 from bemychange.model.action.models import UserAction
@@ -80,7 +81,7 @@ def change_tag_of_user_action(user_action_id):
         tag_mapping.update(tag_slug=final_slug)
     else:
         db.engine.execute(
-            'insert into user_action_tag_mapping(user_action_id, tag_slug) values(:uaid, :tag)',
+            text('insert into user_action_tag_mapping(user_action_id, tag_slug) values(:uaid, :tag)'),
             **{'uaid': user_action_id, 'tag': final_slug}
         )
 

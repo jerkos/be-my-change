@@ -13,3 +13,23 @@ export function changeTags(actionId, body, tagMappingId) {
             body: JSON.stringify(body)
         }).then(response => response.json());
 }
+
+export function deleteTag(tagId) {
+    return fetch(`/tag/${tagId}`, {
+        method: 'DELETE'
+    }).then(response => response.json());
+}
+
+export function createTag(body) {
+    return fetch(`/tags/`, {
+        method: 'POST',
+        body: JSON.stringify(body)
+    }).then(response => response.json());
+}
+
+export function updateTag(tagId, body) {
+    return fetch(`/tags/${tagId}`, {
+        method: 'PUT',
+        body: JSON.stringify(body)
+    }).then(response => response.json());
+}
