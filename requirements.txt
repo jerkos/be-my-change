@@ -1,3 +1,4 @@
+goose3
 alembic==0.9.6
 bcrypt==3.1.4
 beautifulsoup4==4.5.3
