@@ -34,7 +34,7 @@ class DevConfig(Config):
 
     ENV = 'dev'
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('POSTGRESQL_ADDON_URI') or 'postgres://bemychange:123456@localhost:5432'
+    SQLALCHEMY_DATABASE_URI = os.getenv('POSTGRESQL_ADDON_URI') or 'postgres://bemychange:123456@localhost:5432'
     DEBUG_TB_ENABLED = True
     ASSETS_DEBUG = True  # Don't bundle/minify static assets
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
