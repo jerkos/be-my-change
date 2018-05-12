@@ -45,7 +45,7 @@ WITH actions_for_date AS (
                  SELECT 1
                  FROM jsonb_array_elements(actions_for_date.result) t
                  WHERE (t ->> 'action_id') :: BIGINT = commentaries.action_id
-             )
+             ) AND commentaries.is_journal is FALSE
              GROUP BY 1
            ) _
   ),

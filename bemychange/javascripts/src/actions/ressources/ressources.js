@@ -1,6 +1,7 @@
 import '../../home';
 import * as SimpleDom from 'simpledom-component';
 import './ressources.less';
+import {gatherInformations} from '../../services/ressource';
 import {withVeilAndMessages} from "../../components/veil/veil";
 
 
@@ -91,7 +92,7 @@ export class RessourcesTab extends SimpleDom.Component {
                     }}/>
                     <a class="hbtn hbtn-action" onclick={() => {
                         withVeilAndMessages(
-                            fetchJsonData(`/gather-informations?url=${this.currentUrl}`),
+                            gatherInformations(this.currentUrl),
                             true
                         ).then(result => {
                             console.log(result);

@@ -1,6 +1,7 @@
 import * as SimpleDom from 'simpledom-component';
 import { withVeilAndMessages } from '../../components/veil/veil';
 import './commentaries.less';
+import {saveCommentary} from "../../services/commentary";
 const SimpleMDE = require('simplemde');
 require('../../../node_modules/simplemde/dist/simplemde.min.css');
 const gravatar = require('gravatar');
@@ -103,11 +104,7 @@ export class CommentariesTab extends SimpleDom.Component {
                             content,
                             action_id: this.props.action.id
                         };
-                        withVeilAndMessages(
-                            fetchJsonData(
-                                `/users/actions/${this.props.action.id}/commentaries`,
-                                { method: 'POST', body: JSON.stringify(comm) }
-                            ), true)
+                        withVeilAndMessages(saveCommentary(0, comm), true)
                             .then(comm => {
                                 this.commentaries.push(comm);
                                 this.store.updateState(

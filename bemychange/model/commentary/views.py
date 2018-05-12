@@ -1,3 +1,4 @@
+import datetime as dt
 from flask import Blueprint, request
 from flask_login import login_required, current_user
 from sqlalchemy import and_, or_
@@ -46,5 +47,6 @@ def save_commentary(commentary_id):
         content=data.get('content'),
         user_id=current_user.id,
         action_id=data.get('action_id'),
-        is_journal=data.get('is_journal', False)
+        is_journal=data.get('is_journal', False),
+        created_at=dt.datetime.utcnow()
     )), 200
