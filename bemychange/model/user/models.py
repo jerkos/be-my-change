@@ -3,6 +3,7 @@ import datetime as dt
 
 from flask_login import UserMixin
 from sqlalchemy import text
+from sqlalchemy.dialects.postgresql.json import JSONB
 
 from bemychange.database import Column, Model, SurrogatePK, db, reference_col, relationship, JsonSerializerMixin
 from bemychange.extensions import bcrypt
@@ -30,6 +31,7 @@ class User(JsonSerializerMixin, UserMixin, SurrogatePK, Model):
     active = Column(db.Boolean(), default=False)
     is_admin = Column(db.Boolean(), default=False)
     points = Column(db.Integer, default=0)
+    connexions = Column(JSONB)
 
     def __init__(self, username, email, password=None, **kwargs):
         db.Model.__init__(self, username=username, email=email, **kwargs)
@@ -57,3 +59,12 @@ class User(JsonSerializerMixin, UserMixin, SurrogatePK, Model):
             **{'requested_date': requested_date, 'user_id': self.get_id()}
         )
         return rows.first()['result'] or []
+
+    @staticmethod
+    def find(user_id):
+        rows = db.engine.execute(
+            text('select row_to_json(_) as result from (select * from users where id = :user_id)_'),
+            **{'user_id': user_id}
+        )
+        return rows.first()['result'] or None
+

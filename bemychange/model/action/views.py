@@ -1,7 +1,7 @@
 import datetime as dt
 import json
 
-from flask import Blueprint, request, abort, current_app, logging, redirect, url_for
+from flask import Blueprint, request, abort, current_app, logging, redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from sqlalchemy import func, desc, or_, text
 
@@ -9,7 +9,7 @@ from bemychange.extensions import db, csrf_protect
 from bemychange.model.action.models import UserAction, Action
 from bemychange.model.tag.models import Tags
 from bemychange.model.user.models import User
-from bemychange.utils import with_transaction
+# from bemychange.utils import with_transaction
 
 action = Blueprint(
     'actions',
@@ -139,12 +139,12 @@ def user_action_done(user_action_id):
 @action.route('/<int:action_id>/participate')
 @login_required
 def participate_to_action(action_id, tag=None):
-    action = Action.get_by_id(action_id)
-    if action is None:
+    action_inst = Action.get_by_id(action_id)
+    if action_inst is None:
         return 'not found', 404
 
     start_date = request.args.get('start_date', dt.datetime.now())
-    nb_days = request.args.get('nb_days', action.initial_nb_days)
+    nb_days = request.args.get('nb_days', action_inst.initial_nb_days)
     user_action = UserAction.create(
         user_id=current_user.id,
         action_id=action_id,
@@ -193,6 +193,28 @@ def get_matching_text_actions():
             (Action.title.like(like_query)) |
             (Action.description.like(like_query))
         ).all()), 200
+
+
+@action.route('/<int:action_id>/like')
+@login_required
+def like(action_id):
+    user = User.find(current_user.id)
+    action_inst = Action.get_by_id(action_id)
+    if user is None or action_inst is None:
+        return jsonify({}), 404
+    user.update({'like_date': dt.datetime.now().isoformat()})
+    user.pop('password')
+    user_as_str = json.dumps(user)
+    db.engine.execute(
+        text(
+            'begin transaction;'
+            'update actions set '
+            'user_likes = COALESCE(user_likes, \'[]\'::jsonb) || (:user_like)::jsonb where actions.id = :action_id;'
+            'end transaction; commit;',
+        ),
+        **{'user_like': user_as_str, 'action_id': action_id}
+    )
+    return '{}', 200
 
 
 @action.route('/last-actions')

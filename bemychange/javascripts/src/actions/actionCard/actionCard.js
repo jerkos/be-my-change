@@ -42,6 +42,19 @@ export class ActionCard extends SimpleDom.Component {
         return title;
     }
 
+    static refreshSidebarTags(tags, actionsListToUpdate = true) {
+        fillUptag(tags);
+        const events = Array.of('SIDEBAR_TO_UPDATE', 'TITLE_TO_REFRESH');
+        if (actionsListToUpdate) {
+            events.push('ACTIONS_LIST_TO_UPDATE');
+        }
+        this.store.updateState({
+                tags,
+                countByTagSlug: getTagsNumber(this.state.actions)
+            },
+            ...events);
+    }
+
     static formatHours(time) {
         return time.replace('une', '1').replace('un', '1').replace('heure', 'h');
     }

@@ -12,7 +12,7 @@ import {getFullTag, updateSidebarTags} from "../utils";
 import {TagSelector} from "../tagSelector/tagSelector";
 import "../tagSelector/tagSelector.less";
 import {saveCommentary, updateCommentary} from "../../services/commentary";
-import {updateUserAction} from "../../services/action";
+import {likeAction, updateUserAction} from "../../services/action";
 import {changeTags} from "../../services/tag";
 
 
@@ -273,7 +273,11 @@ export class ActionInfo extends SimpleDom.Component {
                 </div>
                 <h4 class="action-info-title">
                     <img class="action-info-image" src={this.userAction.action.image_url}/>
-                    <span>{this.action.title} <span class="lnr lnr-thumbs-up"/>{this.action.nblike}</span>
+                    <span>
+                        {this.action.title}
+                        <span class="lnr lnr-thumbs-up" onclick={() => {likeAction(this.action.id)}}/>
+                        LIKE
+                    </span>
                 </h4>
                 <div class="action-info-author">Créé par <span>{this.userAction.action.creator.username}</span></div>
                 <div class="row">

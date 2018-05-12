@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 import datetime as dt
 
 from sqlalchemy import func, text
+from sqlalchemy.dialects.postgresql.json import JSONB
 
 from bemychange.database import JsonSerializerMixin, SurrogatePK, Model, Column, reference_col, relationship
 from bemychange.extensions import db
@@ -21,19 +23,13 @@ class Action(JsonSerializerMixin, SurrogatePK, Model):
     default_tag = Column(db.Text, nullable=True)
     creator_user_id = reference_col('users', nullable=False)
     creator = relationship('models.User')
-    nb_like = Column(db.BigInteger, default=0)
-
-
-class ActionLike(Model):
-    __tablename__ = 'action_like'
-
-    user_id = reference_col('users', nullable=False, primary_key=True)
-    action_id = reference_col('actions', nullable=False, primary_key=True)
+    user_likes = Column(JSONB)
 
 
 class UserAction(JsonSerializerMixin, SurrogatePK, Model):
     __tablename__ = 'user_actions'
     RELATIONSHIPS_TO_DICT = True
+
     user_id = reference_col('users', nullable=False)
     user = relationship('models.User')
     action_id = reference_col('actions', nullable=False)

@@ -36,3 +36,8 @@ export function getUserActionParticipants(userActionId) {
     return fetch(`/user-actions/${userActionId}/participants`)
         .then(response => response.json())
 }
+
+export function likeAction(actionId) {
+    return fetch(`/user-actions/${actionId}/like`)
+        .then(response => response.json())
+}
