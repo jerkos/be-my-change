@@ -24,7 +24,7 @@ module.exports = {
         //,campagne: ['./src/campagne/less/main.less', './src/campagne/routes.es6']
     },
     output: {
-        path: path.resolve(__dirname, "../static/bundles/"),
+        path: path.resolve(__dirname, "../static/bundles/") + '/',
         filename: "[name].js",
         publicPath: "/static/bundles/",
         library: "[name]",
