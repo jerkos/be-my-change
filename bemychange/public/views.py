@@ -81,20 +81,20 @@ def gather_informations():
     url = request.args['url']
     g = Goose()
     try:
-        response = g.extract(url=url)
-        print(response.top_image)
-        print(response.__dict__)
+        goose_response = g.extract(url=url)
+        print(goose_response.top_image)
+        print(goose_response.__dict__)
     except Exception as e:
         print('error')
         return jsonify({'error': True, 'message': e}), 500
 
     response_img = ''
-    if response.top_image is not None:
-        response_img = response.top_image.src
+    if goose_response.top_image is not None:
+        response_img = goose_response.top_image.src
     return jsonify({
-            'title': response.title,
+            'title': goose_response.title,
             'urlRequested': url,
-            'text': response.cleaned_text[:200],
+            'text': goose_response.cleaned_text[:200],
             'mainImage': response_img
         }), 200
 
