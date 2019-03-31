@@ -81,7 +81,7 @@ def about():
 def gather_informations():
     url = request.args['url']
     g = Goose({
-        'local_storage_path': './data/' if os.environ.get('CC_FS_BUCKET') is not None else '.'
+        'local_storage_path': './data/' if os.environ.get('BUCKET_HOST') is not None else '.'
     })
     try:
         goose_response = g.extract(url=url)
