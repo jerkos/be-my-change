@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from flask import Blueprint, flash, redirect, render_template, request, url_for, jsonify
 from flask_login import login_required, login_user, logout_user, current_user
 from flask.helpers import get_debug_flag
@@ -79,7 +80,9 @@ def about():
 @main_views.route('/gather-informations', methods=['GET'])
 def gather_informations():
     url = request.args['url']
-    g = Goose()
+    g = Goose({
+        'local_storage_path': './data/' if os.environ.get('CC_FS_BUCKET') is not None else '.'
+    })
     try:
         goose_response = g.extract(url=url)
         print(goose_response.top_image)
