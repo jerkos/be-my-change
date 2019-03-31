@@ -82,6 +82,7 @@ def gather_informations():
     g = Goose()
     try:
         response = g.extract(url=url)
+        print(response.top_image)
     except Exception as e:
         print('error')
         return jsonify({'error': True, 'message': e}), 500
