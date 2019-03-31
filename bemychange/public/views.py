@@ -80,8 +80,9 @@ def about():
 @main_views.route('/gather-informations', methods=['GET'])
 def gather_informations():
     url = request.args['url']
-    g = Goose({
-        'local_storage_path': './data/' if os.environ.get('BUCKET_HOST') is not None else '.'
+    g = Goose(config={
+        'local_storage_path': './data/' if os.environ.get('BUCKET_HOST') is not None else '.',
+        'enable_image_fetching': True
     })
     try:
         goose_response = g.extract(url=url)
