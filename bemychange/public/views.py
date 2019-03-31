@@ -87,7 +87,7 @@ def gather_informations():
         return jsonify({'error': True, 'message': e}), 500
 
     response_img = ''
-    if response.top_image:
+    if response.top_image is not None:
         response_img = response.top_image.src
     return jsonify({
             'title': response.title,
