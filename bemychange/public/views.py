@@ -83,6 +83,7 @@ def gather_informations():
     try:
         response = g.extract(url=url)
         print(response.top_image)
+        print(response.__dict__)
     except Exception as e:
         print('error')
         return jsonify({'error': True, 'message': e}), 500
